@@ -82,14 +82,16 @@ class Application(tk.Tk):
         tree_wrap.grid(row=0, column=1, sticky='nsew')
         cols = ('id', 'event_name', 'time', 'location')
         self.tree = ttk.Treeview(tree_wrap, columns=cols, show='headings')
-        self.tree.heading('id', text='ID')
-        self.tree.heading('event_name', text='Sự kiện')
-        self.tree.heading('time', text='Thời gian')
-        self.tree.heading('location', text='Địa điểm')
-        self.tree.column('id', width=50, stretch=False)
-        self.tree.column('event_name', width=360)
-        self.tree.column('time', width=120)
-        self.tree.column('location', width=180)
+        # Center headings
+        self.tree.heading('id', text='ID', anchor='center')
+        self.tree.heading('event_name', text='Sự kiện', anchor='center')
+        self.tree.heading('time', text='Thời gian', anchor='center')
+        self.tree.heading('location', text='Địa điểm', anchor='center')
+        # Center column contents
+        self.tree.column('id', width=50, stretch=False, anchor='center')
+        self.tree.column('event_name', width=360, anchor='center')
+        self.tree.column('time', width=120, anchor='center')
+        self.tree.column('location', width=180, anchor='center')
         self.tree.pack(fill='both', expand=True)
 
         # Controls
