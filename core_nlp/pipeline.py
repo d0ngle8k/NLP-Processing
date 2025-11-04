@@ -19,16 +19,15 @@ class NLPPipeline:
         # Time patterns: nhận diện các mảnh thời gian rời rạc để ghép lại
         self.time_patterns = re.compile(
             r"(" 
-            r"\b\d{1,2}(?:h|\s*giờ)(?:\s*\d{1,2}(?:p|\s*phút))?\b"  # 10h, 10 giờ 30 phút
-            r"|\b\d{1,2}:\d{1,2}\b"                                   # 10:30
+            r"\b\d{1,2}(?:h|\s*giờ|:\d{1,2})(?:\s*\d{1,2}(?:p|\s*phút))?\b"  # 10h, 10:30, 10 giờ 30 phút
             r"|(?:ngày|ngay)\s*\d{1,2}\s*(?:tháng|thang)\s*\d{1,2}"   # ngày/ngay 6 tháng/thang 12
             r"|(?:hôm nay|hom nay|ngày mai|ngay mai|mai)"                 # hôm nay / hom nay / ngày mai / ngay mai / mai
             r"|(?:ngày mốt|ngay mot|mốt|mot|mai mốt|mai mot|ngày kia|ngay kia)" # ngày mốt / mai mốt / ngày kia
-            r"|(?:sáng|sang)(?:\s+\w+)?|(?:chiều|chieu)(?:\s+\w+)?|(?:tối|toi)(?:\s+\w+)?"  # buổi
+               r"|\b(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya)(?=\s|$)"  # buổi (standalone only, no greedy \w+)
             r"|(?:cuối tuần|cuoi tuan)"                                   # cuối tuần / cuoi tuan
-            r"|(?:thứ|thu)\s*\d(?:\s*(?:tuần|tuan) sau)?"               # thứ 2 tuần sau (diacriticless)
-            r"|t\s*\d(?:\s*(?:tuần|tuan) sau)?"                         # t2..t7, tuan sau
-            r"|cn(?:\s*(?:tuần|tuan) sau)?"                               # cn, cn tuần sau
+            r"|(?:thứ|thu)\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?"  # thứ 2 [tuần sau sáng] or [sáng]
+            r"|t\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?"            # t2 [tuan sau toi] or [toi]
+            r"|cn(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?"                # cn [tuần sau chiều] or [chiều]
             r"|(?:trong|sau)\s*\d{1,3}\s*(?:phút|phut|giờ|gio|ngày|ngay|tuần|tuan)"  # durations
             r"|\d{1,3}\s*(?:phút|phut|giờ|gio|ngày|ngay|tuần|tuan)\s*(?:nữa|nua)"    # X đơn vị nữa
             r"|(?:utc|gmt)\s*[+\-]?\d{1,2}(?::?\d{2})?"                # UTC+7, GMT+07:00
@@ -54,6 +53,15 @@ class NLPPipeline:
         self.reminder_hour_regex2 = re.compile(fr"\b{num}\s*{unit_hour}{before}\s*(?:{verb})", re.IGNORECASE)
         # Presence-only (no number): used to strip from text and optional boolean
         self.reminder_presence_regex = re.compile(fr"{verb}{pron}(?:\s*(?:trước|truoc|trc))?\b", re.IGNORECASE)
+
+        # Time connectors and period words to strip from event name (comprehensive list with/without diacritics)
+        time_connectors = r"(?:vào|vao|lúc|luc|vào\s+lúc|vao\s+luc|khoảng|khoang|từ|tu|đến|den|tới|cho\s+đến|cho\s+den|bắt\s+đầu|bat\s+dau|kết\s+thúc|ket\s+thuc)"
+        # Period words: only match as standalone words (not part of longer words like 'thuyet trinh')
+        period_words = r"(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya)(?=\s|$)"
+        # Include standalone relative fragments: nay (from hom nay), qua (from hom qua), mot (from ngay mot)
+        relative_time = r"(?:hôm\s*nay|hom\s*nay|ngày\s*mai|ngay\s*mai|mai|ngày\s*mốt|ngay\s*mot|mốt|mot|hôm\s*qua|hom\s*qua|qua|nay|tuần\s*sau|tuan\s*sau|tuần\s*trước|tuan\s*truoc)"
+        timezone_words = r"(?:utc|gmt|múi\s*giờ|mui\s*gio)"
+        self.time_related_words = re.compile(fr"\b({time_connectors}|{period_words}|{relative_time}|{timezone_words})\b", re.IGNORECASE)
 
     def _extract_location_ner(self, text: str) -> Tuple[Optional[str], str]:
         """Sử dụng underthesea NER để ghép các token B-LOC/I-LOC thành một cụm địa điểm.
@@ -91,7 +99,8 @@ class NLPPipeline:
             "location": None,
         }
         original_text = text
-        # Time: ghép các mảnh liền kề lớn nhất thành một cụm
+        
+        # Step 1: Identify and extract time_str for parsing
         matches = list(self.time_patterns.finditer(text))
         if matches:
             start = min(m.start() for m in matches)
@@ -99,46 +108,75 @@ class NLPPipeline:
             # Lưu lại tiền tố/hậu tố để fallback nếu event trống
             prefix = original_text[:start].strip(" ,.-")
             suffix = original_text[end:].strip(" ,.-")
-            # Trích một đoạn bao quanh để giữ từ bổ trợ
+            # Trích một đoạn bao quanh để giữ từ bổ trợ cho time parsing
             span = text[max(0, start-5):min(len(text), end+5)]
             span = re.sub(r"\b(vào|lúc|khoảng)\b", "", span, flags=re.IGNORECASE).strip()
             results['time_str'] = span
-            # Xóa đoạn thời gian khỏi văn bản gốc
-            text = (text[:start] + text[end:]).strip()
-        # Location fallback
+            
+            # Step 2: Remove ALL time pattern matches from text (not just the main span)
+            # Sort matches by start position in reverse to avoid index shifting
+            for m in sorted(matches, key=lambda x: x.start(), reverse=True):
+                text = text[:m.start()] + ' ' + text[m.end():]
+            text = text.strip()
+        
+        # Step 3: Remove all time-related words (connectors, periods, relative time, timezone)
+        text = self.time_related_words.sub(' ', text)
+        text = re.sub(r"\s{2,}", " ", text).strip()
+        
+        # Step 4: Location fallback (from cleaned text)
         l = self.location_patterns.search(text)
         if l and not results['location']:
             results['location'] = l.group(1).strip()
-            text = text.replace(l.group(0), '').strip()
-        # Remaining as event name
-        results['event_name'] = re.sub(r"\b(vào|lúc|khoảng|nhắc tôi|nhắc|nhac toi|nhac|tại|ở)\b", "", text, flags=re.IGNORECASE)
-        results['event_name'] = re.sub(r"\s{2,}", " ", results['event_name']).strip(' ,.-').strip()
-        # Fallback: nếu event_name rỗng, thử lấy phần trước thời gian (ưu tiên) hoặc sau thời gian
+            # Remove the entire match (including 'tai/o' + location) from text
+            text = text[:l.start()] + ' ' + text[l.end():]
+            text = text.strip()
+        
+        # Step 5: Clean event name - remove location keywords and remaining noise
+        event_text = re.sub(r"\b(tại|tai|ở|o)\b", "", text, flags=re.IGNORECASE)
+        event_text = re.sub(r"\s{2,}", " ", event_text).strip(' ,.-').strip()
+        results['event_name'] = event_text
+        
+        # Fallback: if event_name empty after aggressive cleaning, try prefix or suffix from original
         if not results['event_name'] and matches:
-            # Loại bỏ từ nối khỏi prefix/suffix
-            def _clean_side(s: str) -> str:
-                s2 = re.sub(r"\b(vào|lúc|khoảng|tại|ở)\b", "", s, flags=re.IGNORECASE)
-                s2 = re.sub(r"\s{2,}", " ", s2).strip(' ,.-').strip()
-                return s2
-            prefix_clean = _clean_side(prefix)
-            suffix_clean = _clean_side(suffix)
+            # Clean prefix/suffix with same aggressive approach
+            prefix_clean = self._clean_event_name(prefix)
+            suffix_clean = self._clean_event_name(suffix)
             results['event_name'] = prefix_clean or suffix_clean
+        
         return results
+    
+    def _clean_event_name(self, text: str) -> str:
+        """Aggressively clean time-related words from event name."""
+        if not text:
+            return ""
+        # Remove all time patterns
+        cleaned = self.time_patterns.sub(' ', text)
+        # Remove time-related words
+        cleaned = self.time_related_words.sub(' ', cleaned)
+        # Remove location/time connectors
+        cleaned = re.sub(r"\b(vào|vao|lúc|luc|khoảng|khoang|tại|tai|ở|o)\b", "", cleaned, flags=re.IGNORECASE)
+        # Collapse spaces and trim punctuation
+        cleaned = re.sub(r"\s{2,}", " ", cleaned).strip(' ,.-').strip()
+        return cleaned
 
     def process(self, text: str) -> Dict[str, Any]:
         processed_text = text.lower() if text else ''
         # 1) Extract reminder minutes first, strip reminder phrases from text to avoid leaking into location
         reminder_minutes, text_wo_reminder, has_reminder_phrase = self._extract_reminder(processed_text)
-        # 2) NER location on cleaned text then regex remainder
-        loc_ner, rem_after_loc = self._extract_location_ner(text_wo_reminder)
-        ex = self._extract_entities_regex(rem_after_loc)
+        # 2) Extract entities (time, location, event) - location fallback runs inside _extract_entities_regex
+        ex = self._extract_entities_regex(text_wo_reminder)
+        # 3) If location not found by regex fallback, try NER as backup
+        if not ex.get('location'):
+            loc_ner, _ = self._extract_location_ner(text_wo_reminder)
+            if loc_ner:
+                ex['location'] = loc_ner
         # Parse time
         start_dt, end_dt = parse_vietnamese_time_range(ex['time_str'], relative_base=self.relative_base)
         result = {
             'event': ex['event_name'],
             'start_time': start_dt.isoformat() if start_dt else None,
             'end_time': end_dt.isoformat() if end_dt else None,
-            'location': self._clean_location_of_reminder(loc_ner or ex['location']),
+            'location': self._clean_location_of_reminder(ex.get('location')),
             'reminder_minutes': reminder_minutes,
         }
         return result
