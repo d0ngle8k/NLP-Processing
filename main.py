@@ -36,6 +36,11 @@ class Application(tk.Tk):
         input_frame = ttk.Frame(self, padding=10)
         input_frame.pack(fill='x', side='top')
 
+        # Search frame (below input)
+        search_frame = ttk.Frame(self, padding=(10, 0))
+        search_frame.pack(fill='x', side='top')
+        self.search_mode = False
+
         main_frame = ttk.Frame(self, padding=10)
         main_frame.pack(fill='both', expand=True)
         main_frame.columnconfigure(1, weight=1)
@@ -50,6 +55,22 @@ class Application(tk.Tk):
         self.nlp_entry = ttk.Entry(input_frame)
         self.nlp_entry.pack(side='left', fill='x', expand=True)
         ttk.Button(input_frame, text="Thêm sự kiện", command=self.handle_add_event).pack(side='left', padx=(8, 0))
+
+        # Search controls
+        ttk.Label(search_frame, text="Tìm:").pack(side='left', padx=(0, 8))
+        self.search_mode_var = tk.StringVar(value='Nội dung')
+        self.search_field = ttk.Combobox(
+            search_frame,
+            textvariable=self.search_mode_var,
+            state='readonly',
+            width=12,
+            values=['ID', 'Nội dung', 'Địa điểm']
+        )
+        self.search_field.pack(side='left')
+        self.search_entry = ttk.Entry(search_frame)
+        self.search_entry.pack(side='left', padx=6, fill='x', expand=True)
+        ttk.Button(search_frame, text="Tìm", command=self.handle_search).pack(side='left', padx=4)
+        ttk.Button(search_frame, text="Xóa lọc", command=self.handle_clear_search).pack(side='left', padx=4)
 
         # Calendar
         self.calendar = Calendar(main_frame, selectmode='day', date_pattern='y-mm-dd')
@@ -139,7 +160,9 @@ class Application(tk.Tk):
             messagebox.showerror("Lỗi", f"Đã xảy ra lỗi: {e}")
 
     def handle_date_select(self, _evt=None):
-        self.refresh_for_date(self.calendar.selection_get())
+        # Nếu đang ở chế độ tìm kiếm, bỏ qua refresh theo ngày để không mất kết quả
+        if not getattr(self, 'search_mode', False):
+            self.refresh_for_date(self.calendar.selection_get())
 
     def refresh_for_date(self, date_obj: date):
         events = self.db_manager.get_events_by_date(date_obj)
@@ -148,6 +171,42 @@ class Application(tk.Tk):
         for ev in events:
             time_str = (ev['start_time'] or '')[11:16] if ev.get('start_time') else ''
             self.tree.insert('', 'end', values=(ev['id'], ev['event_name'], time_str, ev.get('location') or ''))
+
+    def _render_events(self, events):
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        for ev in events:
+            time_str = (ev.get('start_time') or '')[11:16] if ev.get('start_time') else ''
+            self.tree.insert('', 'end', values=(ev.get('id'), ev.get('event_name'), time_str, ev.get('location') or ''))
+
+    def handle_search(self):
+        mode = self.search_mode_var.get()
+        query = self.search_entry.get().strip()
+        try:
+            if mode == 'ID':
+                if not query.isdigit():
+                    messagebox.showwarning("Tìm kiếm", "Vui lòng nhập ID là số.")
+                    return
+                events = self.db_manager.search_events_by_id(int(query))
+            elif mode == 'Nội dung':
+                if not query:
+                    messagebox.showwarning("Tìm kiếm", "Vui lòng nhập từ khóa nội dung.")
+                    return
+                events = self.db_manager.search_events_by_name(query)
+            else:  # Địa điểm
+                if not query:
+                    messagebox.showwarning("Tìm kiếm", "Vui lòng nhập từ khóa địa điểm.")
+                    return
+                events = self.db_manager.search_events_by_location(query)
+            self._render_events(events)
+            self.search_mode = True
+        except Exception as e:
+            messagebox.showerror("Lỗi tìm kiếm", f"Không thể tìm kiếm: {e}")
+
+    def handle_clear_search(self):
+        self.search_entry.delete(0, 'end')
+        self.search_mode = False
+        self.refresh_for_date(self.calendar.selection_get())
 
     def handle_delete_event(self):
         sel = self.tree.focus()

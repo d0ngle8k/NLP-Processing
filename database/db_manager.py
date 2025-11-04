@@ -107,3 +107,28 @@ class DatabaseManager:
     def update_event_status(self, event_id: int, new_status: str) -> None:
         with self._conn() as conn:
             conn.execute("UPDATE events SET status=? WHERE id=?", (new_status, event_id))
+
+    # --- Search helpers ---
+    def search_events_by_id(self, event_id: int) -> List[Dict[str, Any]]:
+        ev = self.get_event_by_id(event_id)
+        return [ev] if ev else []
+
+    def search_events_by_name(self, keyword: str) -> List[Dict[str, Any]]:
+        kw = (keyword or '').strip().lower()
+        if not kw:
+            return []
+        like = f"%{kw}%"
+        sql = "SELECT * FROM events WHERE LOWER(event_name) LIKE ? ORDER BY start_time"
+        with self._conn() as conn:
+            cur = conn.execute(sql, (like,))
+            return [dict(r) for r in cur.fetchall()]
+
+    def search_events_by_location(self, keyword: str) -> List[Dict[str, Any]]:
+        kw = (keyword or '').strip().lower()
+        if not kw:
+            return []
+        like = f"%{kw}%"
+        sql = "SELECT * FROM events WHERE location IS NOT NULL AND LOWER(location) LIKE ? ORDER BY start_time"
+        with self._conn() as conn:
+            cur = conn.execute(sql, (like,))
+            return [dict(r) for r in cur.fetchall()]
