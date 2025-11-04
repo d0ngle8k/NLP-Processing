@@ -10,7 +10,9 @@ venv/
 # PyInstaller
 /dist/
 /build/
+# Keep spec files ignored by default, except the project's main.spec we want tracked
 *.spec
+!main.spec
 
 # Database file
 /database/*.db

@@ -1,12 +1,41 @@
 from __future__ import annotations
 import os
+import sys
 import sqlite3
 from datetime import date
 from typing import List, Dict, Any
 
 DB_FILE = "events.db"
-DB_PATH = os.path.join(os.path.dirname(__file__), DB_FILE)
-SCHEMA_PATH = os.path.join(os.path.dirname(__file__), "schema.sql")
+
+def _writable_base_dir() -> str:
+    """Return a writable base dir for DB when running normally or as a frozen exe.
+    - In dev: use the module directory (database/)
+    - In frozen exe: use a 'database' folder next to the executable
+    """
+    if getattr(sys, 'frozen', False):  # PyInstaller onefile
+        exe_dir = os.path.dirname(sys.executable)
+        base = os.path.join(exe_dir, 'database')
+    else:
+        base = os.path.dirname(__file__)
+    os.makedirs(base, exist_ok=True)
+    return base
+
+
+def _schema_file_path() -> str:
+    """Locate schema.sql both in dev and in PyInstaller runtime.
+    In frozen mode, data files are extracted under sys._MEIPASS.
+    """
+    # Prefer packaged resource under _MEIPASS when frozen
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        candidate = os.path.join(sys._MEIPASS, 'database', 'schema.sql')
+        if os.path.exists(candidate):
+            return candidate
+    # Fallback to local file next to this module
+    return os.path.join(os.path.dirname(__file__), 'schema.sql')
+
+
+DB_PATH = os.path.join(_writable_base_dir(), DB_FILE)
+SCHEMA_PATH = _schema_file_path()
 
 
 class DatabaseManager:
