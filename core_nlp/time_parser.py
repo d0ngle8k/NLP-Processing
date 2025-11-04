@@ -80,12 +80,21 @@ def _parse_relative_words(base: datetime, s_norm: str) -> tuple[Optional[datetim
         dt = (base + timedelta(days=days_ahead)).replace(hour=9, minute=0)
         text = re.sub(r"\bcuoi tuan\b", "", text).strip()
         return dt, text
-    # thứ d (tuần sau)?
-    m = re.search(r"thu\s*(\d)(?:\s*tuan sau)?", text)
+    # thứ d / t d (tuần sau)?
+    m = re.search(r"\b(?:thu|t)\s*(\d)(?:\s*tuan sau)?\b", text)
     if m:
         thu = int(m.group(1))  # 2..7 (2=Mon)
-        target_wd = (thu - 2) % 7  # map: 2->0 (Mon), 7->5 (Sat), 1(Sun) not used
-        # Tìm thứ trong tuần hiện tại hoặc sau
+        target_wd = (thu - 2) % 7  # map: 2->0 (Mon), 7->5 (Sat)
+        days_ahead = (target_wd - base.weekday()) % 7
+        if 'tuan sau' in m.group(0) or days_ahead == 0:
+            days_ahead += 7
+        dt = (base + timedelta(days=days_ahead)).replace(hour=base.hour, minute=base.minute)
+        text = text.replace(m.group(0), '').strip()
+        return dt, text
+    # CN (Chủ nhật) (tuần sau)?
+    m = re.search(r"\bcn(?:\s*tuan sau)?\b", text)
+    if m:
+        target_wd = 6  # Sunday
         days_ahead = (target_wd - base.weekday()) % 7
         if 'tuan sau' in m.group(0) or days_ahead == 0:
             days_ahead += 7

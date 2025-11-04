@@ -36,5 +36,9 @@
   {"input": "Đi công viên 7h ngày mốt", "expected": {"event": "đi công viên", "time_str": "7h ngày mốt", "location": null, "reminder_minutes": 0}},
   {"input": "Gap doi tac 14:00 ngay kia", "expected": {"event": "gap doi tac", "time_str": "14:00 ngay kia", "location": null, "reminder_minutes": 0}},
   {"input": "Cafe 10h mai mốt", "expected": {"event": "cafe", "time_str": "10h mai mốt", "location": null, "reminder_minutes": 0}},
-  {"input": "hoc bai 8h sang ngay mai", "expected": {"event": "hoc bai", "time_str": "8h sang ngay mai", "location": null, "reminder_minutes": 0}}
+  {"input": "hoc bai 8h sang ngay mai", "expected": {"event": "hoc bai", "time_str": "8h sang ngay mai", "location": null, "reminder_minutes": 0}},
+  {"input": "Họp 18:00 t2", "expected": {"event": "họp", "time_str": "18:00 t2", "location": null, "reminder_minutes": 0}},
+  {"input": "Gặp khách 7h t3", "expected": {"event": "gặp khách", "time_str": "7h t3", "location": null, "reminder_minutes": 0}},
+  {"input": "Đi chơi 9:00 CN", "expected": {"event": "đi chơi", "time_str": "9:00 cn", "location": null, "reminder_minutes": 0}},
+  {"input": "Tham gia lễ 9:00 cn tuần sau", "expected": {"event": "tham gia lễ", "time_str": "9:00 cn tuần sau", "location": null, "reminder_minutes": 0}}
 ]

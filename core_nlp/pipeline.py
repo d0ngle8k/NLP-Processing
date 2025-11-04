@@ -27,6 +27,8 @@ class NLPPipeline:
             r"|(?:sáng|sang)(?:\s+\w+)?|(?:chiều|chieu)(?:\s+\w+)?|(?:tối|toi)(?:\s+\w+)?"  # buổi
             r"|(?:cuối tuần|cuoi tuan)"                                   # cuối tuần / cuoi tuan
             r"|(?:thứ|thu)\s*\d(?:\s*(?:tuần|tuan) sau)?"               # thứ 2 tuần sau (diacriticless)
+            r"|t\s*\d(?:\s*(?:tuần|tuan) sau)?"                         # t2..t7, tuan sau
+            r"|cn(?:\s*(?:tuần|tuan) sau)?"                               # cn, cn tuần sau
             r"|(?:trong|sau)\s*\d{1,3}\s*(?:phút|phut|giờ|gio|ngày|ngay|tuần|tuan)"  # durations
             r"|\d{1,3}\s*(?:phút|phut|giờ|gio|ngày|ngay|tuần|tuan)\s*(?:nữa|nua)"    # X đơn vị nữa
             r"|(?:utc|gmt)\s*[+\-]?\d{1,2}(?::?\d{2})?"                # UTC+7, GMT+07:00
