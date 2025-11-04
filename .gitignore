@@ -10,9 +10,7 @@ venv/
 # PyInstaller
 /dist/
 /build/
-# Keep spec files ignored by default, except the project's main.spec we want tracked
 *.spec
-!main.spec
 
 # Database file
 /database/*.db
@@ -34,3 +32,12 @@ Thumbs.db
 # Local exports
 /schedule_export.json
 /schedule_export.ics
+
+# Generated reports
+*.docx
+*.pdf
+~$*.docx
+
+# Documentation markdown (keep README.md only)
+DUAL_NOTIFICATION.md
+FEATURES_*.md
