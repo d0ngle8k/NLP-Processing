@@ -3,6 +3,13 @@ import threading
 import time
 from datetime import datetime, timedelta
 from tkinter import messagebox
+import platform
+
+try:
+    # Windows-specific sound support
+    import winsound  # type: ignore
+except Exception:
+    winsound = None
 
 
 def check_reminders_loop(root_window, db_manager):
@@ -10,7 +17,9 @@ def check_reminders_loop(root_window, db_manager):
     while True:
         try:
             now = datetime.now()
-            events = db_manager.get_pending_reminders(now.isoformat())
+            # Normalize to seconds precision to avoid microsecond string-compare issues in SQLite
+            now_iso = now.replace(microsecond=0).isoformat()
+            events = db_manager.get_pending_reminders(now_iso)
             for ev in events:
                 try:
                     start_time = datetime.fromisoformat(ev['start_time'])
@@ -36,6 +45,23 @@ def check_reminders_loop(root_window, db_manager):
 
 
 def show_popup(event_name, event_time):
+    # Play a notification sound (Windows if available), otherwise try Tk bell
+    try:
+        if winsound and platform.system() == 'Windows':
+            # Play system exclamation sound
+            winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
+        else:
+            # Fallback: simple bell via Tk (if any root exists)
+            try:
+                import tkinter as tk
+                root = tk._get_default_root()
+                if root is not None:
+                    root.bell()
+            except Exception:
+                pass
+    except Exception:
+        pass
+
     messagebox.showinfo("Nhắc nhở Sự kiện", f"Sự kiện sắp diễn ra:\n\n{event_name}\nLúc: {event_time}")
 
 
