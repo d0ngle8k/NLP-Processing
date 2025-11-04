@@ -215,11 +215,40 @@ class Application(tk.Tk):
                     self.nlp_entry.focus()
                     return
             
-            # Add event to database
-            self.db_manager.add_event(event_dict)
+            # Add event to database with duplicate checking
+            result = self.db_manager.add_event(event_dict)
+            
+            if not result.get('success'):
+                if result.get('error') == 'duplicate_time':
+                    # Show duplicate events
+                    duplicates = result.get('duplicates', [])
+                    dup_info = []
+                    for d in duplicates[:3]:  # Show max 3 duplicates
+                        dup_info.append(f"  • ID {d['id']}: {d['event_name']} - {d['start_time'][:16]}")
+                    dup_list = "\n".join(dup_info)
+                    
+                    messagebox.showerror(
+                        "Trùng lặp thời gian",
+                        f"Đã có sự kiện khác vào thời điểm này!\n\n"
+                        f"Thời gian: {event_dict['start_time'][:16]}\n\n"
+                        f"Sự kiện trùng:\n{dup_list}\n\n"
+                        f"Vui lòng chọn thời gian khác."
+                    )
+                else:
+                    # Other integrity errors
+                    err_msg = result.get('message', 'Unknown error')
+                    messagebox.showerror(
+                        "Lỗi database",
+                        f"Không thể thêm sự kiện:\n{err_msg}"
+                    )
+                self.nlp_entry.focus()
+                return
+            
+            # Success - clear input and refresh
             self.nlp_entry.delete(0, 'end')
             self.refresh_for_date(self.calendar.selection_get())
             
+            # Success message with details
             # Success message with details
             loc_text = event_dict.get('location') or '(không có)'
             rem_text = f"{event_dict.get('reminder_minutes', 0)} phút" if event_dict.get('reminder_minutes') else "không"
@@ -387,7 +416,32 @@ class Application(tk.Tk):
                 'location': location,
                 'reminder_minutes': reminder,
             }
-            self.db_manager.update_event(ev_id, payload)
+            result = self.db_manager.update_event(ev_id, payload)
+            
+            if not result.get('success'):
+                if result.get('error') == 'duplicate_time':
+                    # Show duplicate events
+                    duplicates = result.get('duplicates', [])
+                    dup_info = []
+                    for d in duplicates[:3]:
+                        dup_info.append(f"  • ID {d['id']}: {d['event_name']} - {d['start_time'][:16]}")
+                    dup_list = "\n".join(dup_info)
+                    
+                    messagebox.showerror(
+                        "Trùng lặp thời gian",
+                        f"Đã có sự kiện khác vào thời điểm này!\n\n"
+                        f"Thời gian: {new_iso[:16]}\n\n"
+                        f"Sự kiện trùng:\n{dup_list}\n\n"
+                        f"Vui lòng chọn thời gian khác."
+                    )
+                else:
+                    err_msg = result.get('message', 'Unknown error')
+                    messagebox.showerror(
+                        "Lỗi database",
+                        f"Không thể cập nhật:\n{err_msg}"
+                    )
+                return
+            
             self.refresh_for_date(self.calendar.selection_get())
             self.handle_edit_cancel()
             messagebox.showinfo("Đã lưu", "Cập nhật sự kiện thành công.")

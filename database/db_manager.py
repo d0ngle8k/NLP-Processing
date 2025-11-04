@@ -55,27 +55,83 @@ class DatabaseManager:
                 conn.executescript(f.read())
 
     # CRUD
-    def add_event(self, event_dict: Dict[str, Any]) -> None:
+    def add_event(self, event_dict: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Add a new event to the database.
+        
+        Returns:
+            Dict with 'success': bool and optional 'error': str or 'duplicates': List
+        """
+        # Check for time conflict
+        start_time = event_dict.get('start_time')
+        if start_time:
+            duplicates = self.check_duplicate_time(start_time)
+            if duplicates:
+                return {
+                    'success': False,
+                    'error': 'duplicate_time',
+                    'duplicates': duplicates
+                }
+        
         sql = (
             "INSERT INTO events (event_name, start_time, end_time, location, reminder_minutes) "
             "VALUES (:event, :start_time, :end_time, :location, :reminder_minutes)"
         )
-        with self._conn() as conn:
-            conn.execute(sql, event_dict)
+        try:
+            with self._conn() as conn:
+                conn.execute(sql, event_dict)
+            return {'success': True}
+        except sqlite3.IntegrityError as e:
+            return {
+                'success': False,
+                'error': 'integrity_error',
+                'message': str(e)
+            }
 
-    def update_event(self, event_id: int, event_dict: Dict[str, Any]) -> None:
+    def update_event(self, event_id: int, event_dict: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Update an existing event.
+        
+        Returns:
+            Dict with 'success': bool and optional 'error': str or 'duplicates': List
+        """
+        # Check for time conflict (excluding current event)
+        start_time = event_dict.get('start_time')
+        if start_time:
+            duplicates = self.check_duplicate_time(start_time, exclude_id=event_id)
+            if duplicates:
+                return {
+                    'success': False,
+                    'error': 'duplicate_time',
+                    'duplicates': duplicates
+                }
+        
         sql = (
             "UPDATE events SET event_name=:event, start_time=:start_time, end_time=:end_time, "
             "location=:location, reminder_minutes=:reminder_minutes WHERE id=:id"
         )
         data = dict(event_dict)
         data['id'] = event_id
-        with self._conn() as conn:
-            conn.execute(sql, data)
+        try:
+            with self._conn() as conn:
+                conn.execute(sql, data)
+            return {'success': True}
+        except sqlite3.IntegrityError as e:
+            return {
+                'success': False,
+                'error': 'integrity_error',
+                'message': str(e)
+            }
 
     def delete_event(self, event_id: int) -> None:
         with self._conn() as conn:
             conn.execute("DELETE FROM events WHERE id=?", (event_id,))
+            # Check if all events are deleted, if so reset the AUTOINCREMENT counter
+            cur = conn.execute("SELECT COUNT(*) FROM events")
+            count = cur.fetchone()[0]
+            if count == 0:
+                # Reset the sqlite_sequence table to restart ID from 1
+                conn.execute("DELETE FROM sqlite_sequence WHERE name='events'")
 
     def get_events_by_date(self, date_obj: date) -> List[Dict[str, Any]]:
         date_str = date_obj.strftime('%Y-%m-%d')
@@ -131,4 +187,38 @@ class DatabaseManager:
         sql = "SELECT * FROM events WHERE location IS NOT NULL AND LOWER(location) LIKE ? ORDER BY start_time"
         with self._conn() as conn:
             cur = conn.execute(sql, (like,))
+            return [dict(r) for r in cur.fetchall()]
+
+    # --- Duplicate checking helpers ---
+    def check_duplicate_time(self, start_time_iso: str, exclude_id: int = None) -> List[Dict[str, Any]]:
+        """
+        Check if there's already an event at the exact same time (date + hour + minute).
+        Used to prevent scheduling conflicts.
+        
+        Args:
+            start_time_iso: ISO 8601 datetime string (e.g., "2025-11-06T10:00:00")
+            exclude_id: Optional event ID to exclude from check (for updates)
+            
+        Returns:
+            List of conflicting events (empty if no duplicates)
+        """
+        # Extract date and time components (YYYY-MM-DD HH:MM)
+        if not start_time_iso or len(start_time_iso) < 16:
+            return []
+        
+        datetime_key = start_time_iso[:16]  # "2025-11-06T10:00"
+        
+        # Check for events with same date-time (ignoring seconds)
+        sql = """
+            SELECT * FROM events 
+            WHERE substr(start_time, 1, 16) = ?
+        """
+        params = [datetime_key]
+        
+        if exclude_id is not None:
+            sql += " AND id != ?"
+            params.append(exclude_id)
+        
+        with self._conn() as conn:
+            cur = conn.execute(sql, params)
             return [dict(r) for r in cur.fetchall()]
