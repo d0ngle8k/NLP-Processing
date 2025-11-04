@@ -77,6 +77,7 @@ class NLPPipeline:
             "reminder_minutes": 0,
             "location": None,
         }
+        original_text = text
         # Reminder
         m = self.reminder_patterns.search(text)
         if m:
@@ -91,6 +92,9 @@ class NLPPipeline:
         if matches:
             start = min(m.start() for m in matches)
             end = max(m.end() for m in matches)
+            # Lưu lại tiền tố/hậu tố để fallback nếu event trống
+            prefix = original_text[:start].strip(" ,.-")
+            suffix = original_text[end:].strip(" ,.-")
             # Trích một đoạn bao quanh để giữ từ bổ trợ
             span = text[max(0, start-5):min(len(text), end+5)]
             span = re.sub(r"\b(vào|lúc|khoảng)\b", "", span, flags=re.IGNORECASE).strip()
@@ -103,8 +107,18 @@ class NLPPipeline:
             results['location'] = l.group(1).strip()
             text = text.replace(l.group(0), '').strip()
         # Remaining as event name
-        results['event_name'] = re.sub(r"\b(vào|lúc|nhắc tôi|nhắc|tại|ở)\b", "", text, flags=re.IGNORECASE)
+        results['event_name'] = re.sub(r"\b(vào|lúc|khoảng|nhắc tôi|nhắc|tại|ở)\b", "", text, flags=re.IGNORECASE)
         results['event_name'] = re.sub(r"\s{2,}", " ", results['event_name']).strip(' ,.-').strip()
+        # Fallback: nếu event_name rỗng, thử lấy phần trước thời gian (ưu tiên) hoặc sau thời gian
+        if not results['event_name'] and matches:
+            # Loại bỏ từ nối khỏi prefix/suffix
+            def _clean_side(s: str) -> str:
+                s2 = re.sub(r"\b(vào|lúc|khoảng|tại|ở)\b", "", s, flags=re.IGNORECASE)
+                s2 = re.sub(r"\s{2,}", " ", s2).strip(' ,.-').strip()
+                return s2
+            prefix_clean = _clean_side(prefix)
+            suffix_clean = _clean_side(suffix)
+            results['event_name'] = prefix_clean or suffix_clean
         return results
 
     def process(self, text: str) -> Dict[str, Any]:
