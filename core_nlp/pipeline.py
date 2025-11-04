@@ -22,12 +22,13 @@ class NLPPipeline:
             r"\b\d{1,2}(?:h|\s*giờ|:\d{1,2})(?:\s*\d{1,2}(?:p|\s*phút))?\b"  # 10h, 10:30, 10 giờ 30 phút
             r"|(?:ngày|ngay)\s*\d{1,2}\s*(?:tháng|thang)\s*\d{1,2}"   # ngày/ngay 6 tháng/thang 12
             r"|(?:hôm nay|hom nay|ngày mai|ngay mai|mai)"                 # hôm nay / hom nay / ngày mai / ngay mai / mai
-            r"|(?:ngày mốt|ngay mot|mốt|mot|mai mốt|mai mot|ngày kia|ngay kia)" # ngày mốt / mai mốt / ngày kia
-               r"|\b(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya)(?=\s|$)"  # buổi (standalone only, no greedy \w+)
+                r"|(?:ngày mốt|ngay mot|mốt|mot|mai mốt|mai mot|ngày kia|ngay kia)" # ngày mốt / mai mốt / ngày kia
+                    r"|\b(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya)(?=\s|$)"  # buổi có dấu (standalone)
+                    r"|\btoi\s+(?:nay|mai|qua|hom\s*nay|hom\s*qua|hom\s*kia)(?=\s|$)"  # 'toi' không dấu chỉ được tính là buổi khi đi kèm nay/mai/qua
             r"|(?:cuối tuần|cuoi tuan)"                                   # cuối tuần / cuoi tuan
-            r"|(?:thứ|thu)\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?"  # thứ 2 [tuần sau sáng] or [sáng]
-            r"|t\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?"            # t2 [tuan sau toi] or [toi]
-            r"|cn(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|đêm|dem|khuya))?"                # cn [tuần sau chiều] or [chiều]
+                r"|(?:thứ|thu)\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?"  # thứ 2 [tuần sau sáng] or [sáng]
+                r"|t\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?"            # t2 [tuan sau toi] or [toi]
+                r"|cn(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?"                # cn [tuần sau chiều] or [chiều]
             r"|(?:trong|sau)\s*\d{1,3}\s*(?:phút|phut|giờ|gio|ngày|ngay|tuần|tuan)"  # durations
             r"|\d{1,3}\s*(?:phút|phut|giờ|gio|ngày|ngay|tuần|tuan)\s*(?:nữa|nua)"    # X đơn vị nữa
             r"|(?:utc|gmt)\s*[+\-]?\d{1,2}(?::?\d{2})?"                # UTC+7, GMT+07:00
