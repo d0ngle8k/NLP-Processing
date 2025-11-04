@@ -9,7 +9,7 @@ except Exception:
     def ner(_text: str):
         return []
 
-from .time_parser import parse_vietnamese_time
+from .time_parser import parse_vietnamese_time, parse_vietnamese_time_range
 from datetime import datetime
 
 
@@ -127,11 +127,11 @@ class NLPPipeline:
         loc_ner, rem = self._extract_location_ner(processed_text)
         ex = self._extract_entities_regex(rem)
         # Parse time
-        start_dt = parse_vietnamese_time(ex['time_str'], relative_base=self.relative_base)
+        start_dt, end_dt = parse_vietnamese_time_range(ex['time_str'], relative_base=self.relative_base)
         result = {
             'event': ex['event_name'],
             'start_time': start_dt.isoformat() if start_dt else None,
-            'end_time': None,
+            'end_time': end_dt.isoformat() if end_dt else None,
             'location': loc_ner or ex['location'],
             'reminder_minutes': ex['reminder_minutes'],
         }
