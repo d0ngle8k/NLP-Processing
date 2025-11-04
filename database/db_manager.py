@@ -152,8 +152,14 @@ class DatabaseManager:
             return dict(row) if row else None
 
     def get_pending_reminders(self, now_iso: str) -> List[Dict[str, Any]]:
+        """
+        Lấy tất cả sự kiện chưa được thông báo hoàn toàn (status = 'pending' hoặc 'reminded').
+        - 'pending': chưa popup lần nào.
+        - 'reminded': đã popup "nhắc trước", chờ popup "đúng giờ".
+        - 'notified': đã popup đúng giờ, không lấy nữa.
+        """
         sql = (
-            "SELECT * FROM events WHERE start_time > ? AND status='pending' AND reminder_minutes > 0 "
+            "SELECT * FROM events WHERE start_time > ? AND status IN ('pending', 'reminded') "
             "ORDER BY start_time ASC"
         )
         with self._conn() as conn:
