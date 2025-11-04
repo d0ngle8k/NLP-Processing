@@ -63,8 +63,8 @@ class Application(tk.Tk):
             search_frame,
             textvariable=self.search_mode_var,
             state='readonly',
-            width=12,
-            values=['ID', 'Nội dung', 'Địa điểm']
+            width=14,
+            values=['ID', 'Nội dung', 'Địa điểm', 'Lịch đã đặt']
         )
         self.search_field.pack(side='left')
         self.search_entry = ttk.Entry(search_frame)
@@ -185,7 +185,10 @@ class Application(tk.Tk):
         mode = self.search_mode_var.get()
         query = self.search_entry.get().strip()
         try:
-            if mode == 'ID':
+            if mode == 'Lịch đã đặt':
+                # Lấy tất cả sự kiện đã lên lịch
+                events = self.db_manager.get_all_events()
+            elif mode == 'ID':
                 if not query.isdigit():
                     messagebox.showwarning("Tìm kiếm", "Vui lòng nhập ID là số.")
                     return
