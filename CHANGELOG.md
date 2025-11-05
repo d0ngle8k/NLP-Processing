@@ -1,5 +1,26 @@
 # TroLyLichTrinh - Release Notes
 
+## Version 0.4 (2025-11-05)
+
+### ✨ New Features
+- **Treeview Scrollbars**: Added vertical and horizontal scrollbars
+  - Vertical scrollbar: Essential for viewing many events (100s or 1000s)
+  - Horizontal scrollbar: Useful when content is wide
+  - Professional UI with standard scrollbar behavior
+
+### 🎯 Improvements
+- **Grid Layout**: Switched from pack() to grid() for better widget positioning
+- **Responsive Design**: Configured grid weights for proper window resizing
+- **Better UX**: Can now scroll through large datasets imported from test files
+
+### 📦 Technical
+- File size: ~24.76 MB
+- Grid-based layout with columnconfigure/rowconfigure weights
+- Scrollbar linking via yscrollcommand/xscrollcommand
+- Sticky flags for proper widget expansion
+
+---
+
 ## Version 0.3 (2025-11-05)
 
 ### ✨ New Features
