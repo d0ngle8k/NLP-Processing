@@ -22,29 +22,97 @@ DEFAULT_TZ = None  # Could be ZoneInfo("Asia/Ho_Chi_Minh") if desired
 
 
 def _has_period_flags(s_norm: str) -> dict[str, bool]:
-    """Detect period hints: morning/afternoon/evening/noon/night in normalized text."""
+    """Detect period hints: morning/afternoon/evening/noon/night/midnight in normalized text.
+    
+    Special cases:
+    - "nua dem" (midnight) → 00:00
+    - "12 gio sang" → 00:00 (midnight, not noon)
+    - "12 gio chieu" / "12 noon" → 12:00 (noon)
+    """
     return {
         'sang': bool(re.search(r"\bsang\b", s_norm)),
-        'trua': bool(re.search(r"\btrua\b", s_norm)),
+        'trua': bool(re.search(r"\btrua\b", s_norm)) or bool(re.search(r"\bnoon\b", s_norm)),
         'chieu': bool(re.search(r"\bchieu\b", s_norm)),
         'toi': bool(re.search(r"\btoi\b", s_norm) or re.search(r"\bdem\b", s_norm)),
+        'nua_dem': bool(re.search(r"\bnua\s*dem\b", s_norm)) or bool(re.search(r"\bmidnight\b", s_norm)),
     }
 
 def _adjust_hour_by_period(hh: int, flags: dict[str, bool]) -> int:
-    """Convert 12-hour style to 24-hour if a PM-like period is present."""
+    """Convert 12-hour style to 24-hour with period validation.
+    
+    Định nghĩa thời gian (Time period definitions):
+    - Sáng (morning): 00:00-11:59 (practical: 06:00-11:59)
+    - Trưa (noon): 12:00 exactly
+    - Chiều (afternoon): 12:00-17:59
+    - Tối (evening): 18:00-21:59
+    - Đêm (night): 22:00-23:59 and 00:00-05:59
+    - Nửa đêm (midnight): 00:00 exactly
+    
+    Validation rules:
+    - "nửa đêm" / "midnight" → 00:00
+    - "12 giờ sáng" → 00:00 (midnight, following 12 AM convention)
+    - "12 giờ chiều" / "12 noon" → 12:00 (noon)
+    - "10 giờ trưa" → INVALID (trưa = 12:00 only) → fallback to 12:00
+    - "10 giờ sáng" → 10:00 (valid)
+    - "2 giờ chiều" → 14:00 (valid: 2 PM)
+    - "8 giờ tối" → 20:00 (valid)
+    """
     if hh is None:
         return hh
-    # Evening/night/afternoon => PM for 1..11
-    if flags.get('toi') or flags.get('chieu') or flags.get('trua'):
-        if 1 <= hh <= 11:
+    
+    # Special case: "nửa đêm" (midnight) → always 00:00
+    if flags.get('nua_dem'):
+        return 0
+    
+    # Special case: "12 giờ sáng" → 00:00 (midnight)
+    # "sáng" with hour 12 is interpreted as 12 AM (start of day)
+    if flags.get('sang') and hh == 12:
+        return 0
+    
+    # Special case: "trưa" (noon) should be 12:00
+    if flags.get('trua'):
+        # If user says "X giờ trưa" but X != 12, it's ambiguous
+        # Common interpretation: "trưa" = 12:00 or early afternoon
+        if hh == 12:
+            return 12  # Noon exactly
+        elif 1 <= hh <= 5:
+            # "1 giờ trưa", "2 giờ trưa" → 13:00, 14:00 (early afternoon)
             return hh + 12
-    # Morning keeps AM
+        else:
+            # Invalid: "10 giờ trưa" doesn't make sense
+            # Fallback: interpret as 12:00 (noon)
+            return 12
+    
+    # "tối" (evening) or "đêm" (night) → PM for 1-11
+    if flags.get('toi'):
+        if 1 <= hh <= 11:
+            # "6 giờ tối" → 18:00, "10 giờ tối" → 22:00
+            return hh + 12
+        # 12 giờ tối → midnight (00:00)
+        elif hh == 12:
+            return 0
+        return hh
+    
+    # "chiều" (afternoon) → PM for 1-11, but validate range 12:00-17:59
+    if flags.get('chieu'):
+        if 1 <= hh <= 5:
+            # "1 giờ chiều" → 13:00, "5 giờ chiều" → 17:00
+            return hh + 12
+        elif hh == 12:
+            return 12  # "12 giờ chiều" → 12:00 (noon/early afternoon)
+        else:
+            # "10 giờ chiều" is ambiguous (chiều ends ~18:00)
+            # Fallback: treat as evening (add 12 if < 12)
+            return hh + 12 if hh < 12 else hh
+    
+    # "sáng" (morning) → AM (no change for 0-11, except 12 handled above)
+    # Default: keep original hour
     return hh
 
 def _parse_explicit_time(s: str) -> tuple[Optional[int], Optional[int], str]:
     s = s.strip()
     s_norm = _vn_norm(s)
-    # 10 rưỡi / 10 giờ rưỡi / 10h rưỡi => HH:30
+    #  rưỡi / giờ rưỡi /  rưỡi => HH:30
     m = re.search(r"\b(\d{1,2})\s*(?:h|gio|giờ)?\s*(?:ruoi|r\u01b0oi)\b", s_norm)
     if m:
         hh = int(m.group(1))
