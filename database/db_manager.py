@@ -50,6 +50,15 @@ class DatabaseManager:
         return conn
 
     def _create_table(self) -> None:
+        """Create database table from schema.sql if not exists."""
+        # Ensure schema file exists
+        if not os.path.exists(SCHEMA_PATH):
+            raise FileNotFoundError(
+                f"Schema file not found: {SCHEMA_PATH}\n"
+                f"frozen={getattr(sys, 'frozen', False)}, "
+                f"_MEIPASS={getattr(sys, '_MEIPASS', 'NOT SET')}"
+            )
+        
         with self._conn() as conn:
             with open(SCHEMA_PATH, 'r', encoding='utf-8') as f:
                 conn.executescript(f.read())
@@ -132,6 +141,26 @@ class DatabaseManager:
             if count == 0:
                 # Reset the sqlite_sequence table to restart ID from 1
                 conn.execute("DELETE FROM sqlite_sequence WHERE name='events'")
+
+    def delete_all_events(self) -> int:
+        """
+        Delete all events from the database.
+        
+        Returns:
+            int: Number of events deleted
+        """
+        with self._conn() as conn:
+            # Count events before deletion
+            cur = conn.execute("SELECT COUNT(*) FROM events")
+            count = cur.fetchone()[0]
+            
+            # Delete all events
+            conn.execute("DELETE FROM events")
+            
+            # Reset the AUTOINCREMENT counter
+            conn.execute("DELETE FROM sqlite_sequence WHERE name='events'")
+            
+            return count
 
     def get_events_by_date(self, date_obj: date) -> List[Dict[str, Any]]:
         date_str = date_obj.strftime('%Y-%m-%d')
