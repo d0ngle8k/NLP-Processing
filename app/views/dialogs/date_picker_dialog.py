@@ -79,7 +79,7 @@ class DatePickerDialog(ctk.CTkToplevel):
         header_frame = ctk.CTkFrame(parent, fg_color='transparent')
         header_frame.pack(fill='x', pady=(0, SPACING['md']))
         
-        # Previous month button
+        # Previous month button (BLACK ARROWS)
         prev_btn = ctk.CTkButton(
             header_frame,
             text="◀",
@@ -87,21 +87,26 @@ class DatePickerDialog(ctk.CTkToplevel):
             height=36,
             fg_color=COLORS['bg_gray'],
             hover_color=COLORS['bg_gray_hover'],
+            text_color='#000000',  # BLACK
             font=FONTS['body_bold'],
             command=self._prev_month
         )
         prev_btn.pack(side='left')
         
-        # Month/Year label
+        # Month/Year label (clickable for sliders)
         self.month_label = ctk.CTkLabel(
             header_frame,
             text=self._get_month_year_text(),
             font=FONTS['heading'],
-            text_color=COLORS['text_primary']
+            text_color=COLORS['text_primary'],
+            cursor='hand2'  # Show it's clickable
         )
         self.month_label.pack(side='left', fill='x', expand=True)
         
-        # Next month button
+        # Click month label to show month slider
+        self.month_label.bind('<Button-1>', lambda e: self._show_month_slider())
+        
+        # Next month button (BLACK ARROWS)
         next_btn = ctk.CTkButton(
             header_frame,
             text="▶",
@@ -109,10 +114,15 @@ class DatePickerDialog(ctk.CTkToplevel):
             height=36,
             fg_color=COLORS['bg_gray'],
             hover_color=COLORS['bg_gray_hover'],
+            text_color='#000000',  # BLACK
             font=FONTS['body_bold'],
             command=self._next_month
         )
         next_btn.pack(side='right')
+        
+        # Store header frame reference for sliders
+        self.header_frame = header_frame
+        self.slider_active = False
     
     def _create_calendar_grid(self, parent):
         """Create calendar grid with dates"""
@@ -232,7 +242,7 @@ class DatePickerDialog(ctk.CTkToplevel):
             text_color = COLORS['text_primary']
             hover_color = COLORS['bg_gray']
         
-        # Create button
+        # Create button (NO COMMAND - use double-click binding instead)
         btn = ctk.CTkButton(
             self.date_cells_frame,
             text=str(day),
@@ -242,10 +252,13 @@ class DatePickerDialog(ctk.CTkToplevel):
             text_color=text_color,
             hover_color=hover_color,
             font=FONTS['body'],
-            corner_radius=6,
-            command=lambda d=date_obj: self._select_date(d) if d else None
+            corner_radius=6
         )
         btn.grid(row=row, column=col, padx=1, pady=1, sticky='nsew')
+        
+        # DOUBLE-CLICK to select date
+        if date_obj:
+            btn.bind('<Double-Button-1>', lambda e, d=date_obj: self._select_date(d))
         
         # Configure grid weights
         self.date_cells_frame.grid_rowconfigure(row, weight=1)
@@ -294,6 +307,123 @@ class DatePickerDialog(ctk.CTkToplevel):
             command=self._confirm
         )
         confirm_btn.pack(side='right')
+    
+    def _show_month_slider(self):
+        """Show month/year selection sliders"""
+        if self.slider_active:
+            return
+        
+        self.slider_active = True
+        
+        # Create slider container
+        slider_frame = ctk.CTkFrame(self.header_frame, fg_color=COLORS['bg_white'], corner_radius=8)
+        slider_frame.place(relx=0.5, rely=1.2, anchor='n', relwidth=0.9)
+        
+        # Month slider label
+        month_label = ctk.CTkLabel(
+            slider_frame,
+            text="Tháng:",
+            font=FONTS['body_bold'],
+            text_color=COLORS['text_primary']
+        )
+        month_label.grid(row=0, column=0, padx=(10, 5), pady=(10, 5), sticky='w')
+        
+        # Month slider (1-12)
+        self.month_slider = ctk.CTkSlider(
+            slider_frame,
+            from_=1,
+            to=12,
+            number_of_steps=11,
+            width=200,
+            command=lambda v: self._update_month_preview(int(v))
+        )
+        self.month_slider.set(self.viewing_date.month)
+        self.month_slider.grid(row=0, column=1, padx=5, pady=(10, 5), sticky='ew')
+        
+        # Month value display
+        self.month_value_label = ctk.CTkLabel(
+            slider_frame,
+            text=f"{self.viewing_date.month}",
+            font=FONTS['body_bold'],
+            text_color=COLORS['primary_blue'],
+            width=30
+        )
+        self.month_value_label.grid(row=0, column=2, padx=(5, 10), pady=(10, 5))
+        
+        # Year slider label
+        year_label = ctk.CTkLabel(
+            slider_frame,
+            text="Năm:",
+            font=FONTS['body_bold'],
+            text_color=COLORS['text_primary']
+        )
+        year_label.grid(row=1, column=0, padx=(10, 5), pady=5, sticky='w')
+        
+        # Year slider (2000-2025)
+        self.year_slider = ctk.CTkSlider(
+            slider_frame,
+            from_=2000,
+            to=2025,
+            number_of_steps=25,
+            width=200,
+            command=lambda v: self._update_year_preview(int(v))
+        )
+        self.year_slider.set(self.viewing_date.year)
+        self.year_slider.grid(row=1, column=1, padx=5, pady=5, sticky='ew')
+        
+        # Year value display
+        self.year_value_label = ctk.CTkLabel(
+            slider_frame,
+            text=f"{self.viewing_date.year}",
+            font=FONTS['body_bold'],
+            text_color=COLORS['primary_blue'],
+            width=50
+        )
+        self.year_value_label.grid(row=1, column=2, padx=(5, 10), pady=5)
+        
+        # Apply button
+        apply_btn = ctk.CTkButton(
+            slider_frame,
+            text="✓ Áp dụng",
+            width=120,
+            height=32,
+            fg_color=COLORS['primary_blue'],
+            hover_color=COLORS['primary_blue_hover'],
+            font=FONTS['body'],
+            command=lambda: self._apply_slider_changes(slider_frame)
+        )
+        apply_btn.grid(row=2, column=0, columnspan=3, pady=(5, 10))
+        
+        # Configure grid
+        slider_frame.grid_columnconfigure(1, weight=1)
+        
+        # Store reference
+        self.active_slider_frame = slider_frame
+    
+    def _update_month_preview(self, month):
+        """Update month preview label"""
+        self.month_value_label.configure(text=f"{month}")
+    
+    def _update_year_preview(self, year):
+        """Update year preview label"""
+        self.year_value_label.configure(text=f"{year}")
+    
+    def _apply_slider_changes(self, slider_frame):
+        """Apply month/year changes from sliders"""
+        # Get values from sliders
+        new_month = int(self.month_slider.get())
+        new_year = int(self.year_slider.get())
+        
+        # Update viewing date
+        self.viewing_date = date(new_year, new_month, 1)
+        
+        # Update UI
+        self.month_label.configure(text=self._get_month_year_text())
+        self._populate_dates()
+        
+        # Close slider
+        slider_frame.destroy()
+        self.slider_active = False
     
     def _get_month_year_text(self):
         """Get formatted month/year text"""
