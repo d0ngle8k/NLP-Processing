@@ -83,24 +83,44 @@ class Application(tk.Tk):
         self.calendar.grid(row=0, column=0, sticky='ns', padx=(0, 10))
         self.calendar.bind("<<CalendarSelected>>", self.handle_date_select)
 
-        # Treeview
+        # Treeview with scrollbars
         tree_wrap = ttk.Frame(main_frame)
         tree_wrap.grid(row=0, column=1, sticky='nsew')
+        
+        # Configure grid weights for proper resizing
+        tree_wrap.columnconfigure(0, weight=1)
+        tree_wrap.rowconfigure(0, weight=1)
+        
+        # Create Treeview
         cols = ('id', 'event_name', 'time', 'remind', 'location')
         self.tree = ttk.Treeview(tree_wrap, columns=cols, show='headings')
+        
         # Center headings
         self.tree.heading('id', text='ID', anchor='center')
         self.tree.heading('event_name', text='Sự kiện', anchor='center')
         self.tree.heading('time', text='Thời gian', anchor='center')
         self.tree.heading('remind', text='Nhắc tôi', anchor='center')
         self.tree.heading('location', text='Địa điểm', anchor='center')
+        
         # Center column contents
         self.tree.column('id', width=50, stretch=False, anchor='center')
         self.tree.column('event_name', width=330, anchor='center')
         self.tree.column('time', width=110, anchor='center')
         self.tree.column('remind', width=80, anchor='center')
         self.tree.column('location', width=180, anchor='center')
-        self.tree.pack(fill='both', expand=True)
+        
+        # Vertical scrollbar
+        vsb = ttk.Scrollbar(tree_wrap, orient='vertical', command=self.tree.yview)
+        self.tree.configure(yscrollcommand=vsb.set)
+        
+        # Horizontal scrollbar (optional, useful if content is wide)
+        hsb = ttk.Scrollbar(tree_wrap, orient='horizontal', command=self.tree.xview)
+        self.tree.configure(xscrollcommand=hsb.set)
+        
+        # Grid layout for tree and scrollbars
+        self.tree.grid(row=0, column=0, sticky='nsew')
+        vsb.grid(row=0, column=1, sticky='ns')
+        hsb.grid(row=1, column=0, sticky='ew')
 
         # Controls
         ttk.Button(control_frame, text="Nhập JSON", command=self.handle_import_json).pack(side='right', padx=4)
