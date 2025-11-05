@@ -136,9 +136,14 @@ Ví dụ kết quả gần đây: macro-F1 ≈ 0.967 (tùy môi trường/thư v
 
 - Xuất mặc định ra gốc dự án: `schedule_export.json`, `schedule_export.ics`.
 - Nhập từ tệp do bạn chọn qua hộp thoại.
+- **Nhập JSON hỗ trợ 2 định dạng**:
+    1. **Export format** (truyền thống): `{"event_name": "...", "start_time": "2025-11-10T18:00:00", ...}`
+    2. **Test case format** (MỚI): `{"input": "Họp nhóm 10h mai...", "expected": {...}}` - tự động parse qua NLP
 - Mapping chính:
-    - JSON: `event_name`/`event` → `event_name`, `start_time` ISO bắt buộc, `location`, `reminder_minutes`.
+    - JSON export: `event_name`/`event` → `event_name`, `start_time` ISO bắt buộc, `location`, `reminder_minutes`.
+    - JSON test case: `input` → parse qua NLP → event + start_time + location + reminder.
     - ICS: đọc `name`, `begin` (tự động chuyển `datetime`/Arrow → ISO), `location`.
+- **Lưu ý**: Có thể nhập file test từ `./tests/` (như `test_cases.json`, `extended_test_cases_10000.json`).
 
 ## Đóng gói (.exe) bằng PyInstaller
 

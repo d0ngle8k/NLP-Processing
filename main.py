@@ -350,7 +350,7 @@ class Application(tk.Tk):
         if not path:
             return
         try:
-            count = import_from_json(self.db_manager, path)
+            count = import_from_json(self.db_manager, path, self.nlp_pipeline)
             self.refresh_for_date(self.calendar.selection_get())
             messagebox.showinfo("Nhập JSON", f"Đã nhập {count} sự kiện từ JSON.")
         except Exception as e:

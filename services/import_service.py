@@ -5,8 +5,12 @@ from datetime import datetime
 from ics import Calendar
 
 
-def import_from_json(db_manager, filepath: str) -> int:
-    """Import events from a JSON file produced by export_to_json.
+def import_from_json(db_manager, filepath: str, nlp_pipeline=None) -> int:
+    """Import events from a JSON file.
+    Supports two formats:
+    1. Export format: {"event_name": "...", "start_time": "...", ...}
+    2. Test case format: {"input": "...", "expected": {...}} - will parse 'input' with NLP
+    
     Returns number of events imported.
     """
     with open(filepath, 'r', encoding='utf-8') as f:
@@ -17,17 +21,46 @@ def import_from_json(db_manager, filepath: str) -> int:
     for ev in data:
         if not isinstance(ev, dict):
             continue
-        # Map compatible fields
-        to_insert = {
-            'event': ev.get('event_name') or ev.get('event') or '',
-            'start_time': ev.get('start_time'),
-            'end_time': ev.get('end_time'),
-            'location': ev.get('location'),
-            'reminder_minutes': int(ev.get('reminder_minutes') or 0),
-        }
-        if to_insert['event'] and to_insert['start_time']:
-            db_manager.add_event(to_insert)
-            count += 1
+        
+        # Check if this is a test case format (has 'input' and 'expected' keys)
+        if 'input' in ev and 'expected' in ev:
+            # This is a test case file - parse the 'input' field with NLP
+            if nlp_pipeline is None:
+                # If no NLP pipeline provided, skip test cases
+                continue
+            
+            input_text = ev.get('input', '').strip()
+            if not input_text:
+                continue
+            
+            # Parse the input with NLP pipeline
+            try:
+                parsed = nlp_pipeline.process(input_text)
+                to_insert = {
+                    'event': parsed.get('event') or '',
+                    'start_time': parsed.get('start_time'),
+                    'end_time': parsed.get('end_time'),
+                    'location': parsed.get('location'),
+                    'reminder_minutes': int(parsed.get('reminder_minutes') or 0),
+                }
+                if to_insert['event'] and to_insert['start_time']:
+                    db_manager.add_event(to_insert)
+                    count += 1
+            except Exception:
+                # Skip items that fail to parse
+                continue
+        else:
+            # Map compatible fields from export format
+            to_insert = {
+                'event': ev.get('event_name') or ev.get('event') or '',
+                'start_time': ev.get('start_time'),
+                'end_time': ev.get('end_time'),
+                'location': ev.get('location'),
+                'reminder_minutes': int(ev.get('reminder_minutes') or 0),
+            }
+            if to_insert['event'] and to_insert['start_time']:
+                db_manager.add_event(to_insert)
+                count += 1
     return count
 
 

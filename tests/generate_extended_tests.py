@@ -1,11 +1,19 @@
 """
-Script to generate 1000 extended test cases for NLP pipeline
+Script to generate extended test cases for NLP pipeline
 Covers: diacritics, no diacritics, uppercase, lowercase, mixed case, edge cases
+
+Now supports generating an arbitrary number of cases via --count (default 1000)
+and custom output via --output. A fixed --seed ensures reproducibility.
 """
 import json
 import random
+import argparse
 
-def generate_extended_test_cases():
+def _generate_base_test_cases():
+    """
+    Generate a diverse base pool of test cases across categories.
+    Returns a list typically > 1000 items to allow sampling/slicing.
+    """
     test_cases = []
     
     # 1. Basic events with diacritics variations (100 cases)
@@ -398,24 +406,50 @@ def generate_extended_test_cases():
                 }
             })
     
-    return test_cases[:1000]  # Ensure exactly 1000 cases
+    return test_cases
+
+
+def generate_extended_test_cases(count: int, seed: int | None = 42):
+    """
+    Generate 'count' test cases. If the base pool is smaller than 'count',
+    top up by sampling from the base pool (duplicates allowed) to reach the target size.
+    """
+    if seed is not None:
+        random.seed(seed)
+
+    base = _generate_base_test_cases()
+    if count <= len(base):
+        return base[:count]
+
+    # Need more: sample additional items from the base to reach desired size
+    extra = []
+    need = count - len(base)
+    for _ in range(need):
+        extra.append(random.choice(base))
+    return base + extra
 
 
 if __name__ == "__main__":
-    test_cases = generate_extended_test_cases()
-    
-    output_file = "tests/extended_test_cases.json"
+    parser = argparse.ArgumentParser(description="Generate extended NLP test cases")
+    parser.add_argument("--count", type=int, default=1000, help="Number of test cases to generate (default: 1000)")
+    parser.add_argument("--output", type=str, default="tests/extended_test_cases.json", help="Output JSON file path")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility (default: 42)")
+    args = parser.parse_args()
+
+    test_cases = generate_extended_test_cases(args.count, args.seed)
+
+    output_file = args.output
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(test_cases, f, ensure_ascii=False, indent=2)
-    
+
     print(f"Generated {len(test_cases)} test cases")
     print(f"Saved to: {output_file}")
-    
+
     # Statistics
     with_location = sum(1 for tc in test_cases if tc["expected"]["location"] is not None)
     with_reminder = sum(1 for tc in test_cases if tc["expected"]["reminder_minutes"] > 0)
     with_time = sum(1 for tc in test_cases if tc["expected"]["time_str"] is not None)
-    
+
     print(f"\nStatistics:")
     print(f"  - Cases with location: {with_location}")
     print(f"  - Cases with reminder: {with_reminder}")
