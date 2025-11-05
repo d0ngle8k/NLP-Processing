@@ -90,7 +90,12 @@ class NLPPipeline:
 
         location_tokens = []
         capture = False
-        for tok, tag in entities:
+        # underthesea NER returns 4-tuple: (token, pos_tag, chunk_tag, entity_tag)
+        for item in entities:
+            # Extract token and entity tag from 4-tuple
+            tok = item[0] if isinstance(item, tuple) else item
+            tag = item[3] if isinstance(item, tuple) and len(item) >= 4 else (item[1] if isinstance(item, tuple) and len(item) >= 2 else 'O')
+            
             if tag == 'B-LOC':
                 if location_tokens:
                     break  # chỉ lấy cụm đầu tiên
