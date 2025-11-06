@@ -28,13 +28,15 @@ def _has_period_flags(s_norm: str) -> dict[str, bool]:
     - "nua dem" (midnight) → 00:00
     - "12 gio sang" → 00:00 (midnight, not noon)
     - "12 gio chieu" / "12 noon" → 12:00 (noon)
+    
+    Also handles typos: "sang" (no accent), "toi" (no accent)
     """
     return {
-        'sang': bool(re.search(r"\bsang\b", s_norm)),
-        'trua': bool(re.search(r"\btrua\b", s_norm)) or bool(re.search(r"\bnoon\b", s_norm)),
-        'chieu': bool(re.search(r"\bchieu\b", s_norm)),
-        'toi': bool(re.search(r"\btoi\b", s_norm) or re.search(r"\bdem\b", s_norm)),
-        'nua_dem': bool(re.search(r"\bnua\s*dem\b", s_norm)) or bool(re.search(r"\bmidnight\b", s_norm)),
+        'sang': bool(re.search(r"\bs[aà]ng\b", s_norm)),
+        'trua': bool(re.search(r"\btr[uư]a\b", s_norm)) or bool(re.search(r"\bnoon\b", s_norm)),
+        'chieu': bool(re.search(r"\bchi[eê]u\b", s_norm)),
+        'toi': bool(re.search(r"\bt[oô]i\b", s_norm) or re.search(r"\bd[eê]m\b", s_norm)),
+        'nua_dem': bool(re.search(r"\bn[uư]a\s*d[eê]m\b", s_norm)) or bool(re.search(r"\bmidnight\b", s_norm)),
     }
 
 def _adjust_hour_by_period(hh: int, flags: dict[str, bool]) -> int:
@@ -112,8 +114,34 @@ def _adjust_hour_by_period(hh: int, flags: dict[str, bool]) -> int:
 def _parse_explicit_time(s: str) -> tuple[Optional[int], Optional[int], str]:
     s = s.strip()
     s_norm = _vn_norm(s)
+    
+    # Map Vietnamese number words to digits
+    # Include typo variations: "bah" (ba+h), "sáuh" (sau+h), "mườih" (muoi+h)
+    number_words = {
+        'mot': 1, 'moh': 1, 'moth': 1,  # typo: mộth
+        'hai': 2, 'haih': 2,
+        'ba': 3, 'bah': 3,  # typo: bah
+        'bon': 4, 'bonh': 4, 'tu': 4, 'tuh': 4,
+        'nam': 5, 'namh': 5,  # typo: nămh
+        'sau': 6, 'sauh': 6,  # typo: sáuh
+        'bay': 7, 'bayh': 7,
+        'tam': 8, 'tamh': 8,  # typo: támh
+        'chin': 9, 'chinh': 9,
+        'muoi': 10, 'muoi': 10, 'mười': 10, 'muoih': 10,  # typo: mườih
+        'muoi mot': 11, 'muoi hai': 12, 'muoi haih': 12, 'muoih haih': 12,  # typo variations
+    }
+    
+    # Replace number words with digits in normalized string
+    s_norm_numbers = s_norm
+    # Sort by length (longest first) to avoid partial replacements
+    for word, num in sorted(number_words.items(), key=lambda x: -len(x[0])):
+        s_norm_numbers = re.sub(r"\b" + word + r"\b", str(num), s_norm_numbers)
+    
+    # "lúc 12 giờ" / "lúc 12h" - remove "lúc" prefix
+    s_norm_numbers = re.sub(r"\bluc\s+", "", s_norm_numbers)
+    
     #  rưỡi / giờ rưỡi /  rưỡi => HH:30
-    m = re.search(r"\b(\d{1,2})\s*(?:h|gio|giờ)?\s*(?:ruoi|r\u01b0oi)\b", s_norm)
+    m = re.search(r"\b(\d{1,2})\s*(?:h|gio|giờ)?\s*(?:ruoi|r\u01b0oi)\b", s_norm_numbers)
     if m:
         hh = int(m.group(1))
         mm = 30
@@ -122,7 +150,7 @@ def _parse_explicit_time(s: str) -> tuple[Optional[int], Optional[int], str]:
         return hh, mm, s.strip()
     # 10 giờ kém 15 => 09:45
     # Allow formats: 10h|10 giờ kém 15
-    mk = re.search(r"\b(\d{1,2})\s*(?:h|gio|giờ)\s*k[eé]m\s*(\d{1,2})\b", s_norm)
+    mk = re.search(r"\b(\d{1,2})\s*(?:h|gio|giờ)\s*k[eé]m\s*(\d{1,2})\b", s_norm_numbers)
     if mk:
         base_h = int(mk.group(1))
         minus_m = int(mk.group(2))
@@ -141,17 +169,49 @@ def _parse_explicit_time(s: str) -> tuple[Optional[int], Optional[int], str]:
         hh = int(m.group(1))
         mm = int(m.group(2) or 0)
         return hh, mm, re.sub(m.group(0), "", s, 1).strip()
-    # 17 giờ 30 phút | 17 giờ
-    m = re.search(r"\b(\d{1,2})\s*giờ(?:\s*(\d{1,2})\s*phút)?\b", s)
+    # "12 giờ 30 phút" / "12 giờ" - now with number word support
+    m = re.search(r"\b(\d{1,2})\s*(?:gio|giờ)(?:\s*(\d{1,2})\s*(?:phut|phút))?\b", s_norm_numbers)
     if m:
         hh = int(m.group(1))
         mm = int(m.group(2) or 0)
-        return hh, mm, re.sub(m.group(0), "", s, 1).strip()
+        return hh, mm, re.sub(r"\b\d{1,2}\s*(?:giờ|gio)(?:\s*\d{1,2}\s*(?:phút|phut))?\b", "", s, 1, flags=re.IGNORECASE).strip()
+    # Standalone number (from number word conversion like "támh" -> "8", "mười haih" -> "12")
+    # This catches cases where number words with typo "h" were converted to digits
+    m = re.search(r"\b(\d{1,2})\b", s_norm_numbers)
+    if m:
+        hh = int(m.group(1))
+        # Validate hour range
+        if 0 <= hh <= 23:
+            return hh, 0, re.sub(r"\b" + m.group(1) + r"\b", "", s_norm_numbers, 1).strip()
     return None, None, s
 
 
 def _parse_explicit_date(base: datetime, s_norm: str) -> tuple[Optional[datetime], str]:
-    # ngay 6 thang 12 (normalized)
+    # Format: DD.MM.YYYY or DD/MM/YYYY or DD-MM-YYYY
+    m = re.search(r"\b(\d{1,2})[\.\-/](\d{1,2})[\.\-/](\d{4})\b", s_norm)
+    if m:
+        day = int(m.group(1))
+        month = int(m.group(2))
+        year = int(m.group(3))
+        try:
+            dt = datetime(year, month, day, base.hour, base.minute)
+            return dt, re.sub(m.group(0), "", s_norm, 1).strip()
+        except ValueError:
+            pass
+    
+    # Format: DD.MM or DD/MM or DD-MM (short date, current year)
+    m = re.search(r"\b(\d{1,2})[\.\-/](\d{1,2})\b", s_norm)
+    if m:
+        day = int(m.group(1))
+        month = int(m.group(2))
+        year = base.year
+        try:
+            dt = datetime(year, month, day, base.hour, base.minute)
+            return dt, re.sub(m.group(0), "", s_norm, 1).strip()
+        except ValueError:
+            pass
+    
+    # Format: ngay 6 thang 12 (normalized Vietnamese)
     m = re.search(r"ngay\s*(\d{1,2})\s*thang\s*(\d{1,2})", s_norm)
     if m:
         day = int(m.group(1))
@@ -159,18 +219,53 @@ def _parse_explicit_date(base: datetime, s_norm: str) -> tuple[Optional[datetime
         year = base.year
         try:
             dt = datetime(year, month, day, base.hour, base.minute)
+            return dt, re.sub(m.group(0), "", s_norm, 1).strip()
         except ValueError:
-            return None, s_norm
-        return dt, re.sub(m.group(0), "", s_norm, 1).strip()
+            pass
+    
     return None, s_norm
 
 
 def _parse_relative_words(base: datetime, s_norm: str) -> tuple[Optional[datetime], str]:
     text = s_norm
+    
+    # Handle compound time expressions: "tối mai", "sáng mai", "chiều mai", "đêm nay"
+    # Support both with/without diacritics and typos (toi/tối, dem/đêm, sang/sáng)
+    # Strategy: Only set DATE, let explicit time + period flags determine HOUR
+    # Exception: If no explicit time, use default hours
+    
+    # "tối mai" = tomorrow evening (default 20:00 if no explicit time)
+    if re.search(r"\btoi\s+mai\b", text):
+        dt = (base + timedelta(days=1)).replace(hour=20, minute=0)
+        text = re.sub(r"\btoi\s+mai\b", "", text).strip()
+        return dt, text
+    # "đêm nay" = tonight (default 22:00 if no explicit time)
+    if re.search(r"\bdem\s+nay\b", text):
+        dt = base.replace(hour=22, minute=0)
+        text = re.sub(r"\bdem\s+nay\b", "", text).strip()
+        return dt, text
+    # "sáng mai" = tomorrow morning (default 08:00 if no explicit time)
+    if re.search(r"\bsang\s+mai\b", text):
+        dt = (base + timedelta(days=1)).replace(hour=8, minute=0)
+        text = re.sub(r"\bsang\s+mai\b", "", text).strip()
+        return dt, text
+    # "chiều mai" = tomorrow afternoon (default 15:00 if no explicit time)
+    if re.search(r"\bchieu\s+mai\b", text):
+        dt = (base + timedelta(days=1)).replace(hour=15, minute=0)
+        text = re.sub(r"\bchieu\s+mai\b", "", text).strip()
+        return dt, text
+    # "trưa mai" = tomorrow noon (default 12:00 if no explicit time)
+    if re.search(r"\btrua\s+mai\b", text):
+        dt = (base + timedelta(days=1)).replace(hour=12, minute=0)
+        text = re.sub(r"\btrua\s+mai\b", "", text).strip()
+        return dt, text
+    
     # hom nay / ngay mai / mai
-    if re.search(r"\bhom nay\b", text):
-        dt = base.replace(hour=base.hour, minute=base.minute)
-        text = re.sub(r"\bhom nay\b", "", text).strip()
+    # "hôm nay" keeps base date (today) but preserves base time
+    # Will be overridden if explicit time is found later
+    if re.search(r"\bhom\s+nay\b", text):
+        dt = base  # Keep current base datetime
+        text = re.sub(r"\bhom\s+nay\b", "", text).strip()
         return dt, text
     if re.search(r"\b(ngay mai|mai)\b", text):
         dt = (base + timedelta(days=1)).replace(hour=base.hour, minute=base.minute)
@@ -189,23 +284,61 @@ def _parse_relative_words(base: datetime, s_norm: str) -> tuple[Optional[datetim
         text = re.sub(r"\bcuoi tuan\b", "", text).strip()
         return dt, text
     # thứ d / t d (tuần sau)?
-    m = re.search(r"\b(?:thu|t)\s*(\d)(?:\s*tuan sau)?\b", text)
+    # Match "thứ 3", "thu 3", "t 3", "thứ ba", "thứ hai" etc.
+    # Also match "tuần sau" before or after: "tuần sau thứ 3", "thứ 3 tuần sau"
+    m = re.search(r"\b(?:(?:tuan sau\s+)?(?:thu[sứ]?|t)\s*(\d|hai|ba|tu|nam|sau|bay|tam)(?:\s+tuan sau)?)\b", text)
     if m:
-        thu = int(m.group(1))  # 2..7 (2=Mon)
-        target_wd = (thu - 2) % 7  # map: 2->0 (Mon), 7->5 (Sat)
+        # Check if "tuần sau" appears anywhere in the match
+        has_tuan_sau = 'tuan sau' in m.group(0)
+        # Map word to number
+        word_map = {'hai': 2, 'ba': 3, 'tu': 4, 'nam': 5, 'sau': 6, 'bay': 7, 'tam': 8}
+        thu_str = m.group(1)
+        thu = word_map.get(thu_str, int(thu_str) if thu_str.isdigit() else 2)
+        
+        # Validate range 2-8 (Mon-Sun: thứ 2-7, thứ 8=CN)
+        if thu == 8:
+            thu = 1  # Chủ nhật (Sunday) = thứ 8 = day 0
+        if not (1 <= thu <= 7):
+            thu = 2  # Default to Monday
+        
+        # Map to weekday (0=Mon, 6=Sun)
+        if thu == 1:  # Chủ nhật
+            target_wd = 6
+        else:
+            target_wd = (thu - 2) % 7  # thứ 2->0 (Mon), thứ 7->5 (Sat)
+        
         days_ahead = (target_wd - base.weekday()) % 7
-        if 'tuan sau' in m.group(0) or days_ahead == 0:
-            days_ahead += 7
+        
+        # If "tuần sau" specified, always go to next week
+        if has_tuan_sau:
+            if days_ahead == 0:
+                days_ahead = 7
+            else:
+                days_ahead += 7
+        # If days_ahead == 0 (today is the target weekday), only skip if it's too late
+        # For now, if it's the same day and no specific time extracted yet, keep it today
+        # This will be refined when combining with time
+        elif days_ahead == 0:
+            # Keep today (will check time later)
+            pass
+        
         dt = (base + timedelta(days=days_ahead)).replace(hour=base.hour, minute=base.minute)
         text = text.replace(m.group(0), '').strip()
         return dt, text
-    # CN (Chủ nhật) (tuần sau)?
-    m = re.search(r"\bcn(?:\s*tuan sau)?\b", text)
+    # CN / Chủ nhật (tuần sau)?
+    m = re.search(r"\b(?:cn|chu\s+nhat)(?:\s*tuan sau)?\b", text)
     if m:
         target_wd = 6  # Sunday
         days_ahead = (target_wd - base.weekday()) % 7
-        if 'tuan sau' in m.group(0) or days_ahead == 0:
-            days_ahead += 7
+        has_tuan_sau = 'tuan sau' in m.group(0)
+        if has_tuan_sau:
+            if days_ahead == 0:
+                days_ahead = 7
+            else:
+                days_ahead += 7
+        elif days_ahead == 0:
+            # Same day - keep it
+            pass
         dt = (base + timedelta(days=days_ahead)).replace(hour=base.hour, minute=base.minute)
         text = text.replace(m.group(0), '').strip()
         return dt, text
@@ -213,6 +346,19 @@ def _parse_relative_words(base: datetime, s_norm: str) -> tuple[Optional[datetim
     if re.search(r"\bhom kia\b", text):
         dt = (base - timedelta(days=2)).replace(hour=base.hour, minute=base.minute)
         text = re.sub(r"\bhom kia\b", "", text).strip()
+        return dt, text
+    # tuần sau / tuần tới (next week - Monday of next week)
+    if re.search(r"\btuan\s+(?:sau|toi)\b", text):
+        days_ahead = (7 - base.weekday()) % 7  # Days until next Monday
+        days_ahead = 7 if days_ahead == 0 else days_ahead  # If today is Monday, go to next Monday
+        dt = (base + timedelta(days=days_ahead)).replace(hour=base.hour, minute=base.minute)
+        text = re.sub(r"\btuan\s+(?:sau|toi)\b", "", text).strip()
+        return dt, text
+    # tháng sau / tháng tới (next month - 1st day of next month)
+    if re.search(r"\bthang\s+(?:sau|toi)\b", text):
+        # Approximate: add 30 days
+        dt = (base + timedelta(days=30)).replace(hour=base.hour, minute=base.minute)
+        text = re.sub(r"\bthang\s+(?:sau|toi)\b", "", text).strip()
         return dt, text
     return None, s_norm
 
@@ -222,8 +368,8 @@ def _parse_duration(base: datetime, s_norm: str) -> tuple[Optional[datetime], st
     Returns (dt, remaining_text). dt uses base date/time for time-of-day unless overridden later.
     """
     text = s_norm
-    # trong/sau X đơn vị
-    m = re.search(r"\b(trong|sau)\s*(\d{1,3})\s*(phut|gio|ngay|tuan)\b", text)
+    # trong/sau X đơn vị (add "thang" for month)
+    m = re.search(r"\b(trong|sau)\s*(\d{1,3})\s*(phut|gio|ngay|tuan|thang)\b", text)
     if m:
         val = int(m.group(2))
         unit = m.group(3)
@@ -232,12 +378,13 @@ def _parse_duration(base: datetime, s_norm: str) -> tuple[Optional[datetime], st
             'gio': timedelta(hours=val),
             'ngay': timedelta(days=val),
             'tuan': timedelta(weeks=val),
+            'thang': timedelta(days=val*30),  # Approximate: 1 month = 30 days
         }[unit]
         dt = base + delta
         text = text.replace(m.group(0), '').strip()
         return dt, text
     # X đơn vị nữa
-    m = re.search(r"\b(\d{1,3})\s*(phut|gio|ngay|tuan)\s*nua\b", text)
+    m = re.search(r"\b(\d{1,3})\s*(phut|gio|ngay|tuan|thang)\s*nua\b", text)
     if m:
         val = int(m.group(1))
         unit = m.group(2)
@@ -246,6 +393,7 @@ def _parse_duration(base: datetime, s_norm: str) -> tuple[Optional[datetime], st
             'gio': timedelta(hours=val),
             'ngay': timedelta(days=val),
             'tuan': timedelta(weeks=val),
+            'thang': timedelta(days=val*30),  # Approximate: 1 month = 30 days
         }[unit]
         dt = base + delta
         text = text.replace(m.group(0), '').strip()
@@ -292,6 +440,7 @@ def _parse_common_day(base: datetime, s_raw: str, s_norm: str) -> tuple[datetime
         day_dt = rel_dt
     else:
         day_dt = base
+    
     return day_dt, rest_norm, tzinfo
 
 def parse_vietnamese_time_range(time_str: str | None, *, relative_base: Optional[datetime] = None) -> tuple[Optional[datetime], Optional[datetime]]:
@@ -307,8 +456,9 @@ def parse_vietnamese_time_range(time_str: str | None, *, relative_base: Optional
 
     day_dt, rest_norm, tzinfo = _parse_common_day(base, s_raw, s_norm)
 
-    # Detect general period flags from the entire string
-    flags = _has_period_flags(rest_norm)
+    # Detect general period flags from the ORIGINAL string (before relative words removed)
+    # This ensures "6h chiều mai" detects "chiều" flag correctly
+    flags = _has_period_flags(s_norm)
 
     # Split range using common separators
     # Patterns: "tu 10h den 12h", "10:00 den 11:30", "10h-12h", "10h – 12h"
@@ -328,10 +478,18 @@ def parse_vietnamese_time_range(time_str: str | None, *, relative_base: Optional
         start_h, start_m = sh, sm
         end_h, end_m = eh, em
     else:
-        # Single time expression
-        sh, sm, _rest = _parse_explicit_time(s_raw)
+        # Single time expression - use rest_norm (after relative words removed)
+        sh, sm, _rest = _parse_explicit_time(rest_norm)
         start_h, start_m = sh, sm
 
+    # If no explicit time found, check if day_dt already has the time set
+    # (e.g., from "đêm nay" = 22:00 or "tối mai" = 20:00)
+    # BUT: Only use day_dt time if rest_norm has NO time patterns
+    # (e.g., "tối mai" alone is OK, but "6h tối mai" should use 6h + tối flag)
+    if start_h is None and day_dt != base and not re.search(r"\d{1,2}\s*(?:h|gio|:|giờ)", rest_norm):
+        # day_dt was set by relative words with specific time, use it directly
+        return day_dt, None
+    
     # If no explicit time found, use default mapping by period
     default_hour = None
     if flags.get('sang'):

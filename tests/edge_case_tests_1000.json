@@ -1,0 +1,6332 @@
+{
+  "metadata": {
+    "total_cases": 1050,
+    "generated_at": "2025-11-06T19:59:32.720964",
+    "categories": [
+      "weekday_time",
+      "time_range",
+      "ambiguous_toi",
+      "today_explicit",
+      "period_evening",
+      "missing_location",
+      "with_location",
+      "with_reminder",
+      "typo_no_diacritics",
+      "missing_event",
+      "invalid_input",
+      "missing_time",
+      "same_weekday",
+      "period_marker",
+      "duration",
+      "mixed_case",
+      "date_format",
+      "next_week",
+      "special_time",
+      "compressed_time",
+      "relative_date",
+      "only_event"
+    ]
+  },
+  "test_cases": [
+    {
+      "id": 1,
+      "input": "thu 4 mười một giờ tôi có training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 4 + mười một"
+    },
+    {
+      "id": 2,
+      "input": "làm việc thứ ba lúc bảy giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ ba + bảy"
+    },
+    {
+      "id": 3,
+      "input": "tôi training cn haih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: cn + hai"
+    },
+    {
+      "id": 4,
+      "input": "t5 sáuh gặp khách",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t5 + sáu"
+    },
+    {
+      "id": 5,
+      "input": "thứ 7 năm giờ tôi có làm việc",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 7 + năm"
+    },
+    {
+      "id": 6,
+      "input": "meeting thứ 4 lúc mười hai giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 4 + mười hai"
+    },
+    {
+      "id": 7,
+      "input": "tôi review code thứ hai sáuh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ hai + sáu"
+    },
+    {
+      "id": 8,
+      "input": "cn bah meeting",
+      "category": "weekday_time",
+      "note": "Weekday with word number: cn + ba"
+    },
+    {
+      "id": 9,
+      "input": "t3 tám giờ tôi có training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t3 + tám"
+    },
+    {
+      "id": 10,
+      "input": "review code t5 lúc năm giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t5 + năm"
+    },
+    {
+      "id": 11,
+      "input": "tôi standup thu 6 mộth",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 6 + một"
+    },
+    {
+      "id": 12,
+      "input": "cn támh training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: cn + tám"
+    },
+    {
+      "id": 13,
+      "input": "chủ nhật một giờ tôi có review code",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chủ nhật + một"
+    },
+    {
+      "id": 14,
+      "input": "review code thứ 7 lúc mười giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 7 + mười"
+    },
+    {
+      "id": 15,
+      "input": "tôi standup t3 sáuh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t3 + sáu"
+    },
+    {
+      "id": 16,
+      "input": "thứ hai bah họp",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ hai + ba"
+    },
+    {
+      "id": 17,
+      "input": "thứ sáu một giờ tôi có review code",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ sáu + một"
+    },
+    {
+      "id": 18,
+      "input": "meeting thứ 3 lúc sáu giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 3 + sáu"
+    },
+    {
+      "id": 19,
+      "input": "tôi họp chu nhat bah",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chu nhat + ba"
+    },
+    {
+      "id": 20,
+      "input": "thứ 6 sáuh làm việc",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 6 + sáu"
+    },
+    {
+      "id": 21,
+      "input": "thu 3 mười giờ tôi có training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 3 + mười"
+    },
+    {
+      "id": 22,
+      "input": "phỏng vấn chủ nhật lúc sáu giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chủ nhật + sáu"
+    },
+    {
+      "id": 23,
+      "input": "tôi gặp khách chủ nhật mộth",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chủ nhật + một"
+    },
+    {
+      "id": 24,
+      "input": "cn mộth standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: cn + một"
+    },
+    {
+      "id": 25,
+      "input": "thứ 4 ba giờ tôi có làm việc",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 4 + ba"
+    },
+    {
+      "id": 26,
+      "input": "standup thứ 4 lúc năm giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 4 + năm"
+    },
+    {
+      "id": 27,
+      "input": "tôi review code thứ 3 bảyh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 3 + bảy"
+    },
+    {
+      "id": 28,
+      "input": "chu nhat bảyh standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chu nhat + bảy"
+    },
+    {
+      "id": 29,
+      "input": "chủ nhật mười giờ tôi có họp",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chủ nhật + mười"
+    },
+    {
+      "id": 30,
+      "input": "meeting thứ tư lúc bảy giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ tư + bảy"
+    },
+    {
+      "id": 31,
+      "input": "tôi phỏng vấn t4 mười haih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t4 + mười hai"
+    },
+    {
+      "id": 32,
+      "input": "thứ tư nămh họp",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ tư + năm"
+    },
+    {
+      "id": 33,
+      "input": "thứ 2 một giờ tôi có standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 2 + một"
+    },
+    {
+      "id": 34,
+      "input": "meeting thứ bảy lúc mười một giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ bảy + mười một"
+    },
+    {
+      "id": 35,
+      "input": "tôi meeting thứ 2 bốnh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 2 + bốn"
+    },
+    {
+      "id": 36,
+      "input": "thứ 4 chính standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 4 + chín"
+    },
+    {
+      "id": 37,
+      "input": "thứ 4 bốn giờ tôi có phỏng vấn",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 4 + bốn"
+    },
+    {
+      "id": 38,
+      "input": "phỏng vấn thu 2 lúc năm giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 2 + năm"
+    },
+    {
+      "id": 39,
+      "input": "tôi training chủ nhật mườih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chủ nhật + mười"
+    },
+    {
+      "id": 40,
+      "input": "chu nhat mười haih training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chu nhat + mười hai"
+    },
+    {
+      "id": 41,
+      "input": "chủ nhật mười giờ tôi có standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chủ nhật + mười"
+    },
+    {
+      "id": 42,
+      "input": "review code thứ 2 lúc năm giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 2 + năm"
+    },
+    {
+      "id": 43,
+      "input": "tôi làm việc thứ 4 mười haih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 4 + mười hai"
+    },
+    {
+      "id": 44,
+      "input": "t7 sáuh meeting",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t7 + sáu"
+    },
+    {
+      "id": 45,
+      "input": "thứ 7 một giờ tôi có làm việc",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 7 + một"
+    },
+    {
+      "id": 46,
+      "input": "training thứ tư lúc tám giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ tư + tám"
+    },
+    {
+      "id": 47,
+      "input": "tôi làm việc t3 mười haih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t3 + mười hai"
+    },
+    {
+      "id": 48,
+      "input": "thứ tư chính standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ tư + chín"
+    },
+    {
+      "id": 49,
+      "input": "t7 mười giờ tôi có review code",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t7 + mười"
+    },
+    {
+      "id": 50,
+      "input": "meeting chu nhat lúc năm giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chu nhat + năm"
+    },
+    {
+      "id": 51,
+      "input": "tôi meeting t3 haih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t3 + hai"
+    },
+    {
+      "id": 52,
+      "input": "chu nhat haih training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chu nhat + hai"
+    },
+    {
+      "id": 53,
+      "input": "thứ 2 sáu giờ tôi có training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 2 + sáu"
+    },
+    {
+      "id": 54,
+      "input": "phỏng vấn thu 5 lúc mười giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 5 + mười"
+    },
+    {
+      "id": 55,
+      "input": "tôi làm việc thứ 5 bảyh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 5 + bảy"
+    },
+    {
+      "id": 56,
+      "input": "thu 2 chính phỏng vấn",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 2 + chín"
+    },
+    {
+      "id": 57,
+      "input": "thứ 6 hai giờ tôi có meeting",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 6 + hai"
+    },
+    {
+      "id": 58,
+      "input": "standup thu 6 lúc chín giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 6 + chín"
+    },
+    {
+      "id": 59,
+      "input": "tôi training t7 mườih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t7 + mười"
+    },
+    {
+      "id": 60,
+      "input": "thứ bảy nămh meeting",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ bảy + năm"
+    },
+    {
+      "id": 61,
+      "input": "thu 5 bốn giờ tôi có training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 5 + bốn"
+    },
+    {
+      "id": 62,
+      "input": "gặp khách thu 2 lúc mười giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 2 + mười"
+    },
+    {
+      "id": 63,
+      "input": "tôi làm việc thu 6 mườih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 6 + mười"
+    },
+    {
+      "id": 64,
+      "input": "thứ sáu nămh meeting",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ sáu + năm"
+    },
+    {
+      "id": 65,
+      "input": "t7 mười giờ tôi có họp",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t7 + mười"
+    },
+    {
+      "id": 66,
+      "input": "meeting thu 4 lúc mười hai giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 4 + mười hai"
+    },
+    {
+      "id": 67,
+      "input": "tôi làm việc thứ 5 támh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 5 + tám"
+    },
+    {
+      "id": 68,
+      "input": "t7 mườih họp",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t7 + mười"
+    },
+    {
+      "id": 69,
+      "input": "thu 6 mười giờ tôi có gặp khách",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 6 + mười"
+    },
+    {
+      "id": 70,
+      "input": "training thứ 2 lúc chín giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 2 + chín"
+    },
+    {
+      "id": 71,
+      "input": "tôi standup t7 bah",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t7 + ba"
+    },
+    {
+      "id": 72,
+      "input": "thứ sáu bah training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ sáu + ba"
+    },
+    {
+      "id": 73,
+      "input": "thứ bảy mười một giờ tôi có training",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ bảy + mười một"
+    },
+    {
+      "id": 74,
+      "input": "training t6 lúc mười một giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t6 + mười một"
+    },
+    {
+      "id": 75,
+      "input": "tôi standup cn bảyh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: cn + bảy"
+    },
+    {
+      "id": 76,
+      "input": "thứ 3 bốnh họp",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 3 + bốn"
+    },
+    {
+      "id": 77,
+      "input": "thứ 5 một giờ tôi có phỏng vấn",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 5 + một"
+    },
+    {
+      "id": 78,
+      "input": "review code thu 6 lúc ba giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 6 + ba"
+    },
+    {
+      "id": 79,
+      "input": "tôi gặp khách thứ tư bảyh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ tư + bảy"
+    },
+    {
+      "id": 80,
+      "input": "thứ 6 mộth review code",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 6 + một"
+    },
+    {
+      "id": 81,
+      "input": "thu 6 năm giờ tôi có meeting",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 6 + năm"
+    },
+    {
+      "id": 82,
+      "input": "họp thứ hai lúc bảy giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ hai + bảy"
+    },
+    {
+      "id": 83,
+      "input": "tôi phỏng vấn chủ nhật sáuh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: chủ nhật + sáu"
+    },
+    {
+      "id": 84,
+      "input": "thu 5 bốnh phỏng vấn",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 5 + bốn"
+    },
+    {
+      "id": 85,
+      "input": "t7 chín giờ tôi có gặp khách",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t7 + chín"
+    },
+    {
+      "id": 86,
+      "input": "gặp khách t2 lúc mười một giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t2 + mười một"
+    },
+    {
+      "id": 87,
+      "input": "tôi training thứ hai nămh",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ hai + năm"
+    },
+    {
+      "id": 88,
+      "input": "thứ 7 bảyh standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 7 + bảy"
+    },
+    {
+      "id": 89,
+      "input": "thứ bảy năm giờ tôi có gặp khách",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ bảy + năm"
+    },
+    {
+      "id": 90,
+      "input": "làm việc t6 lúc bảy giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t6 + bảy"
+    },
+    {
+      "id": 91,
+      "input": "tôi standup thứ tư bah",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ tư + ba"
+    },
+    {
+      "id": 92,
+      "input": "t6 mườih standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t6 + mười"
+    },
+    {
+      "id": 93,
+      "input": "thứ 2 mười giờ tôi có meeting",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 2 + mười"
+    },
+    {
+      "id": 94,
+      "input": "review code thứ tư lúc ba giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ tư + ba"
+    },
+    {
+      "id": 95,
+      "input": "tôi standup t4 chính",
+      "category": "weekday_time",
+      "note": "Weekday with word number: t4 + chín"
+    },
+    {
+      "id": 96,
+      "input": "thứ bảy mườih standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ bảy + mười"
+    },
+    {
+      "id": 97,
+      "input": "thu 2 mười hai giờ tôi có standup",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 2 + mười hai"
+    },
+    {
+      "id": 98,
+      "input": "meeting thứ 7 lúc năm giờ",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 7 + năm"
+    },
+    {
+      "id": 99,
+      "input": "tôi làm việc thứ 5 haih",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thứ 5 + hai"
+    },
+    {
+      "id": 100,
+      "input": "thu 6 nămh gặp khách",
+      "category": "weekday_time",
+      "note": "Weekday with word number: thu 6 + năm"
+    },
+    {
+      "id": 101,
+      "input": "10h tôi có họp",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 102,
+      "input": "2h tối meeting",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 103,
+      "input": "2h tôi có training",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 104,
+      "input": "6h tối gặp khách",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 105,
+      "input": "3h tôi có làm việc",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 106,
+      "input": "11h tối phỏng vấn",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 107,
+      "input": "7h tôi có làm việc",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 108,
+      "input": "2h tối gặp khách",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 109,
+      "input": "5h tôi có phỏng vấn",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 110,
+      "input": "1h tối review code",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 111,
+      "input": "11h tôi có gặp khách",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 112,
+      "input": "2h tối training",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 113,
+      "input": "2h tôi có standup",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 114,
+      "input": "1h tối làm việc",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 115,
+      "input": "8h tôi có review code",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 116,
+      "input": "3h tối họp",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 117,
+      "input": "7h tôi có phỏng vấn",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 118,
+      "input": "10h tối standup",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 119,
+      "input": "7h tôi có review code",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 120,
+      "input": "2h tối họp",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 121,
+      "input": "11h tôi có họp",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 122,
+      "input": "9h tối họp",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 123,
+      "input": "8h tôi có meeting",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 124,
+      "input": "10h tối training",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 125,
+      "input": "8h tôi có meeting",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 126,
+      "input": "3h tối training",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 127,
+      "input": "9h tôi có gặp khách",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 128,
+      "input": "9h tối standup",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 129,
+      "input": "9h tôi có làm việc",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 130,
+      "input": "8h tối standup",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 131,
+      "input": "3h tôi có gặp khách",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 132,
+      "input": "10h tối standup",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 133,
+      "input": "1h tôi có họp",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 134,
+      "input": "7h tối làm việc",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 135,
+      "input": "2h tôi có standup",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 136,
+      "input": "10h tối meeting",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 137,
+      "input": "2h tôi có standup",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 138,
+      "input": "3h tối làm việc",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 139,
+      "input": "8h tôi có làm việc",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 140,
+      "input": "3h tối standup",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 141,
+      "input": "11h tôi có gặp khách",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 142,
+      "input": "4h tối gặp khách",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 143,
+      "input": "1h tôi có review code",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 144,
+      "input": "10h tối training",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 145,
+      "input": "4h tôi có phỏng vấn",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 146,
+      "input": "9h tối gặp khách",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 147,
+      "input": "8h tôi có gặp khách",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 148,
+      "input": "6h tối phỏng vấn",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 149,
+      "input": "8h tôi có meeting",
+      "category": "ambiguous_toi",
+      "note": "Should parse as time + \"tôi có\" (I have), NOT evening"
+    },
+    {
+      "id": 150,
+      "input": "5h tối làm việc",
+      "category": "period_evening",
+      "note": "Should parse as evening time"
+    },
+    {
+      "id": 151,
+      "input": "18h vào ngày 20.10 làm việc",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 152,
+      "input": "17h 31/01/2026 phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 153,
+      "input": "họp vào 16h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 154,
+      "input": "làm việc 16h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 155,
+      "input": "review code vào 19h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 156,
+      "input": "gặp khách vào 6h ngày 25.12.2025",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 157,
+      "input": "16h vào ngày 20.10 gặp khách",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 158,
+      "input": "họp vào 20h ngày 31/01/2026",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 159,
+      "input": "22h 25.12.2025 review code",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 160,
+      "input": "training 18h ngày 15-03-2025",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 161,
+      "input": "22h vào ngày 01-06 review code",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 162,
+      "input": "standup 18h ngày 01-06",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 163,
+      "input": "21h 15-03-2025 meeting",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 164,
+      "input": "17h 01-06 gặp khách",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 165,
+      "input": "17h 31/01/2026 gặp khách",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 166,
+      "input": "standup vào 21h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 167,
+      "input": "12h 25.12.2025 làm việc",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 168,
+      "input": "7h 15/12 standup",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 169,
+      "input": "ngày 25.12.2025 lúc 22h review code",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 170,
+      "input": "15h vào ngày 01-06 meeting",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 171,
+      "input": "11h 15-03-2025 meeting",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 172,
+      "input": "12h 15/12 meeting",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 173,
+      "input": "meeting 19h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 174,
+      "input": "làm việc 10h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 175,
+      "input": "17h vào ngày 15-03-2025 training",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 176,
+      "input": "ngày 20.10 lúc 10h phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 177,
+      "input": "11h 01-06 phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 178,
+      "input": "ngày 01-06 lúc 18h standup",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 179,
+      "input": "làm việc vào 8h ngày 31/01/2026",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 180,
+      "input": "16h vào ngày 01-06 họp",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 181,
+      "input": "17h vào ngày 25.12.2025 review code",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 182,
+      "input": "ngày 31/01/2026 lúc 7h làm việc",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 183,
+      "input": "15h 20.10 standup",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 184,
+      "input": "ngày 31/01/2026 lúc 9h họp",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 185,
+      "input": "15h 20.10 phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 186,
+      "input": "20h vào ngày 15/12 training",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 187,
+      "input": "10h 01-06 làm việc",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 188,
+      "input": "làm việc vào 20h ngày 15/12",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 189,
+      "input": "ngày 15-03-2025 lúc 11h họp",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 190,
+      "input": "gặp khách 14h ngày 25.12.2025",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 191,
+      "input": "20h 15/12 training",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 192,
+      "input": "làm việc vào 16h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 193,
+      "input": "làm việc vào 10h ngày 15/12",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 194,
+      "input": "18h vào ngày 01-06 phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 195,
+      "input": "12h vào ngày 01-06 gặp khách",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 196,
+      "input": "21h vào ngày 01-06 meeting",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 197,
+      "input": "standup vào 16h ngày 15-03-2025",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 198,
+      "input": "training vào 15h ngày 31/01/2026",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 199,
+      "input": "12h 31/01/2026 training",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 200,
+      "input": "standup 15h ngày 15/12",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 201,
+      "input": "ngày 25.12.2025 lúc 12h standup",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 202,
+      "input": "11h vào ngày 15/12 làm việc",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 203,
+      "input": "7h vào ngày 15-03-2025 meeting",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 204,
+      "input": "meeting 18h ngày 01-06",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 205,
+      "input": "meeting 17h ngày 15-03-2025",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 206,
+      "input": "họp vào 19h ngày 01-06",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 207,
+      "input": "phỏng vấn vào 16h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 208,
+      "input": "training vào 13h ngày 15-03-2025",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 209,
+      "input": "14h vào ngày 20.10 training",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 210,
+      "input": "10h vào ngày 20.10 training",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 211,
+      "input": "review code 19h ngày 01-06",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 212,
+      "input": "ngày 25.12.2025 lúc 8h review code",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 213,
+      "input": "20h vào ngày 15-03-2025 review code",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 214,
+      "input": "15h 01-06 gặp khách",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 215,
+      "input": "ngày 15-03-2025 lúc 6h meeting",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 216,
+      "input": "phỏng vấn vào 18h ngày 15-03-2025",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 217,
+      "input": "6h 25.12.2025 standup",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 218,
+      "input": "11h 31/01/2026 training",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 219,
+      "input": "ngày 15-03-2025 lúc 18h phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 220,
+      "input": "gặp khách 15h ngày 31/01/2026",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 221,
+      "input": "9h 31/01/2026 standup",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 222,
+      "input": "training 18h ngày 15-03-2025",
+      "category": "date_format",
+      "note": "Date format: DD-MM-YYYY"
+    },
+    {
+      "id": 223,
+      "input": "ngày 15/12 lúc 6h làm việc",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 224,
+      "input": "ngày 31/01/2026 lúc 13h làm việc",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 225,
+      "input": "meeting 16h ngày 20.10",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 226,
+      "input": "20h vào ngày 15/12 standup",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 227,
+      "input": "phỏng vấn 14h ngày 01-06",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 228,
+      "input": "7h vào ngày 01-06 review code",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 229,
+      "input": "training 17h ngày 25.12.2025",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 230,
+      "input": "14h vào ngày 25.12.2025 review code",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 231,
+      "input": "ngày 15/12 lúc 11h meeting",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 232,
+      "input": "11h vào ngày 15/12 meeting",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 233,
+      "input": "11h 25.12.2025 review code",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 234,
+      "input": "21h vào ngày 25.12.2025 training",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 235,
+      "input": "11h 01-06 phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 236,
+      "input": "7h vào ngày 25.12.2025 training",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 237,
+      "input": "meeting vào 20h ngày 31/01/2026",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 238,
+      "input": "17h vào ngày 01-06 gặp khách",
+      "category": "date_format",
+      "note": "Date format: DD-MM"
+    },
+    {
+      "id": 239,
+      "input": "18h vào ngày 31/01/2026 gặp khách",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 240,
+      "input": "18h vào ngày 15/12 standup",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 241,
+      "input": "meeting 8h ngày 31/01/2026",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 242,
+      "input": "21h 31/01/2026 làm việc",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 243,
+      "input": "21h 15/12 họp",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 244,
+      "input": "21h vào ngày 31/01/2026 meeting",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 245,
+      "input": "ngày 15/12 lúc 20h review code",
+      "category": "date_format",
+      "note": "Date format: DD/MM"
+    },
+    {
+      "id": 246,
+      "input": "19h 31/01/2026 họp",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 247,
+      "input": "22h vào ngày 31/01/2026 phỏng vấn",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 248,
+      "input": "họp vào 6h ngày 25.12.2025",
+      "category": "date_format",
+      "note": "Date format: DD.MM.YYYY"
+    },
+    {
+      "id": 249,
+      "input": "ngày 31/01/2026 lúc 16h làm việc",
+      "category": "date_format",
+      "note": "Date format: DD/MM/YYYY"
+    },
+    {
+      "id": 250,
+      "input": "14h 20.10 làm việc",
+      "category": "date_format",
+      "note": "Date format: DD.MM"
+    },
+    {
+      "id": 251,
+      "input": "tôi có làm việc ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 252,
+      "input": "tôi có phỏng vấn ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 253,
+      "input": "tôi có làm việc ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 254,
+      "input": "tôi có review code ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 255,
+      "input": "tôi có làm việc ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 256,
+      "input": "tôi có training ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 257,
+      "input": "tôi có làm việc ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 258,
+      "input": "tôi có họp ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 259,
+      "input": "tôi có làm việc ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 260,
+      "input": "tôi có standup ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 261,
+      "input": "tôi có làm việc ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 262,
+      "input": "tôi có meeting ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 263,
+      "input": "tôi có review code ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 264,
+      "input": "tôi có review code ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 265,
+      "input": "tôi có meeting ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 266,
+      "input": "tôi có gặp khách ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 267,
+      "input": "tôi có standup ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 268,
+      "input": "tôi có standup ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 269,
+      "input": "tôi có meeting ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 270,
+      "input": "tôi có phỏng vấn ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 271,
+      "input": "tôi có training ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 272,
+      "input": "tôi có họp ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 273,
+      "input": "tôi có gặp khách ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 274,
+      "input": "tôi có standup ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 275,
+      "input": "tôi có họp ngày mai",
+      "category": "missing_time",
+      "note": "Has event and date, missing specific time"
+    },
+    {
+      "id": 276,
+      "input": "thứ sáu 17h họp",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 277,
+      "input": "chủ nhật 8h phỏng vấn",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 278,
+      "input": "t7 11h gặp khách",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 279,
+      "input": "thứ 5 8h phỏng vấn",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 280,
+      "input": "t4 13h review code",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 281,
+      "input": "thứ 4 12h review code",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 282,
+      "input": "thứ 3 12h gặp khách",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 283,
+      "input": "chu nhat 9h meeting",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 284,
+      "input": "thu 3 14h review code",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 285,
+      "input": "thu 5 10h làm việc",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 286,
+      "input": "thứ 2 15h meeting",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 287,
+      "input": "thứ bảy 18h phỏng vấn",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 288,
+      "input": "thứ 3 18h làm việc",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 289,
+      "input": "thứ năm 10h họp",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 290,
+      "input": "thu 5 15h standup",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 291,
+      "input": "thứ tư 8h phỏng vấn",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 292,
+      "input": "thu 2 11h standup",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 293,
+      "input": "cn 16h review code",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 294,
+      "input": "thứ 6 18h làm việc",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 295,
+      "input": "t5 12h gặp khách",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 296,
+      "input": "chu nhat 10h meeting",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 297,
+      "input": "thu 3 10h meeting",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 298,
+      "input": "thứ 4 18h review code",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 299,
+      "input": "chủ nhật 13h review code",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 300,
+      "input": "t7 14h phỏng vấn",
+      "category": "missing_location",
+      "note": "Has event and time, no location (should be OK)"
+    },
+    {
+      "id": 301,
+      "input": "t4 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 302,
+      "input": "t7 15h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 303,
+      "input": "thu 2 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 304,
+      "input": "thứ bảy 16h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 305,
+      "input": "t7 12h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 306,
+      "input": "thứ ba 12h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 307,
+      "input": "thứ 6 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 308,
+      "input": "thứ sáu 16h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 309,
+      "input": "t5 13h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 310,
+      "input": "thu 3 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 311,
+      "input": "thu 5 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 312,
+      "input": "thu 2 15h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 313,
+      "input": "thứ 2 14h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 314,
+      "input": "thu 2 18h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 315,
+      "input": "thứ sáu 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 316,
+      "input": "t2 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 317,
+      "input": "t7 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 318,
+      "input": "thứ bảy 14h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 319,
+      "input": "t4 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 320,
+      "input": "thu 6 17h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 321,
+      "input": "chu nhat 12h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 322,
+      "input": "cn 18h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 323,
+      "input": "thu 4 17h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 324,
+      "input": "thứ hai 15h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 325,
+      "input": "chủ nhật 13h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL"
+    },
+    {
+      "id": 326,
+      "input": "tôi có training",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 327,
+      "input": "tôi có phỏng vấn",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 328,
+      "input": "tôi có phỏng vấn",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 329,
+      "input": "tôi có meeting",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 330,
+      "input": "tôi có họp",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 331,
+      "input": "tôi có training",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 332,
+      "input": "tôi có làm việc",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 333,
+      "input": "tôi có họp",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 334,
+      "input": "tôi có standup",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 335,
+      "input": "tôi có phỏng vấn",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 336,
+      "input": "tôi có gặp khách",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 337,
+      "input": "tôi có review code",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 338,
+      "input": "tôi có phỏng vấn",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 339,
+      "input": "tôi có phỏng vấn",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 340,
+      "input": "tôi có họp",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 341,
+      "input": "tôi có meeting",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 342,
+      "input": "tôi có training",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 343,
+      "input": "tôi có standup",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 344,
+      "input": "tôi có review code",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 345,
+      "input": "tôi có review code",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 346,
+      "input": "tôi có review code",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 347,
+      "input": "tôi có họp",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 348,
+      "input": "tôi có review code",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 349,
+      "input": "tôi có làm việc",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 350,
+      "input": "tôi có phỏng vấn",
+      "category": "only_event",
+      "note": "Has event only, missing time - should FAIL"
+    },
+    {
+      "id": 351,
+      "input": "8 giờ tối review code",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 8"
+    },
+    {
+      "id": 352,
+      "input": "3 giờ chiều meeting",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 3"
+    },
+    {
+      "id": 353,
+      "input": "làm việc 10h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 354,
+      "input": "thứ ba 1h chiều họp",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 1"
+    },
+    {
+      "id": 355,
+      "input": "làm việc 11h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 356,
+      "input": "họp 10h sáng",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 10"
+    },
+    {
+      "id": 357,
+      "input": "chủ nhật 10h tối làm việc",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 10"
+    },
+    {
+      "id": 358,
+      "input": "thứ 4 6h tối training",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 6"
+    },
+    {
+      "id": 359,
+      "input": "3h chiều phỏng vấn",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 3"
+    },
+    {
+      "id": 360,
+      "input": "standup lúc 7h tối",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 7"
+    },
+    {
+      "id": 361,
+      "input": "10 giờ tối review code",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 10"
+    },
+    {
+      "id": 362,
+      "input": "12h đêm gặp khách",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 12"
+    },
+    {
+      "id": 363,
+      "input": "4 giờ chiều họp",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 4"
+    },
+    {
+      "id": 364,
+      "input": "12 giờ trưa meeting",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 365,
+      "input": "6 giờ sáng standup",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 6"
+    },
+    {
+      "id": 366,
+      "input": "11 giờ tối training",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 11"
+    },
+    {
+      "id": 367,
+      "input": "làm việc 10h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 368,
+      "input": "thứ 5 12h trưa làm việc",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 369,
+      "input": "training lúc 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 370,
+      "input": "6h tối standup",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 6"
+    },
+    {
+      "id": 371,
+      "input": "thứ năm 10h sáng meeting",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 10"
+    },
+    {
+      "id": 372,
+      "input": "11h tối gặp khách",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 11"
+    },
+    {
+      "id": 373,
+      "input": "gặp khách 10h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 374,
+      "input": "11h tối họp",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 11"
+    },
+    {
+      "id": 375,
+      "input": "thứ tư 10h đêm standup",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 376,
+      "input": "9h sáng meeting",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 9"
+    },
+    {
+      "id": 377,
+      "input": "họp lúc 10h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 378,
+      "input": "làm việc 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 379,
+      "input": "5h chiều training",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 5"
+    },
+    {
+      "id": 380,
+      "input": "họp 2h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 2"
+    },
+    {
+      "id": 381,
+      "input": "review code lúc 10h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 382,
+      "input": "8h tối phỏng vấn",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 8"
+    },
+    {
+      "id": 383,
+      "input": "9 giờ sáng standup",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 9"
+    },
+    {
+      "id": 384,
+      "input": "phỏng vấn lúc 9h sáng",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 9"
+    },
+    {
+      "id": 385,
+      "input": "thu 3 4h chiều review code",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 4"
+    },
+    {
+      "id": 386,
+      "input": "phỏng vấn lúc 10h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 387,
+      "input": "9 giờ sáng làm việc",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 9"
+    },
+    {
+      "id": 388,
+      "input": "họp lúc 10h tối",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 10"
+    },
+    {
+      "id": 389,
+      "input": "họp lúc 4h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 4"
+    },
+    {
+      "id": 390,
+      "input": "standup 9h sáng",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 9"
+    },
+    {
+      "id": 391,
+      "input": "gặp khách 7h sáng",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 7"
+    },
+    {
+      "id": 392,
+      "input": "10h sáng làm việc",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 10"
+    },
+    {
+      "id": 393,
+      "input": "11 giờ tối review code",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 11"
+    },
+    {
+      "id": 394,
+      "input": "training 9h tối",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 9"
+    },
+    {
+      "id": 395,
+      "input": "12 giờ trưa standup",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 396,
+      "input": "gặp khách 4h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 4"
+    },
+    {
+      "id": 397,
+      "input": "làm việc lúc 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 398,
+      "input": "thứ ba 8h tối review code",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 8"
+    },
+    {
+      "id": 399,
+      "input": "meeting lúc 7h tối",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 7"
+    },
+    {
+      "id": 400,
+      "input": "8 giờ tối gặp khách",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 8"
+    },
+    {
+      "id": 401,
+      "input": "phỏng vấn lúc 11h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 402,
+      "input": "meeting 11h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 403,
+      "input": "thứ 6 2h chiều standup",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 2"
+    },
+    {
+      "id": 404,
+      "input": "8 giờ sáng họp",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 8"
+    },
+    {
+      "id": 405,
+      "input": "7 giờ tối họp",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 7"
+    },
+    {
+      "id": 406,
+      "input": "làm việc 5h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 5"
+    },
+    {
+      "id": 407,
+      "input": "gặp khách lúc 3h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 3"
+    },
+    {
+      "id": 408,
+      "input": "standup 11h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 409,
+      "input": "12 giờ trưa review code",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 410,
+      "input": "training 7h sáng",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 7"
+    },
+    {
+      "id": 411,
+      "input": "standup 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 412,
+      "input": "12h trưa họp",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 413,
+      "input": "họp 10h tối",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 10"
+    },
+    {
+      "id": 414,
+      "input": "7h sáng gặp khách",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 7"
+    },
+    {
+      "id": 415,
+      "input": "9h sáng gặp khách",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 9"
+    },
+    {
+      "id": 416,
+      "input": "t4 10h đêm làm việc",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 417,
+      "input": "6 giờ sáng phỏng vấn",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 6"
+    },
+    {
+      "id": 418,
+      "input": "training 3h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 3"
+    },
+    {
+      "id": 419,
+      "input": "review code lúc 12h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 12"
+    },
+    {
+      "id": 420,
+      "input": "t5 6h sáng làm việc",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 6"
+    },
+    {
+      "id": 421,
+      "input": "meeting lúc 9h tối",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 9"
+    },
+    {
+      "id": 422,
+      "input": "phỏng vấn 10h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 423,
+      "input": "9 giờ tối meeting",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 9"
+    },
+    {
+      "id": 424,
+      "input": "meeting 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 425,
+      "input": "11 giờ đêm làm việc",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 426,
+      "input": "standup lúc 5h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 5"
+    },
+    {
+      "id": 427,
+      "input": "3 giờ chiều gặp khách",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 3"
+    },
+    {
+      "id": 428,
+      "input": "làm việc lúc 11h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 429,
+      "input": "review code lúc 9h tối",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 9"
+    },
+    {
+      "id": 430,
+      "input": "làm việc 12h đêm",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 12"
+    },
+    {
+      "id": 431,
+      "input": "review code lúc 2h chiều",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 2"
+    },
+    {
+      "id": 432,
+      "input": "thứ ba 12h đêm làm việc",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 12"
+    },
+    {
+      "id": 433,
+      "input": "12h đêm phỏng vấn",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 12"
+    },
+    {
+      "id": 434,
+      "input": "9 giờ tối standup",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 9"
+    },
+    {
+      "id": 435,
+      "input": "standup 7h sáng",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 7"
+    },
+    {
+      "id": 436,
+      "input": "9 giờ tối review code",
+      "category": "period_marker",
+      "note": "Period: tối, hour: 9"
+    },
+    {
+      "id": 437,
+      "input": "5h chiều họp",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 5"
+    },
+    {
+      "id": 438,
+      "input": "11h sáng meeting",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 11"
+    },
+    {
+      "id": 439,
+      "input": "10h đêm training",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 440,
+      "input": "12 giờ trưa training",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 441,
+      "input": "họp 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 442,
+      "input": "standup 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 443,
+      "input": "họp 6h sáng",
+      "category": "period_marker",
+      "note": "Period: sáng, hour: 6"
+    },
+    {
+      "id": 444,
+      "input": "4 giờ chiều training",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 4"
+    },
+    {
+      "id": 445,
+      "input": "họp lúc 12h trưa",
+      "category": "period_marker",
+      "note": "Period: trưa, hour: 12"
+    },
+    {
+      "id": 446,
+      "input": "10h đêm meeting",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 10"
+    },
+    {
+      "id": 447,
+      "input": "t6 2h chiều gặp khách",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 2"
+    },
+    {
+      "id": 448,
+      "input": "thứ năm 11h đêm gặp khách",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 449,
+      "input": "thứ hai 4h chiều training",
+      "category": "period_marker",
+      "note": "Period: chiều, hour: 4"
+    },
+    {
+      "id": 450,
+      "input": "11h đêm standup",
+      "category": "period_marker",
+      "note": "Period: đêm, hour: 11"
+    },
+    {
+      "id": 451,
+      "input": "tôi họp hôm nay 13h",
+      "category": "relative_date",
+      "note": "Relative: hôm nay"
+    },
+    {
+      "id": 452,
+      "input": "training cuối tuần sau lúc 12h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần sau"
+    },
+    {
+      "id": 453,
+      "input": "training cuối tuần sau lúc 18h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần sau"
+    },
+    {
+      "id": 454,
+      "input": "phỏng vấn tháng tới lúc 21h",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 455,
+      "input": "11h tháng tới họp",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 456,
+      "input": "tháng tới 7h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 457,
+      "input": "review code tuần tới lúc 18h",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 458,
+      "input": "tháng tới 18h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 459,
+      "input": "gặp khách mai mốt lúc 14h",
+      "category": "relative_date",
+      "note": "Relative: mai mốt"
+    },
+    {
+      "id": 460,
+      "input": "tôi standup hôm nay 14h",
+      "category": "relative_date",
+      "note": "Relative: hôm nay"
+    },
+    {
+      "id": 461,
+      "input": "tháng sau 6h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 462,
+      "input": "ngày kia 6h tôi có standup",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 463,
+      "input": "họp tháng sau lúc 11h",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 464,
+      "input": "tôi standup mai 19h",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 465,
+      "input": "training ngày mai lúc 15h",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 466,
+      "input": "review code ngày kia lúc 17h",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 467,
+      "input": "6h cuối tuần này phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần này"
+    },
+    {
+      "id": 468,
+      "input": "meeting tháng sau lúc 10h",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 469,
+      "input": "22h cuối tuần này gặp khách",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần này"
+    },
+    {
+      "id": 470,
+      "input": "cuối tuần 13h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 471,
+      "input": "10h cuối tuần làm việc",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 472,
+      "input": "tuần tới 18h tôi có làm việc",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 473,
+      "input": "tôi làm việc tuần sau 7h",
+      "category": "relative_date",
+      "note": "Relative: tuần sau"
+    },
+    {
+      "id": 474,
+      "input": "8h cuối tuần này standup",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần này"
+    },
+    {
+      "id": 475,
+      "input": "14h cuối tuần làm việc",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 476,
+      "input": "ngày kia 21h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 477,
+      "input": "6h tháng sau standup",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 478,
+      "input": "13h cuối tuần standup",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 479,
+      "input": "ngày kia 17h tôi có standup",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 480,
+      "input": "tôi phỏng vấn tháng tới 12h",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 481,
+      "input": "standup mai mốt lúc 19h",
+      "category": "relative_date",
+      "note": "Relative: mai mốt"
+    },
+    {
+      "id": 482,
+      "input": "họp cuối tuần sau lúc 20h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần sau"
+    },
+    {
+      "id": 483,
+      "input": "cuối tuần sau 10h tôi có làm việc",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần sau"
+    },
+    {
+      "id": 484,
+      "input": "9h tháng tới training",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 485,
+      "input": "tôi gặp khách tháng sau 8h",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 486,
+      "input": "tôi meeting mai 8h",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 487,
+      "input": "phỏng vấn cuối tuần lúc 7h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 488,
+      "input": "tôi làm việc cuối tuần này 13h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần này"
+    },
+    {
+      "id": 489,
+      "input": "11h mai mốt standup",
+      "category": "relative_date",
+      "note": "Relative: mai mốt"
+    },
+    {
+      "id": 490,
+      "input": "18h tuần sau meeting",
+      "category": "relative_date",
+      "note": "Relative: tuần sau"
+    },
+    {
+      "id": 491,
+      "input": "tôi meeting cuối tuần 8h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 492,
+      "input": "cuối tuần 7h tôi có gặp khách",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 493,
+      "input": "tuần tới 15h tôi có gặp khách",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 494,
+      "input": "ngày kia 6h tôi có standup",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 495,
+      "input": "9h ngày mai training",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 496,
+      "input": "tháng tới 21h tôi có standup",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 497,
+      "input": "19h ngày mai meeting",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 498,
+      "input": "standup mai lúc 14h",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 499,
+      "input": "họp mai lúc 15h",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 500,
+      "input": "tháng tới 13h tôi có gặp khách",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 501,
+      "input": "tôi họp mai 17h",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 502,
+      "input": "tháng tới 21h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 503,
+      "input": "phỏng vấn mai mốt lúc 8h",
+      "category": "relative_date",
+      "note": "Relative: mai mốt"
+    },
+    {
+      "id": 504,
+      "input": "22h tháng sau training",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 505,
+      "input": "15h ngày mai training",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 506,
+      "input": "phỏng vấn tháng sau lúc 12h",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 507,
+      "input": "ngày mai 14h tôi có gặp khách",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 508,
+      "input": "phỏng vấn tuần tới lúc 10h",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 509,
+      "input": "hôm nay 17h tôi có làm việc",
+      "category": "relative_date",
+      "note": "Relative: hôm nay"
+    },
+    {
+      "id": 510,
+      "input": "14h mai mốt training",
+      "category": "relative_date",
+      "note": "Relative: mai mốt"
+    },
+    {
+      "id": 511,
+      "input": "mai mốt 12h tôi có làm việc",
+      "category": "relative_date",
+      "note": "Relative: mai mốt"
+    },
+    {
+      "id": 512,
+      "input": "8h tháng tới review code",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 513,
+      "input": "13h mai gặp khách",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 514,
+      "input": "tôi họp ngày mai 12h",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 515,
+      "input": "standup hôm nay lúc 9h",
+      "category": "relative_date",
+      "note": "Relative: hôm nay"
+    },
+    {
+      "id": 516,
+      "input": "ngày kia 15h tôi có họp",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 517,
+      "input": "training cuối tuần lúc 7h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 518,
+      "input": "19h tuần tới họp",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 519,
+      "input": "gặp khách cuối tuần này lúc 11h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần này"
+    },
+    {
+      "id": 520,
+      "input": "tôi standup tuần tới 7h",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 521,
+      "input": "9h tuần tới gặp khách",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 522,
+      "input": "làm việc cuối tuần này lúc 14h",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần này"
+    },
+    {
+      "id": 523,
+      "input": "tôi gặp khách mai mốt 21h",
+      "category": "relative_date",
+      "note": "Relative: mai mốt"
+    },
+    {
+      "id": 524,
+      "input": "ngày kia 15h tôi có meeting",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 525,
+      "input": "tôi gặp khách hôm nay 18h",
+      "category": "relative_date",
+      "note": "Relative: hôm nay"
+    },
+    {
+      "id": 526,
+      "input": "tôi training tuần sau 8h",
+      "category": "relative_date",
+      "note": "Relative: tuần sau"
+    },
+    {
+      "id": 527,
+      "input": "phỏng vấn mai lúc 14h",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 528,
+      "input": "tôi training tuần tới 7h",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 529,
+      "input": "tôi meeting ngày mai 15h",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 530,
+      "input": "standup tuần sau lúc 17h",
+      "category": "relative_date",
+      "note": "Relative: tuần sau"
+    },
+    {
+      "id": 531,
+      "input": "tháng sau 14h tôi có training",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 532,
+      "input": "20h tháng sau standup",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 533,
+      "input": "mai 8h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 534,
+      "input": "13h cuối tuần training",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 535,
+      "input": "ngày kia 7h tôi có phỏng vấn",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 536,
+      "input": "6h ngày mai review code",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 537,
+      "input": "20h cuối tuần gặp khách",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 538,
+      "input": "cuối tuần 14h tôi có họp",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần"
+    },
+    {
+      "id": 539,
+      "input": "review code tháng tới lúc 9h",
+      "category": "relative_date",
+      "note": "Relative: tháng tới"
+    },
+    {
+      "id": 540,
+      "input": "18h cuối tuần sau training",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần sau"
+    },
+    {
+      "id": 541,
+      "input": "gặp khách tuần tới lúc 9h",
+      "category": "relative_date",
+      "note": "Relative: tuần tới"
+    },
+    {
+      "id": 542,
+      "input": "11h ngày kia standup",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 543,
+      "input": "training tháng sau lúc 21h",
+      "category": "relative_date",
+      "note": "Relative: tháng sau"
+    },
+    {
+      "id": 544,
+      "input": "standup ngày kia lúc 8h",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 545,
+      "input": "mai 18h tôi có standup",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 546,
+      "input": "6h cuối tuần này meeting",
+      "category": "relative_date",
+      "note": "Relative: cuối tuần này"
+    },
+    {
+      "id": 547,
+      "input": "làm việc ngày mai lúc 6h",
+      "category": "relative_date",
+      "note": "Relative: ngày mai"
+    },
+    {
+      "id": 548,
+      "input": "làm việc ngày kia lúc 14h",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 549,
+      "input": "13h mai review code",
+      "category": "relative_date",
+      "note": "Relative: mai"
+    },
+    {
+      "id": 550,
+      "input": "14h ngày kia gặp khách",
+      "category": "relative_date",
+      "note": "Relative: ngày kia"
+    },
+    {
+      "id": 551,
+      "input": "phỏng vấn từ 8h đến 9h",
+      "category": "time_range",
+      "note": "Range: 8h-9h"
+    },
+    {
+      "id": 552,
+      "input": "phỏng vấn từ 12h đến 16h",
+      "category": "time_range",
+      "note": "Range: 12h-16h"
+    },
+    {
+      "id": 553,
+      "input": "làm việc từ 9h đến 12h",
+      "category": "time_range",
+      "note": "Range: 9h-12h"
+    },
+    {
+      "id": 554,
+      "input": "họp từ 12h đến 16h",
+      "category": "time_range",
+      "note": "Range: 12h-16h"
+    },
+    {
+      "id": 555,
+      "input": "training từ 14h đến 16h",
+      "category": "time_range",
+      "note": "Range: 14h-16h"
+    },
+    {
+      "id": 556,
+      "input": "training từ 12h đến 16h",
+      "category": "time_range",
+      "note": "Range: 12h-16h"
+    },
+    {
+      "id": 557,
+      "input": "standup từ 13h đến 14h",
+      "category": "time_range",
+      "note": "Range: 13h-14h"
+    },
+    {
+      "id": 558,
+      "input": "training từ 9h đến 12h",
+      "category": "time_range",
+      "note": "Range: 9h-12h"
+    },
+    {
+      "id": 559,
+      "input": "họp từ 11h đến 14h",
+      "category": "time_range",
+      "note": "Range: 11h-14h"
+    },
+    {
+      "id": 560,
+      "input": "làm việc từ 14h đến 16h",
+      "category": "time_range",
+      "note": "Range: 14h-16h"
+    },
+    {
+      "id": 561,
+      "input": "training từ 14h đến 16h",
+      "category": "time_range",
+      "note": "Range: 14h-16h"
+    },
+    {
+      "id": 562,
+      "input": "họp từ 14h đến 16h",
+      "category": "time_range",
+      "note": "Range: 14h-16h"
+    },
+    {
+      "id": 563,
+      "input": "standup từ 9h đến 11h",
+      "category": "time_range",
+      "note": "Range: 9h-11h"
+    },
+    {
+      "id": 564,
+      "input": "họp từ 14h đến 18h",
+      "category": "time_range",
+      "note": "Range: 14h-18h"
+    },
+    {
+      "id": 565,
+      "input": "họp từ 11h đến 13h",
+      "category": "time_range",
+      "note": "Range: 11h-13h"
+    },
+    {
+      "id": 566,
+      "input": "meeting từ 10h đến 12h",
+      "category": "time_range",
+      "note": "Range: 10h-12h"
+    },
+    {
+      "id": 567,
+      "input": "họp từ 10h đến 13h",
+      "category": "time_range",
+      "note": "Range: 10h-13h"
+    },
+    {
+      "id": 568,
+      "input": "gặp khách từ 10h đến 12h",
+      "category": "time_range",
+      "note": "Range: 10h-12h"
+    },
+    {
+      "id": 569,
+      "input": "training từ 14h đến 15h",
+      "category": "time_range",
+      "note": "Range: 14h-15h"
+    },
+    {
+      "id": 570,
+      "input": "standup từ 9h đến 11h",
+      "category": "time_range",
+      "note": "Range: 9h-11h"
+    },
+    {
+      "id": 571,
+      "input": "họp từ 8h đến 10h",
+      "category": "time_range",
+      "note": "Range: 8h-10h"
+    },
+    {
+      "id": 572,
+      "input": "làm việc từ 12h đến 16h",
+      "category": "time_range",
+      "note": "Range: 12h-16h"
+    },
+    {
+      "id": 573,
+      "input": "họp từ 14h đến 17h",
+      "category": "time_range",
+      "note": "Range: 14h-17h"
+    },
+    {
+      "id": 574,
+      "input": "họp từ 10h đến 14h",
+      "category": "time_range",
+      "note": "Range: 10h-14h"
+    },
+    {
+      "id": 575,
+      "input": "meeting từ 9h đến 12h",
+      "category": "time_range",
+      "note": "Range: 9h-12h"
+    },
+    {
+      "id": 576,
+      "input": "phỏng vấn 16h30",
+      "category": "compressed_time",
+      "note": "Format: 16h30"
+    },
+    {
+      "id": 577,
+      "input": "gặp khách 6h45",
+      "category": "compressed_time",
+      "note": "Format: 6h45"
+    },
+    {
+      "id": 578,
+      "input": "họp 14h45",
+      "category": "compressed_time",
+      "note": "Format: 14h45"
+    },
+    {
+      "id": 579,
+      "input": "review code 6h45",
+      "category": "compressed_time",
+      "note": "Format: 6h45"
+    },
+    {
+      "id": 580,
+      "input": "meeting 18h45",
+      "category": "compressed_time",
+      "note": "Format: 18h45"
+    },
+    {
+      "id": 581,
+      "input": "review code 7h15",
+      "category": "compressed_time",
+      "note": "Format: 7h15"
+    },
+    {
+      "id": 582,
+      "input": "review code 15h15",
+      "category": "compressed_time",
+      "note": "Format: 15h15"
+    },
+    {
+      "id": 583,
+      "input": "review code 9h15",
+      "category": "compressed_time",
+      "note": "Format: 9h15"
+    },
+    {
+      "id": 584,
+      "input": "phỏng vấn 11h00",
+      "category": "compressed_time",
+      "note": "Format: 11h00"
+    },
+    {
+      "id": 585,
+      "input": "gặp khách 21h15",
+      "category": "compressed_time",
+      "note": "Format: 21h15"
+    },
+    {
+      "id": 586,
+      "input": "họp 11h45",
+      "category": "compressed_time",
+      "note": "Format: 11h45"
+    },
+    {
+      "id": 587,
+      "input": "review code 18h45",
+      "category": "compressed_time",
+      "note": "Format: 18h45"
+    },
+    {
+      "id": 588,
+      "input": "standup 21h00",
+      "category": "compressed_time",
+      "note": "Format: 21h00"
+    },
+    {
+      "id": 589,
+      "input": "họp 6h00",
+      "category": "compressed_time",
+      "note": "Format: 6h00"
+    },
+    {
+      "id": 590,
+      "input": "meeting 7h15",
+      "category": "compressed_time",
+      "note": "Format: 7h15"
+    },
+    {
+      "id": 591,
+      "input": "phỏng vấn 17h45",
+      "category": "compressed_time",
+      "note": "Format: 17h45"
+    },
+    {
+      "id": 592,
+      "input": "standup 19h45",
+      "category": "compressed_time",
+      "note": "Format: 19h45"
+    },
+    {
+      "id": 593,
+      "input": "phỏng vấn 9h45",
+      "category": "compressed_time",
+      "note": "Format: 9h45"
+    },
+    {
+      "id": 594,
+      "input": "meeting 18h45",
+      "category": "compressed_time",
+      "note": "Format: 18h45"
+    },
+    {
+      "id": 595,
+      "input": "review code 14h00",
+      "category": "compressed_time",
+      "note": "Format: 14h00"
+    },
+    {
+      "id": 596,
+      "input": "làm việc 22h00",
+      "category": "compressed_time",
+      "note": "Format: 22h00"
+    },
+    {
+      "id": 597,
+      "input": "meeting 17h45",
+      "category": "compressed_time",
+      "note": "Format: 17h45"
+    },
+    {
+      "id": 598,
+      "input": "training 17h45",
+      "category": "compressed_time",
+      "note": "Format: 17h45"
+    },
+    {
+      "id": 599,
+      "input": "meeting 8h30",
+      "category": "compressed_time",
+      "note": "Format: 8h30"
+    },
+    {
+      "id": 600,
+      "input": "training 21h45",
+      "category": "compressed_time",
+      "note": "Format: 21h45"
+    },
+    {
+      "id": 601,
+      "input": "họp trong 7 tháng",
+      "category": "duration",
+      "note": "Duration: 7 tháng"
+    },
+    {
+      "id": 602,
+      "input": "meeting trong 6 tháng",
+      "category": "duration",
+      "note": "Duration: 6 tháng"
+    },
+    {
+      "id": 603,
+      "input": "làm việc trong 2 tháng",
+      "category": "duration",
+      "note": "Duration: 2 tháng"
+    },
+    {
+      "id": 604,
+      "input": "training trong 4 ngày",
+      "category": "duration",
+      "note": "Duration: 4 ngày"
+    },
+    {
+      "id": 605,
+      "input": "làm việc trong 7 tháng",
+      "category": "duration",
+      "note": "Duration: 7 tháng"
+    },
+    {
+      "id": 606,
+      "input": "phỏng vấn trong 1 ngày",
+      "category": "duration",
+      "note": "Duration: 1 ngày"
+    },
+    {
+      "id": 607,
+      "input": "meeting trong 7 tuần",
+      "category": "duration",
+      "note": "Duration: 7 tuần"
+    },
+    {
+      "id": 608,
+      "input": "standup trong 3 tuần",
+      "category": "duration",
+      "note": "Duration: 3 tuần"
+    },
+    {
+      "id": 609,
+      "input": "gặp khách trong 1 ngày",
+      "category": "duration",
+      "note": "Duration: 1 ngày"
+    },
+    {
+      "id": 610,
+      "input": "gặp khách trong 6 ngày",
+      "category": "duration",
+      "note": "Duration: 6 ngày"
+    },
+    {
+      "id": 611,
+      "input": "training trong 1 ngày",
+      "category": "duration",
+      "note": "Duration: 1 ngày"
+    },
+    {
+      "id": 612,
+      "input": "training trong 3 tháng",
+      "category": "duration",
+      "note": "Duration: 3 tháng"
+    },
+    {
+      "id": 613,
+      "input": "phỏng vấn trong 6 ngày",
+      "category": "duration",
+      "note": "Duration: 6 ngày"
+    },
+    {
+      "id": 614,
+      "input": "làm việc trong 7 ngày",
+      "category": "duration",
+      "note": "Duration: 7 ngày"
+    },
+    {
+      "id": 615,
+      "input": "làm việc trong 3 tuần",
+      "category": "duration",
+      "note": "Duration: 3 tuần"
+    },
+    {
+      "id": 616,
+      "input": "training trong 4 tuần",
+      "category": "duration",
+      "note": "Duration: 4 tuần"
+    },
+    {
+      "id": 617,
+      "input": "làm việc trong 3 tháng",
+      "category": "duration",
+      "note": "Duration: 3 tháng"
+    },
+    {
+      "id": 618,
+      "input": "gặp khách trong 7 tháng",
+      "category": "duration",
+      "note": "Duration: 7 tháng"
+    },
+    {
+      "id": 619,
+      "input": "làm việc trong 1 tháng",
+      "category": "duration",
+      "note": "Duration: 1 tháng"
+    },
+    {
+      "id": 620,
+      "input": "phỏng vấn trong 6 tuần",
+      "category": "duration",
+      "note": "Duration: 6 tuần"
+    },
+    {
+      "id": 621,
+      "input": "training trong 6 tháng",
+      "category": "duration",
+      "note": "Duration: 6 tháng"
+    },
+    {
+      "id": 622,
+      "input": "phỏng vấn trong 5 ngày",
+      "category": "duration",
+      "note": "Duration: 5 ngày"
+    },
+    {
+      "id": 623,
+      "input": "gặp khách trong 6 tháng",
+      "category": "duration",
+      "note": "Duration: 6 tháng"
+    },
+    {
+      "id": 624,
+      "input": "gặp khách trong 2 ngày",
+      "category": "duration",
+      "note": "Duration: 2 ngày"
+    },
+    {
+      "id": 625,
+      "input": "gặp khách trong 3 tuần",
+      "category": "duration",
+      "note": "Duration: 3 tuần"
+    },
+    {
+      "id": 626,
+      "input": "meeting 19h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 627,
+      "input": "meeting 11h kém 12",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 628,
+      "input": "gặp khách 14h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 629,
+      "input": "họp 9h kém 12",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 630,
+      "input": "standup 15h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 631,
+      "input": "review code 8h kém 14",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 632,
+      "input": "họp 9h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 633,
+      "input": "họp 20h kém 12",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 634,
+      "input": "họp 20h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 635,
+      "input": "làm việc 17h kém 14",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 636,
+      "input": "meeting 13h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 637,
+      "input": "meeting 11h kém 14",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 638,
+      "input": "gặp khách 17h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 639,
+      "input": "gặp khách 7h kém 11",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 640,
+      "input": "standup 18h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 641,
+      "input": "standup 20h kém 12",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 642,
+      "input": "làm việc 8h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 643,
+      "input": "review code 11h kém 7",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 644,
+      "input": "training 11h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 645,
+      "input": "standup 13h kém 12",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 646,
+      "input": "meeting 15h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 647,
+      "input": "review code 11h kém 9",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 648,
+      "input": "gặp khách 9h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 649,
+      "input": "họp 12h kém 6",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 650,
+      "input": "họp 13h rưỡi",
+      "category": "special_time",
+      "note": "rưỡi or kém format"
+    },
+    {
+      "id": 651,
+      "input": "gặp khách tại quán cafe lúc 15h",
+      "category": "with_location",
+      "note": "Location: quán cafe"
+    },
+    {
+      "id": 652,
+      "input": "làm việc 9h tại nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 653,
+      "input": "phỏng vấn tại quán cafe lúc 10h",
+      "category": "with_location",
+      "note": "Location: quán cafe"
+    },
+    {
+      "id": 654,
+      "input": "đến trung tâm thương mại 17h standup",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 655,
+      "input": "đến nhà hàng ABC 11h review code",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 656,
+      "input": "làm việc tại sân bay lúc 12h",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 657,
+      "input": "thứ ba 17h standup tại toà A",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 658,
+      "input": "đến toà A 13h gặp khách",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 659,
+      "input": "15h làm việc ở nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 660,
+      "input": "thu 4 14h meeting tại văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 661,
+      "input": "t4 17h review code tại bệnh viện Bạch Mai",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 662,
+      "input": "họp 18h tại văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 663,
+      "input": "phỏng vấn tại bệnh viện Bạch Mai lúc 15h",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 664,
+      "input": "19h meeting ở bệnh viện Bạch Mai",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 665,
+      "input": "standup tại tầng 5 lúc 14h",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 666,
+      "input": "16h phỏng vấn ở toà A",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 667,
+      "input": "đến toà A 9h phỏng vấn",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 668,
+      "input": "20h training ở văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 669,
+      "input": "13h gặp khách ở sân bay",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 670,
+      "input": "review code 9h tại trung tâm thương mại",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 671,
+      "input": "đến công ty 15h training",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 672,
+      "input": "đến sân bay 16h training",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 673,
+      "input": "đến phòng 302 14h standup",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 674,
+      "input": "meeting 19h tại trung tâm thương mại",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 675,
+      "input": "làm việc tại nhà hàng ABC lúc 8h",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 676,
+      "input": "họp 13h tại nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 677,
+      "input": "đến bệnh viện Bạch Mai 8h họp",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 678,
+      "input": "16h standup ở văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 679,
+      "input": "đến trung tâm thương mại 10h họp",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 680,
+      "input": "đến trung tâm thương mại 11h meeting",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 681,
+      "input": "meeting tại bệnh viện Bạch Mai lúc 13h",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 682,
+      "input": "12h meeting ở công ty",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 683,
+      "input": "17h review code ở tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 684,
+      "input": "review code tại bệnh viện Bạch Mai lúc 11h",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 685,
+      "input": "review code tại tầng 5 lúc 9h",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 686,
+      "input": "làm việc tại trung tâm thương mại lúc 13h",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 687,
+      "input": "thứ tư 18h họp tại toà A",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 688,
+      "input": "thứ 6 9h phỏng vấn tại tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 689,
+      "input": "thứ 4 20h làm việc tại toà A",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 690,
+      "input": "thứ 4 15h họp tại bệnh viện Bạch Mai",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 691,
+      "input": "thu 7 10h standup tại trung tâm thương mại",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 692,
+      "input": "họp tại phòng 302 lúc 14h",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 693,
+      "input": "họp 8h tại văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 694,
+      "input": "đến bệnh viện Bạch Mai 18h họp",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 695,
+      "input": "review code tại tầng 5 lúc 14h",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 696,
+      "input": "15h gặp khách ở trung tâm thương mại",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 697,
+      "input": "phỏng vấn tại toà A lúc 15h",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 698,
+      "input": "đến công ty 13h meeting",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 699,
+      "input": "20h training ở bệnh viện Bạch Mai",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 700,
+      "input": "thu 7 17h training tại văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 701,
+      "input": "phỏng vấn tại trung tâm thương mại lúc 20h",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 702,
+      "input": "phỏng vấn tại toà A lúc 9h",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 703,
+      "input": "thu 7 18h phỏng vấn tại nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 704,
+      "input": "t2 14h meeting tại phòng 302",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 705,
+      "input": "standup 20h tại công ty",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 706,
+      "input": "19h meeting ở sân bay",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 707,
+      "input": "đến bệnh viện Bạch Mai 11h review code",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 708,
+      "input": "phỏng vấn tại phòng 302 lúc 19h",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 709,
+      "input": "13h training ở tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 710,
+      "input": "training 20h tại quán cafe",
+      "category": "with_location",
+      "note": "Location: quán cafe"
+    },
+    {
+      "id": 711,
+      "input": "đến phòng 302 9h standup",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 712,
+      "input": "11h meeting ở văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 713,
+      "input": "thứ 2 16h standup tại văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 714,
+      "input": "16h gặp khách ở nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 715,
+      "input": "14h meeting ở công ty",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 716,
+      "input": "meeting 11h tại tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 717,
+      "input": "meeting 15h tại sân bay",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 718,
+      "input": "standup 14h tại tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 719,
+      "input": "10h phỏng vấn ở văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 720,
+      "input": "thứ hai 20h review code tại quán cafe",
+      "category": "with_location",
+      "note": "Location: quán cafe"
+    },
+    {
+      "id": 721,
+      "input": "12h training ở bệnh viện Bạch Mai",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 722,
+      "input": "đến tầng 5 12h phỏng vấn",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 723,
+      "input": "14h training ở sân bay",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 724,
+      "input": "9h phỏng vấn ở công ty",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 725,
+      "input": "thứ 4 15h phỏng vấn tại văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 726,
+      "input": "18h training ở toà A",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 727,
+      "input": "thu 2 15h review code tại nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 728,
+      "input": "gặp khách 11h tại tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 729,
+      "input": "18h review code ở trung tâm thương mại",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 730,
+      "input": "8h standup ở bệnh viện Bạch Mai",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 731,
+      "input": "review code tại toà A lúc 16h",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 732,
+      "input": "đến toà A 14h meeting",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 733,
+      "input": "thứ năm 13h training tại tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 734,
+      "input": "gặp khách 13h tại toà A",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 735,
+      "input": "review code tại công ty lúc 9h",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 736,
+      "input": "meeting tại phòng 302 lúc 20h",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 737,
+      "input": "đến trung tâm thương mại 17h meeting",
+      "category": "with_location",
+      "note": "Location: trung tâm thương mại"
+    },
+    {
+      "id": 738,
+      "input": "họp 17h tại phòng 302",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 739,
+      "input": "training 14h tại nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 740,
+      "input": "review code 12h tại văn phòng",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 741,
+      "input": "t2 18h làm việc tại sân bay",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 742,
+      "input": "làm việc tại quán cafe lúc 11h",
+      "category": "with_location",
+      "note": "Location: quán cafe"
+    },
+    {
+      "id": 743,
+      "input": "họp 19h tại sân bay",
+      "category": "with_location",
+      "note": "Location: sân bay"
+    },
+    {
+      "id": 744,
+      "input": "thu 4 18h standup tại tầng 5",
+      "category": "with_location",
+      "note": "Location: tầng 5"
+    },
+    {
+      "id": 745,
+      "input": "gặp khách tại văn phòng lúc 13h",
+      "category": "with_location",
+      "note": "Location: văn phòng"
+    },
+    {
+      "id": 746,
+      "input": "chủ nhật 10h training tại nhà hàng ABC",
+      "category": "with_location",
+      "note": "Location: nhà hàng ABC"
+    },
+    {
+      "id": 747,
+      "input": "17h làm việc ở phòng 302",
+      "category": "with_location",
+      "note": "Location: phòng 302"
+    },
+    {
+      "id": 748,
+      "input": "9h meeting ở toà A",
+      "category": "with_location",
+      "note": "Location: toà A"
+    },
+    {
+      "id": 749,
+      "input": "training 19h tại bệnh viện Bạch Mai",
+      "category": "with_location",
+      "note": "Location: bệnh viện Bạch Mai"
+    },
+    {
+      "id": 750,
+      "input": "đến công ty 15h training",
+      "category": "with_location",
+      "note": "Location: công ty"
+    },
+    {
+      "id": 751,
+      "input": "phỏng vấn 10h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 752,
+      "input": "review code 17h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 753,
+      "input": "họp 9h nhắc trước 1 giờ",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 1 giờ"
+    },
+    {
+      "id": 754,
+      "input": "meeting 10h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 755,
+      "input": "làm việc 11h nhắc trước 1 giờ",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 1 giờ"
+    },
+    {
+      "id": 756,
+      "input": "review code 9h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 757,
+      "input": "gặp khách 15h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 758,
+      "input": "training 13h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 759,
+      "input": "phỏng vấn 14h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 760,
+      "input": "meeting 17h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 761,
+      "input": "gặp khách 17h nhắc trước 1 giờ",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 1 giờ"
+    },
+    {
+      "id": 762,
+      "input": "meeting 17h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 763,
+      "input": "training 18h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 764,
+      "input": "meeting 9h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 765,
+      "input": "review code 11h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 766,
+      "input": "phỏng vấn 8h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 767,
+      "input": "review code 13h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 768,
+      "input": "meeting 18h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 769,
+      "input": "standup 12h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 770,
+      "input": "meeting 18h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 771,
+      "input": "meeting 10h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 772,
+      "input": "standup 13h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 773,
+      "input": "làm việc 11h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 774,
+      "input": "họp 17h nhắc trước 1 giờ",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 1 giờ"
+    },
+    {
+      "id": 775,
+      "input": "gặp khách 15h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 776,
+      "input": "review code 18h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 777,
+      "input": "training 8h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 778,
+      "input": "standup 17h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 779,
+      "input": "review code 10h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 780,
+      "input": "review code 15h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 781,
+      "input": "review code 17h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 782,
+      "input": "gặp khách 9h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 783,
+      "input": "họp 14h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 784,
+      "input": "họp 10h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 785,
+      "input": "làm việc 10h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 786,
+      "input": "meeting 14h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 787,
+      "input": "làm việc 13h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 788,
+      "input": "review code 11h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 789,
+      "input": "meeting 11h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 790,
+      "input": "meeting 10h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 791,
+      "input": "standup 17h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 792,
+      "input": "phỏng vấn 14h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 793,
+      "input": "gặp khách 11h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 794,
+      "input": "làm việc 14h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 795,
+      "input": "training 11h nhắc trước 30 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 30 phút"
+    },
+    {
+      "id": 796,
+      "input": "training 18h nhắc trước 1 giờ",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 1 giờ"
+    },
+    {
+      "id": 797,
+      "input": "training 16h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 798,
+      "input": "gặp khách 12h nhắc trước 15 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 15 phút"
+    },
+    {
+      "id": 799,
+      "input": "review code 14h nhắc trước 60 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc trước 60 phút"
+    },
+    {
+      "id": 800,
+      "input": "review code 8h nhắc tôi trước 10 phút",
+      "category": "with_reminder",
+      "note": "Reminder: nhắc tôi trước 10 phút"
+    },
+    {
+      "id": 801,
+      "input": "cn 16h gap khach",
+      "category": "typo_no_diacritics",
+      "note": "Typo: gap khach (should be gặp khách)"
+    },
+    {
+      "id": 802,
+      "input": "t2 13h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 803,
+      "input": "t6 18h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 804,
+      "input": "t3 16h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 805,
+      "input": "thu 3 14h phong van",
+      "category": "typo_no_diacritics",
+      "note": "Typo: phong van (should be phỏng vấn)"
+    },
+    {
+      "id": 806,
+      "input": "thứ ba 18h gap khach",
+      "category": "typo_no_diacritics",
+      "note": "Typo: gap khach (should be gặp khách)"
+    },
+    {
+      "id": 807,
+      "input": "t5 9h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 808,
+      "input": "thứ ba 14h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 809,
+      "input": "thứ tư 17h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 810,
+      "input": "thứ 2 13h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 811,
+      "input": "t7 17h gap khach",
+      "category": "typo_no_diacritics",
+      "note": "Typo: gap khach (should be gặp khách)"
+    },
+    {
+      "id": 812,
+      "input": "t7 13h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 813,
+      "input": "chủ nhật 20h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 814,
+      "input": "thứ tư 11h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 815,
+      "input": "thứ năm 20h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 816,
+      "input": "thu 3 15h lam viec",
+      "category": "typo_no_diacritics",
+      "note": "Typo: lam viec (should be làm việc)"
+    },
+    {
+      "id": 817,
+      "input": "thứ hai 10h hop",
+      "category": "typo_no_diacritics",
+      "note": "Typo: hop (should be họp)"
+    },
+    {
+      "id": 818,
+      "input": "t4 13h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 819,
+      "input": "thứ năm 17h chieu",
+      "category": "typo_no_diacritics",
+      "note": "Typo: chieu (should be chiều)"
+    },
+    {
+      "id": 820,
+      "input": "thứ ba 20h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 821,
+      "input": "thứ 5 12h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 822,
+      "input": "t3 16h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 823,
+      "input": "thứ sáu 9h gap khach",
+      "category": "typo_no_diacritics",
+      "note": "Typo: gap khach (should be gặp khách)"
+    },
+    {
+      "id": 824,
+      "input": "t2 10h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 825,
+      "input": "thứ hai 8h chieu",
+      "category": "typo_no_diacritics",
+      "note": "Typo: chieu (should be chiều)"
+    },
+    {
+      "id": 826,
+      "input": "thứ 6 20h chieu",
+      "category": "typo_no_diacritics",
+      "note": "Typo: chieu (should be chiều)"
+    },
+    {
+      "id": 827,
+      "input": "chủ nhật 11h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 828,
+      "input": "thu 6 10h chieu",
+      "category": "typo_no_diacritics",
+      "note": "Typo: chieu (should be chiều)"
+    },
+    {
+      "id": 829,
+      "input": "t7 18h hop",
+      "category": "typo_no_diacritics",
+      "note": "Typo: hop (should be họp)"
+    },
+    {
+      "id": 830,
+      "input": "t3 19h lam viec",
+      "category": "typo_no_diacritics",
+      "note": "Typo: lam viec (should be làm việc)"
+    },
+    {
+      "id": 831,
+      "input": "cn 16h lam viec",
+      "category": "typo_no_diacritics",
+      "note": "Typo: lam viec (should be làm việc)"
+    },
+    {
+      "id": 832,
+      "input": "thứ ba 12h hop",
+      "category": "typo_no_diacritics",
+      "note": "Typo: hop (should be họp)"
+    },
+    {
+      "id": 833,
+      "input": "chu nhat 19h phong van",
+      "category": "typo_no_diacritics",
+      "note": "Typo: phong van (should be phỏng vấn)"
+    },
+    {
+      "id": 834,
+      "input": "thu 2 13h phong van",
+      "category": "typo_no_diacritics",
+      "note": "Typo: phong van (should be phỏng vấn)"
+    },
+    {
+      "id": 835,
+      "input": "thứ 7 15h chieu",
+      "category": "typo_no_diacritics",
+      "note": "Typo: chieu (should be chiều)"
+    },
+    {
+      "id": 836,
+      "input": "thứ ba 8h hop",
+      "category": "typo_no_diacritics",
+      "note": "Typo: hop (should be họp)"
+    },
+    {
+      "id": 837,
+      "input": "thứ bảy 11h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 838,
+      "input": "thứ năm 16h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 839,
+      "input": "thu 6 17h lam viec",
+      "category": "typo_no_diacritics",
+      "note": "Typo: lam viec (should be làm việc)"
+    },
+    {
+      "id": 840,
+      "input": "thứ bảy 16h phong van",
+      "category": "typo_no_diacritics",
+      "note": "Typo: phong van (should be phỏng vấn)"
+    },
+    {
+      "id": 841,
+      "input": "chủ nhật 16h hop",
+      "category": "typo_no_diacritics",
+      "note": "Typo: hop (should be họp)"
+    },
+    {
+      "id": 842,
+      "input": "t7 9h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 843,
+      "input": "thu 7 15h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 844,
+      "input": "thu 2 13h gap khach",
+      "category": "typo_no_diacritics",
+      "note": "Typo: gap khach (should be gặp khách)"
+    },
+    {
+      "id": 845,
+      "input": "t3 8h gap khach",
+      "category": "typo_no_diacritics",
+      "note": "Typo: gap khach (should be gặp khách)"
+    },
+    {
+      "id": 846,
+      "input": "thu 5 14h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 847,
+      "input": "thứ 7 17h toi",
+      "category": "typo_no_diacritics",
+      "note": "Typo: toi (should be tối)"
+    },
+    {
+      "id": 848,
+      "input": "thu 2 15h chieu",
+      "category": "typo_no_diacritics",
+      "note": "Typo: chieu (should be chiều)"
+    },
+    {
+      "id": 849,
+      "input": "thứ bảy 20h sang",
+      "category": "typo_no_diacritics",
+      "note": "Typo: sang (should be sáng)"
+    },
+    {
+      "id": 850,
+      "input": "thứ 2 10h chieu",
+      "category": "typo_no_diacritics",
+      "note": "Typo: chieu (should be chiều)"
+    },
+    {
+      "id": 851,
+      "input": "THU 3 17H MEETING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 852,
+      "input": "THU 3 13H HỌP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 853,
+      "input": "THỨ BẢY 15H STANDUP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 854,
+      "input": "CHỦ NHẬT 16H LÀM VIỆC",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 855,
+      "input": "T6 15H LÀM VIỆC",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 856,
+      "input": "CHU NHAT 10H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 857,
+      "input": "THU 4 8H LÀM VIỆC",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 858,
+      "input": "THỨ HAI 11H HỌP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 859,
+      "input": "THỨ 3 19H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 860,
+      "input": "THU 5 9H MEETING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 861,
+      "input": "CHỦ NHẬT 10H GẶP KHÁCH",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 862,
+      "input": "THU 4 9H LÀM VIỆC",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 863,
+      "input": "T4 15H MEETING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 864,
+      "input": "CN 9H GẶP KHÁCH",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 865,
+      "input": "THỨ 4 17H GẶP KHÁCH",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 866,
+      "input": "CN 19H HỌP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 867,
+      "input": "THỨ BA 13H LÀM VIỆC",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 868,
+      "input": "THỨ HAI 12H REVIEW CODE",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 869,
+      "input": "T7 19H TRAINING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 870,
+      "input": "THỨ 2 20H GẶP KHÁCH",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 871,
+      "input": "T3 19H TRAINING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 872,
+      "input": "THU 6 17H REVIEW CODE",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 873,
+      "input": "THỨ NĂM 8H STANDUP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 874,
+      "input": "THỨ 5 19H TRAINING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 875,
+      "input": "THỨ SÁU 19H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 876,
+      "input": "THỨ 7 8H REVIEW CODE",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 877,
+      "input": "THU 7 12H GẶP KHÁCH",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 878,
+      "input": "THU 5 10H GẶP KHÁCH",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 879,
+      "input": "THU 3 20H TRAINING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 880,
+      "input": "THỨ TƯ 19H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 881,
+      "input": "T7 16H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 882,
+      "input": "THỨ SÁU 12H GẶP KHÁCH",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 883,
+      "input": "THỨ 4 16H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 884,
+      "input": "THỨ 4 13H HỌP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 885,
+      "input": "THỨ SÁU 18H STANDUP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 886,
+      "input": "THỨ NĂM 11H HỌP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 887,
+      "input": "T5 13H REVIEW CODE",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 888,
+      "input": "CHỦ NHẬT 15H REVIEW CODE",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 889,
+      "input": "CN 11H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 890,
+      "input": "CHỦ NHẬT 15H MEETING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 891,
+      "input": "CN 12H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 892,
+      "input": "THỨ 6 16H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 893,
+      "input": "THU 7 17H REVIEW CODE",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 894,
+      "input": "T6 12H PHỎNG VẤN",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 895,
+      "input": "THỨ TƯ 19H HỌP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 896,
+      "input": "THU 4 14H HỌP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 897,
+      "input": "THỨ SÁU 20H STANDUP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 898,
+      "input": "THỨ 6 10H MEETING",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 899,
+      "input": "THU 4 14H REVIEW CODE",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 900,
+      "input": "THU 6 19H STANDUP",
+      "category": "mixed_case",
+      "note": "UPPERCASE or MixedCase"
+    },
+    {
+      "id": 901,
+      "input": "thứ 5 18h review code",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 902,
+      "input": "thứ 5 9h meeting",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 903,
+      "input": "thứ 5 13h review code",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 904,
+      "input": "thứ 5 14h review code",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 905,
+      "input": "thứ 5 21h meeting",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 906,
+      "input": "thứ 5 17h training",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 907,
+      "input": "thứ 5 13h review code",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 908,
+      "input": "thứ 5 17h standup",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 909,
+      "input": "thứ 5 11h review code",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 910,
+      "input": "thứ 5 15h standup",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 911,
+      "input": "thứ 5 11h họp",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 912,
+      "input": "thứ 5 18h làm việc",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 913,
+      "input": "thứ 5 16h họp",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 914,
+      "input": "thứ 5 11h meeting",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 915,
+      "input": "thứ 5 14h training",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 916,
+      "input": "thứ 5 15h phỏng vấn",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 917,
+      "input": "thứ 5 12h làm việc",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 918,
+      "input": "thứ 5 17h training",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 919,
+      "input": "thứ 5 15h gặp khách",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 920,
+      "input": "thứ 5 9h review code",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 921,
+      "input": "thứ 5 13h họp",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 922,
+      "input": "thứ 5 21h họp",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 923,
+      "input": "thứ 5 20h standup",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 924,
+      "input": "thứ 5 14h làm việc",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 925,
+      "input": "thứ 5 17h họp",
+      "category": "same_weekday",
+      "note": "Today is Thursday - should parse as today or next week?"
+    },
+    {
+      "id": 926,
+      "input": "hôm nay 10h họp",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 927,
+      "input": "hôm nay 18h training",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 928,
+      "input": "hôm nay 21h training",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 929,
+      "input": "hôm nay 15h làm việc",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 930,
+      "input": "hôm nay 9h làm việc",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 931,
+      "input": "hôm nay 12h phỏng vấn",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 932,
+      "input": "hôm nay 9h gặp khách",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 933,
+      "input": "hôm nay 16h phỏng vấn",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 934,
+      "input": "hôm nay 20h standup",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 935,
+      "input": "hôm nay 21h phỏng vấn",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 936,
+      "input": "hôm nay 11h gặp khách",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 937,
+      "input": "hôm nay 15h làm việc",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 938,
+      "input": "hôm nay 17h làm việc",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 939,
+      "input": "hôm nay 12h làm việc",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 940,
+      "input": "hôm nay 10h standup",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 941,
+      "input": "hôm nay 15h standup",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 942,
+      "input": "hôm nay 11h phỏng vấn",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 943,
+      "input": "hôm nay 18h phỏng vấn",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 944,
+      "input": "hôm nay 13h training",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 945,
+      "input": "hôm nay 21h làm việc",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 946,
+      "input": "hôm nay 19h review code",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 947,
+      "input": "hôm nay 16h training",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 948,
+      "input": "hôm nay 14h gặp khách",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 949,
+      "input": "hôm nay 16h họp",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 950,
+      "input": "hôm nay 18h gặp khách",
+      "category": "today_explicit",
+      "note": "Explicitly \"hôm nay\" (today)"
+    },
+    {
+      "id": 951,
+      "input": "t6 tuần sau 9h làm việc",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 952,
+      "input": "thứ 7 19h tuần sau họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 953,
+      "input": "thứ 5 tuần sau 15h họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 954,
+      "input": "chủ nhật 9h tuần sau phỏng vấn",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 955,
+      "input": "t2 tuần sau 9h meeting",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 956,
+      "input": "t5 12h tuần sau meeting",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 957,
+      "input": "t6 tuần sau 8h làm việc",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 958,
+      "input": "thu 7 16h tuần sau phỏng vấn",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 959,
+      "input": "chủ nhật tuần sau 8h standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 960,
+      "input": "t2 8h tuần sau training",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 961,
+      "input": "t7 tuần sau 8h gặp khách",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 962,
+      "input": "t6 15h tuần sau standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 963,
+      "input": "thứ 6 tuần sau 14h training",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 964,
+      "input": "thứ sáu 11h tuần sau phỏng vấn",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 965,
+      "input": "thứ 6 tuần sau 11h làm việc",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 966,
+      "input": "chu nhat 16h tuần sau standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 967,
+      "input": "thứ tư tuần sau 10h họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 968,
+      "input": "cn 12h tuần sau họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 969,
+      "input": "thứ sáu tuần sau 11h gặp khách",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 970,
+      "input": "thứ 2 16h tuần sau làm việc",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 971,
+      "input": "thứ sáu tuần sau 15h meeting",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 972,
+      "input": "cn 20h tuần sau phỏng vấn",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 973,
+      "input": "thu 7 tuần sau 20h review code",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 974,
+      "input": "t5 19h tuần sau standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 975,
+      "input": "t4 tuần sau 16h training",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 976,
+      "input": "thu 3 14h tuần sau training",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 977,
+      "input": "t7 tuần sau 9h họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 978,
+      "input": "t2 16h tuần sau review code",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 979,
+      "input": "thu 3 tuần sau 15h standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 980,
+      "input": "thu 6 15h tuần sau meeting",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 981,
+      "input": "thứ 6 tuần sau 13h phỏng vấn",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 982,
+      "input": "chủ nhật 13h tuần sau họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 983,
+      "input": "thứ 3 tuần sau 13h họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 984,
+      "input": "thu 4 13h tuần sau gặp khách",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 985,
+      "input": "thu 7 tuần sau 18h meeting",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 986,
+      "input": "thứ ba 18h tuần sau review code",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 987,
+      "input": "t4 tuần sau 12h meeting",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 988,
+      "input": "thứ ba 20h tuần sau training",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 989,
+      "input": "thứ năm tuần sau 10h họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 990,
+      "input": "thu 5 12h tuần sau standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 991,
+      "input": "thu 5 tuần sau 9h standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 992,
+      "input": "thu 2 13h tuần sau training",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 993,
+      "input": "thứ ba tuần sau 18h standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 994,
+      "input": "thứ 6 20h tuần sau gặp khách",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 995,
+      "input": "thứ bảy tuần sau 18h review code",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 996,
+      "input": "thu 6 10h tuần sau làm việc",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 997,
+      "input": "thứ sáu tuần sau 9h review code",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 998,
+      "input": "thu 3 20h tuần sau phỏng vấn",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 999,
+      "input": "cn tuần sau 15h standup",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 1000,
+      "input": "t5 13h tuần sau họp",
+      "category": "next_week",
+      "note": "Explicit \"tuần sau\""
+    },
+    {
+      "id": 1001,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1002,
+      "input": "",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1003,
+      "input": "12345",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1004,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1005,
+      "input": "tôi",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1006,
+      "input": "nhắc trước 15 phút",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1007,
+      "input": "phòng 302",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1008,
+      "input": "",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1009,
+      "input": "abc",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1010,
+      "input": "abc",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1011,
+      "input": "12345",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1012,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1013,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1014,
+      "input": "nhắc trước 15 phút",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1015,
+      "input": "abc",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1016,
+      "input": "tôi",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1017,
+      "input": "12345",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1018,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1019,
+      "input": "nhắc trước 15 phút",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1020,
+      "input": "tôi",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1021,
+      "input": "   ",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1022,
+      "input": "tôi",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1023,
+      "input": "phòng 302",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1024,
+      "input": "   ",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1025,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1026,
+      "input": "phòng 302",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1027,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1028,
+      "input": "nhắc trước 15 phút",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1029,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1030,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1031,
+      "input": "phòng 302",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1032,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1033,
+      "input": "",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1034,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1035,
+      "input": "   ",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1036,
+      "input": "tôi",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1037,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1038,
+      "input": "",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1039,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1040,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1041,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1042,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1043,
+      "input": "   ",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1044,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1045,
+      "input": "họp",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1046,
+      "input": "",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1047,
+      "input": "abc",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1048,
+      "input": "",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1049,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    },
+    {
+      "id": 1050,
+      "input": "tôi",
+      "category": "invalid_input",
+      "note": "Should fail gracefully"
+    }
+  ]
+}

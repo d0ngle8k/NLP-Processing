@@ -1,3 +1,4 @@
+# Core dependencies
 underthesea
 dateparser
 tkcalendar
@@ -8,3 +9,12 @@ python-docx==1.1.0
 matplotlib
 openpyxl
 reportlab
+
+# PhoBERT dependencies (optional but recommended)
+# Install with: pip install -r requirements.txt
+# For CPU: torch torchvision torchaudio
+# For GPU (CUDA 11.8): torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+torch>=2.0.0
+transformers>=4.30.0
+tqdm>=4.65.0
+scikit-learn>=1.3.0

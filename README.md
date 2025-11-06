@@ -1,423 +1,807 @@
-# 📅 Trợ Lý Lịch Trình Cá Nhân - NLP Tiếng Việt# 📅 Trợ Lý Lịch Trình Cá Nhân - NLP Tiếng Việt
+# 📅 Trợ Lý Lịch Trình - Vietnamese NLP Calendar Assistant# 📅 Trợ Lý Lịch Trình - NLP Tiếng Việt
 
 
 
-![Version](https://img.shields.io/badge/version-0.6.1-blue.svg)![Version](https://img.shields.io/badge/version-0.6.1-blue.svg)
+![Version](https://img.shields.io/badge/version-0.8.1-blue.svg)![Version](https://img.shields.io/badge/version-0.8.1-blue.svg)
 
-![Python](https://img.shields.io/badge/python-3.12.0-green.svg)![Python](https://img.shields.io/badge/python-3.12.0-green.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-green.svg)![Python](https://img.shields.io/badge/python-3.9%2B-green.svg)
 
 ![License](https://img.shields.io/badge/license-MIT-yellow.svg)![License](https://img.shields.io/badge/license-MIT-yellow.svg)
 
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
+![Edge Cases](https://img.shields.io/badge/edge_cases-96.6%25-brightgreen.svg)![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 
+![Test Coverage](https://img.shields.io/badge/edge_cases-96.6%25-brightgreen.svg)
 
+> **Ứng dụng quản lý lịch trình thông minh** sử dụng xử lý ngôn ngữ tự nhiên (NLP) tiếng Việt. Nhập lệnh như nói chuyện, hệ thống tự động trích xuất sự kiện, thời gian, địa điểm và thiết lập nhắc nhở.
 
-> Ứng dụng desktop thông minh sử dụng **NLP (Natural Language Processing)** để quản lý lịch trình bằng tiếng Việt tự nhiên. Hỗ trợ đầy đủ CRUD, nhắc nhở thông minh, thống kê chi tiết, và xuất báo cáo chuyên nghiệp.> Ứng dụng desktop thông minh sử dụng **NLP (Natural Language Processing)** để quản lý lịch trình bằng tiếng Việt tự nhiên. Hỗ trợ đầy đủ CRUD, nhắc nhở thông minh, thống kê chi tiết, và xuất báo cáo chuyên nghiệp.
 
-
-
-<p align="center"><p align="center">
-
-  <img src="https://img.shields.io/badge/NLP_Accuracy-99.61%25-brightgreen.svg" alt="NLP Accuracy">  <img src="https://img.shields.io/badge/NLP_Accuracy-99.61%25-brightgreen.svg" alt="NLP Accuracy">
-
-  <img src="https://img.shields.io/badge/Test_Cases-100%2C000%2B-blue.svg" alt="Test Coverage">  <img src="https://img.shields.io/badge/Test_Cases-100%2C000%2B-blue.svg" alt="Test Coverage">
-
-  <img src="https://img.shields.io/badge/Build-Passing-success.svg" alt="Build Status">  <img src="https://img.shields.io/badge/Build-Passing-success.svg" alt="Build Status">
-
-</p></p>
-
-
-
-------
-
-
-
-## 🌟 Điểm Nổi Bật## 🌟 Điểm Nổi Bật
-
-
-
-### 🤖 NLP Tiếng Việt Thông Minh### 🤖 NLP Tiếng Việt Thông Minh
-
-- **Độ chính xác**: 99.61% (đã kiểm thử trên 100,000+ test cases)- **Độ chính xác**: 99.61% (đã kiểm thử trên 100,000+ test cases)
-
-- **Xử lý ngôn ngữ tự nhiên**: Nhập câu lệnh thông thường như nói chuyện- **Xử lý ngôn ngữ tự nhiên**: Nhập câu lệnh thông thường như nói chuyện
-
-- **Ví dụ**: - **Ví dụ**: 
-
-  ```  ```
-
-  "Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút"  "Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút"
-
-  "Khám bệnh vào 14h ngày 15/12 tại bệnh viện Bạch Mai"  "Khám bệnh vào 14h ngày 15/12 tại bệnh viện Bạch Mai"
-
-  "Đi ăn tối thứ 7 tuần sau lúc 7h tối"  "Đi ăn tối thứ 7 tuần sau lúc 7h tối"
-
-  ```  ```
-
-
-
-### 📊 Statistics Dashboard (v0.6+)### 📊 Statistics Dashboard (v0.6+)
-
-- **5 Tab phân tích chuyên sâu**:- **5 Tab phân tích chuyên sâu**:
-
-  - 📈 Tổng quan: Tổng sự kiện, streaks, reminders, trung bình  - 📈 Tổng quan: Tổng sự kiện, streaks, reminders, trung bình
-
-  - ⏰ Phân bố thời gian: Theo ngày trong tuần & theo giờ  - ⏰ Phân bố thời gian: Theo ngày trong tuần & theo giờ
-
-  - 📍 Địa điểm: Top 10 địa điểm thường xuyên  - 📍 Địa điểm: Top 10 địa điểm thường xuyên
-
-  - 🏷️ Phân loại: 6 categories (Họp, Khám bệnh, Ăn uống, Học tập, Thể thao, Giải trí)  - 🏷️ Phân loại: 6 categories (Họp, Khám bệnh, Ăn uống, Học tập, Thể thao, Giải trí)
-
-  - 📉 Xu hướng: 4 tuần với growth rate  - 📉 Xu hướng: 4 tuần với growth rate
-
-- **Xuất báo cáo**: PDF chuyên nghiệp & Excel đa sheet- **Xuất báo cáo**: PDF chuyên nghiệp & Excel đa sheet
-
-- **Biểu đồ trực quan**: Matplotlib với thiết kế hiện đại- **Biểu đồ trực quan**: Matplotlib với thiết kế hiện đại
-
-
-
-### 🎯 Tính Năng Đầy Đủ### 🎯 Tính Năng Đầy Đủ
-
-- ✅ **CRUD Operations**: Thêm/Sửa/Xóa/Xem sự kiện- ✅ **CRUD Operations**: Thêm/Sửa/Xóa/Xem sự kiện
-
-- 🔔 **Nhắc nhở thông minh**: Pop-up notification tự động- 🔔 **Nhắc nhở thông minh**: Pop-up notification tự động
-
-- 📥📤 **Import/Export**: JSON & ICS format (hỗ trợ Google Calendar)- 📥📤 **Import/Export**: JSON & ICS format (hỗ trợ Google Calendar)
-
-- 🗓️ **Lịch trực quan**: tkcalendar với danh sách sự kiện theo ngày- 🗓️ **Lịch trực quan**: tkcalendar với danh sách sự kiện theo ngày
-
-- 🔒 **Xác nhận 2 lớp**: Bảo vệ khi xóa tất cả sự kiện- 🔒 **Xác nhận 2 lớp**: Bảo vệ khi xóa tất cả sự kiện
-
-- 🌐 **Timezone support**: UTC/GMT và múi giờ địa phương- 🌐 **Timezone support**: UTC/GMT và múi giờ địa phương
-
-
-
----## Kiến trúc & luồng xử lý
-
-
-
-## 📋 Mục Lục- Giao diện: `main.py`
-
-    - Ô nhập lệnh → gọi `NLPPipeline.process(text)` → kết quả (event, start_time, location, reminder_minutes) → lưu DB → refresh UI.
-
-- [Điểm Nổi Bật](#-điểm-nổi-bật)    - Lịch (`tkcalendar.Calendar`) chọn ngày → truy vấn DB theo ngày → hiển thị `Treeview`.
-
-- [Yêu Cầu Hệ Thống](#-yêu-cầu-hệ-thống)    - Chỉnh sửa inline: nạp dữ liệu từ DB, cập nhật và refresh.
-
-- [Cài Đặt Nhanh](#-cài-đặt-nhanh)    - Import/Export: gọi các hàm trong `services/`.
-
-- [Sử Dụng](#-sử-dụng)    - Nhắc nhở: khởi động luồng nền kiểm tra định kỳ (60s) để hiển thị pop-up và cập nhật trạng thái.
-
-- [Kiến Trúc & Luồng Xử Lý](#️-kiến-trúc--luồng-xử-lý)
-
-- [Cấu Trúc Dự Án](#-cấu-trúc-dự-án)- NLP: `core_nlp/pipeline.py`
-
-- [Database Schema](#️-database-schema)    - Kết hợp NER địa điểm của `underthesea` (nếu có) với regex.
-
-- [Import/Export](#-importexport)    - Tách cụm thời gian (giờ:phút, “10h”, “ngày 6 tháng 12”, “hôm nay/mai/ngày mốt…”, “thứ d [tuần sau]”, “UTC+7/múi giờ +07:00”, “trong/sau X”, “X nữa”, sáng/chiều/tối…).
-
-- [Kiểm Thử](#-kiểm-thử)    - Chuẩn hóa phần văn bản còn lại làm tên sự kiện; trích phút nhắc nhở.
-
-- [Đóng Gói EXE](#-đóng-gói-exe)    - Gọi `parse_vietnamese_time` để chuyển `time_str` → `datetime` ISO.
-
-- [Troubleshooting](#-troubleshooting)
-
-- [Changelog](#-changelog)- Phân tích thời gian: `core_nlp/time_parser.py`
-
-- [License](#-license)    - Quy tắc thủ công cho ngày/giờ tường minh và tương đối; mặc định giờ nếu thiếu (ví dụ 09:00 hoặc theo buổi).
-
-    - Timezone chỉ áp dụng khi người dùng nêu rõ (UTC/GMT hoặc “múi giờ +..”).
 
 ---
 
-- CSDL: `database/db_manager.py` + `database/schema.sql`
+> Ứng dụng quản lý lịch trình thông minh sử dụng **NLP (Natural Language Processing)** để xử lý tiếng Việt tự nhiên. Nhập lệnh như nói chuyện, hệ thống tự động trích xuất sự kiện, thời gian, địa điểm và nhắc nhở.
 
-## 💻 Yêu Cầu Hệ Thống    - SQLite lưu `events(id, event_name, start_time, end_time, location, reminder_minutes, status)`.
-
-    - CRUD, lấy theo ngày, lấy nhắc nhở “pending” và cập nhật trạng thái `notified` sau khi hiển thị.
-
-### Minimum Requirements
-
-- **OS**: Windows 10+ (64-bit)- Dịch vụ: `services/`
-
-- **Python**: 3.9+ (recommended: 3.12.0)    - `import_service.py`: đọc JSON/ICS và ghi vào DB.
-
-- **RAM**: 4GB+    - `export_service.py`: xuất toàn bộ DB ra JSON/ICS.
-
-- **Disk**: 500MB free space    - `notification_service.py`: luồng kiểm tra nhắc nhở và popup.
+## ✨ Tính Năng Chính
 
 
 
-### Dependencies- Kiểm thử: `tests/`
+### 🤖 NLP Tiếng Việt Thông Minh
 
-```plaintext    - `tests/test_cases.json`: bộ dữ liệu kỳ vọng.
+- **Độ chính xác cao**: 96.6% trên 1050+ edge cases---
 
-# Core NLP    - `tests/test_nlp_pipeline.py`: unittest tính macro-F1 cho 4 nhánh (event, time, location, reminder).
+- **Xử lý ngôn ngữ tự nhiên**: Nhập câu như nói chuyện bình thường
 
-underthesea>=6.7.0        # Vietnamese NLP (NER, word segmentation)
+- **Hỗ trợ đa dạng**:## 🌟 Điểm Nổi Bật
 
-python-dateutil>=2.8.2    # Date parsing utilities## Cấu trúc thư mục và tệp chính
+  - ✅ Thời gian: "10h sáng", "6h chiều", "lúc 12 giờ", "támh" (typos)
+
+  - ✅ Ngày: "hôm nay", "mai", "thứ 3", "t5", "chu nhat", "20.10"
+
+  - ✅ Tương đối: "tuần sau", "tháng sau", "trong 2 ngày"
+
+  - ✅ Địa điểm: "ở phòng 302", "tại bệnh viện"### 🤖 NLP Tiếng Việt Thông Minh### 🤖 NLP Tiếng Việt Thông Minh
+
+  - ✅ Nhắc nhở: "nhắc trước 15 phút"
+
+- **Độ chính xác**: 99.61% (đã kiểm thử trên 100,000+ test cases)- **Độ chính xác**: 99.61% (đã kiểm thử trên 100,000+ test cases)
+
+**Ví dụ:**
+
+```- **Xử lý ngôn ngữ tự nhiên**: Nhập câu lệnh thông thường như nói chuyện- **Xử lý ngôn ngữ tự nhiên**: Nhập câu lệnh thông thường như nói chuyện
+
+"thứ 3 mười giờ tôi có lịch phỏng vấn ở tầng 5, nhắc trước 30 phút"
+
+→ Sự kiện: phỏng vấn- **Ví dụ**: - **Ví dụ**: 
+
+→ Thời gian: Thứ 3 tuần này, 10:00
+
+→ Địa điểm: tầng 5  ```  ```
+
+→ Nhắc nhở: 30 phút trước
+
+```  "Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút"  "Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút"
 
 
 
-# GUI Components```
+### 📋 Quản Lý Sự Kiện  "Khám bệnh vào 14h ngày 15/12 tại bệnh viện Bạch Mai"  "Khám bệnh vào 14h ngày 15/12 tại bệnh viện Bạch Mai"
 
-tkcalendar>=1.6.1         # Calendar widget.
+- ✅ **CRUD đầy đủ**: Thêm, sửa, xóa, xem sự kiện
 
-tkinter                    # Standard library (included with Python)├── main.py                     # Tkinter GUI, nhập NLP, lịch, chỉnh sửa, import/export, nhắc nhở
+- 📅 **Lịch trực quan**: `tkcalendar` với chọn ngày dễ dàng  "Đi ăn tối thứ 7 tuần sau lúc 7h tối"  "Đi ăn tối thứ 7 tuần sau lúc 7h tối"
 
-├── core_nlp/
+- 🔍 **Xem theo ngày**: Click ngày trên lịch → hiển thị tất cả sự kiện
 
-# Data Processing│   ├── pipeline.py             # NLPPipeline: NER (underthesea) + regex trích event/time/location/reminder
+- ✏️ **Chỉnh sửa nhanh**: Double-click sự kiện để sửa inline  ```  ```
 
-babel>=2.13.1             # Locale and timezone support│   └── time_parser.py          # parse_vietnamese_time: quy tắc thời gian tiếng Việt
+- 🗑️ **Xóa an toàn**: Xác nhận 2 lần khi xóa tất cả
 
-├── database/
 
-# Import/Export│   ├── db_manager.py           # SQLite CRUD và các truy vấn tiện ích
 
-ics>=0.7.2                # iCalendar format support│   └── schema.sql              # DDL tạo bảng events
+### 🔔 Nhắc Nhở Thông Minh
 
-├── services/
+- ⏰ **Tự động kiểm tra**: Background thread mỗi 60 giây### 📊 Statistics Dashboard (v0.6+)### 📊 Statistics Dashboard (v0.6+)
 
-# Statistics & Reporting (v0.6+)│   ├── import_service.py       # Import JSON/ICS → DB
+- 💬 **Popup thông báo**: Hiển thị trước thời gian đã đặt
 
-matplotlib>=3.8.0         # Charts and visualizations│   ├── export_service.py       # Export DB → JSON/ICS
+- ✅ **Quản lý trạng thái**: Tự động đánh dấu đã thông báo- **5 Tab phân tích chuyên sâu**:- **5 Tab phân tích chuyên sâu**:
 
-reportlab>=4.0.7          # PDF report generation│   └── notification_service.py # Luồng nền kiểm tra và popup nhắc nhở
+- 🔕 **Không spam**: Mỗi sự kiện chỉ nhắc 1 lần
 
-openpyxl>=3.1.2          # Excel file generation├── tests/
+  - 📈 Tổng quan: Tổng sự kiện, streaks, reminders, trung bình  - 📈 Tổng quan: Tổng sự kiện, streaks, reminders, trung bình
 
-scikit-learn>=1.3.0      # Machine learning utilities│   ├── test_nlp_pipeline.py    # unittest tính macro-F1
+### 📥📤 Import/Export
 
-```│   └── test_cases.json         # dữ liệu kiểm thử
+- **JSON**: Format chuẩn để backup/restore  - ⏰ Phân bố thời gian: Theo ngày trong tuần & theo giờ  - ⏰ Phân bố thời gian: Theo ngày trong tuần & theo giờ
 
-├── requirements.txt
+- **ICS**: Tương thích Google Calendar, Outlook, Apple Calendar
 
----└── README.md
+- **Import thông minh**: Hỗ trợ cả export format và test case format  - 📍 Địa điểm: Top 10 địa điểm thường xuyên  - 📍 Địa điểm: Top 10 địa điểm thường xuyên
 
-```
 
-## 🚀 Cài Đặt Nhanh
 
-## Yêu cầu hệ thống
+### ⚙️ Cài Đặt Tiện Lợi  - 🏷️ Phân loại: 6 categories (Họp, Khám bệnh, Ăn uống, Học tập, Thể thao, Giải trí)  - 🏷️ Phân loại: 6 categories (Họp, Khám bệnh, Ăn uống, Học tập, Thể thao, Giải trí)
 
-### 1. Clone Repository
+- 🎛️ **Settings Window**: Giao diện riêng cho cài đặt
 
-```powershell- Python 3.9+ (đã kiểm thử trên Windows)
+- 📦 **Import/Export**: Nút chức năng tập trung  - 📉 Xu hướng: 4 tuần với growth rate  - 📉 Xu hướng: 4 tuần với growth rate
 
-git clone https://github.com/d0ngle8k/NLP-Processing.git- Tkinter (đi kèm CPython chuẩn trên Windows)
+- 🗑️ **Xóa dữ liệu**: Dọn dẹp database an toàn
 
-cd NLP-Processing- Thư viện trong `requirements.txt`: underthesea, tkcalendar, ics, babel, (dateparser hiện không dùng trong mã, có thể giữ lại nếu muốn thử nghiệm)
+- ℹ️ **Thông tin ứng dụng**: Phiên bản, tác giả, năm phát triển- **Xuất báo cáo**: PDF chuyên nghiệp & Excel đa sheet- **Xuất báo cáo**: PDF chuyên nghiệp & Excel đa sheet
 
-```
 
-## Cài đặt và chạy (Windows PowerShell)
 
-### 2. Tạo Virtual Environment
+---- **Biểu đồ trực quan**: Matplotlib với thiết kế hiện đại- **Biểu đồ trực quan**: Matplotlib với thiết kế hiện đại
 
-```powershell1) Tạo môi trường ảo và kích hoạt
+
+
+## 🚀 Cài Đặt và Sử Dụng
+
+
+
+### Yêu Cầu Hệ Thống### 🎯 Tính Năng Đầy Đủ### 🎯 Tính Năng Đầy Đủ
+
+- **OS**: Windows 10+ (64-bit)
+
+- **Python**: 3.9+ (khuyến nghị 3.12)- ✅ **CRUD Operations**: Thêm/Sửa/Xóa/Xem sự kiện- ✅ **CRUD Operations**: Thêm/Sửa/Xóa/Xem sự kiện
+
+- **RAM**: 2GB+
+
+- **Disk**: 100MB- 🔔 **Nhắc nhở thông minh**: Pop-up notification tự động- 🔔 **Nhắc nhở thông minh**: Pop-up notification tự động
+
+
+
+### Cài Đặt Nhanh- 📥📤 **Import/Export**: JSON & ICS format (hỗ trợ Google Calendar)- 📥📤 **Import/Export**: JSON & ICS format (hỗ trợ Google Calendar)
+
+
+
+```powershell- 🗓️ **Lịch trực quan**: tkcalendar với danh sách sự kiện theo ngày- 🗓️ **Lịch trực quan**: tkcalendar với danh sách sự kiện theo ngày
+
+# 1. Clone repository
+
+git clone https://github.com/d0ngle8k/NLP-Processing.git- 🔒 **Xác nhận 2 lớp**: Bảo vệ khi xóa tất cả sự kiện- 🔒 **Xác nhận 2 lớp**: Bảo vệ khi xóa tất cả sự kiện
+
+cd NLP-Processing
+
+- 🌐 **Timezone support**: UTC/GMT và múi giờ địa phương- 🌐 **Timezone support**: UTC/GMT và múi giờ địa phương
+
+# 2. Tạo virtual environment
 
 python -m venv venv
 
-.\venv\Scripts\Activate.ps1```powershell
 
-```python -m venv venv
 
-.\n+venv\Scripts\Activate.ps1  # thông thường trên Windows
+# 3. Kích hoạt environment---## Kiến trúc & luồng xử lý
 
-### 3. Cài Đặt Dependencies# Nếu venv của bạn có cấu trúc dạng bin/ (như repo này), dùng:
+.\venv\Scripts\Activate.ps1  # Windows PowerShell
+
+# hoặc
+
+.\venv\bin\Activate.ps1      # Nếu venv có cấu trúc bin/
+
+## 📋 Mục Lục- Giao diện: `main.py`
+
+# 4. Cài đặt dependencies
+
+pip install -r requirements.txt    - Ô nhập lệnh → gọi `NLPPipeline.process(text)` → kết quả (event, start_time, location, reminder_minutes) → lưu DB → refresh UI.
+
+
+
+# 5. Chạy ứng dụng- [Điểm Nổi Bật](#-điểm-nổi-bật)    - Lịch (`tkcalendar.Calendar`) chọn ngày → truy vấn DB theo ngày → hiển thị `Treeview`.
+
+python main.py
+
+```- [Yêu Cầu Hệ Thống](#-yêu-cầu-hệ-thống)    - Chỉnh sửa inline: nạp dữ liệu từ DB, cập nhật và refresh.
+
+
+
+### Sử Dụng Cơ Bản- [Cài Đặt Nhanh](#-cài-đặt-nhanh)    - Import/Export: gọi các hàm trong `services/`.
+
+
+
+#### 1. Thêm Sự Kiện- [Sử Dụng](#-sử-dụng)    - Nhắc nhở: khởi động luồng nền kiểm tra định kỳ (60s) để hiển thị pop-up và cập nhật trạng thái.
+
+Nhập câu lệnh tự nhiên vào ô text:
+
+```- [Kiến Trúc & Luồng Xử Lý](#️-kiến-trúc--luồng-xử-lý)
+
+"Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút"
+
+"Khám bệnh 14h ngày 15/12 tại bệnh viện Bạch Mai"- [Cấu Trúc Dự Án](#-cấu-trúc-dự-án)- NLP: `core_nlp/pipeline.py`
+
+"t5 támh phỏng vấn"  # Thứ 5, 8 giờ
+
+"chu nhat mườih đi chơi"  # Chủ nhật, 10 giờ- [Database Schema](#️-database-schema)    - Kết hợp NER địa điểm của `underthesea` (nếu có) với regex.
+
+```
+
+→ Bấm **"Thêm sự kiện"**- [Import/Export](#-importexport)    - Tách cụm thời gian (giờ:phút, “10h”, “ngày 6 tháng 12”, “hôm nay/mai/ngày mốt…”, “thứ d [tuần sau]”, “UTC+7/múi giờ +07:00”, “trong/sau X”, “X nữa”, sáng/chiều/tối…).
+
+
+
+#### 2. Xem Sự Kiện- [Kiểm Thử](#-kiểm-thử)    - Chuẩn hóa phần văn bản còn lại làm tên sự kiện; trích phút nhắc nhở.
+
+- Click ngày trên **Calendar** → Danh sách sự kiện hiển thị bên dưới
+
+- Xem theo tháng với điều hướng dễ dàng- [Đóng Gói EXE](#-đóng-gói-exe)    - Gọi `parse_vietnamese_time` để chuyển `time_str` → `datetime` ISO.
+
+
+
+#### 3. Sửa Sự Kiện- [Troubleshooting](#-troubleshooting)
+
+- Double-click vào sự kiện trong danh sách
+
+- Chỉnh sửa thông tin trong form- [Changelog](#-changelog)- Phân tích thời gian: `core_nlp/time_parser.py`
+
+- Bấm **"Sửa"** để lưu
+
+- [License](#-license)    - Quy tắc thủ công cho ngày/giờ tường minh và tương đối; mặc định giờ nếu thiếu (ví dụ 09:00 hoặc theo buổi).
+
+#### 4. Xóa Sự Kiện
+
+- Chọn sự kiện → Bấm **"Xóa"** (xóa 1 sự kiện)    - Timezone chỉ áp dụng khi người dùng nêu rõ (UTC/GMT hoặc “múi giờ +..”).
+
+- Hoặc bấm **"Xóa tất cả"** → Xác nhận 2 lần
+
+---
+
+#### 5. Import/Export
+
+- Bấm **"⚙️ Cài đặt"** (góc dưới bên trái)- CSDL: `database/db_manager.py` + `database/schema.sql`
+
+- **Xuất JSON/ICS**: Lưu toàn bộ dữ liệu
+
+- **Nhập JSON/ICS**: Khôi phục hoặc import từ nguồn khác## 💻 Yêu Cầu Hệ Thống    - SQLite lưu `events(id, event_name, start_time, end_time, location, reminder_minutes, status)`.
+
+
+
+---    - CRUD, lấy theo ngày, lấy nhắc nhở “pending” và cập nhật trạng thái `notified` sau khi hiển thị.
+
+
+
+## 🏗️ Kiến Trúc Hệ Thống### Minimum Requirements
+
+
+
+### Cấu Trúc Thư Mục- **OS**: Windows 10+ (64-bit)- Dịch vụ: `services/`
+
+```
+
+NLP-Processing/- **Python**: 3.9+ (recommended: 3.12.0)    - `import_service.py`: đọc JSON/ICS và ghi vào DB.
+
+├── main.py                      # GUI chính (Tkinter)
+
+├── requirements.txt             # Python dependencies- **RAM**: 4GB+    - `export_service.py`: xuất toàn bộ DB ra JSON/ICS.
+
+├── README.md                    # Tài liệu này
+
+├── CHANGELOG.md                 # Lịch sử phiên bản- **Disk**: 500MB free space    - `notification_service.py`: luồng kiểm tra nhắc nhở và popup.
+
+│
+
+├── core_nlp/                    # Module xử lý NLP
+
+│   ├── pipeline.py              # Pipeline chính (NER + Time + Location)
+
+│   └── time_parser.py           # Parser thời gian tiếng Việt### Dependencies- Kiểm thử: `tests/`
+
+│
+
+├── database/                    # Lớp database```plaintext    - `tests/test_cases.json`: bộ dữ liệu kỳ vọng.
+
+│   ├── db_manager.py            # SQLite CRUD operations
+
+│   ├── schema.sql               # Database schema# Core NLP    - `tests/test_nlp_pipeline.py`: unittest tính macro-F1 cho 4 nhánh (event, time, location, reminder).
+
+│   └── events.db                # SQLite database (auto-created)
+
+│underthesea>=6.7.0        # Vietnamese NLP (NER, word segmentation)
+
+├── services/                    # Business logic services
+
+│   ├── import_service.py        # Import JSON/ICS → DBpython-dateutil>=2.8.2    # Date parsing utilities## Cấu trúc thư mục và tệp chính
+
+│   ├── export_service.py        # Export DB → JSON/ICS
+
+│   └── notification_service.py  # Background reminder thread
+
+│
+
+├── scripts/                     # Utility scripts# GUI Components```
+
+│   ├── generate_edge_case_tests.py  # Tạo test cases
+
+│   └── generate_report.py           # Tạo báo cáotkcalendar>=1.6.1         # Calendar widget.
+
+│
+
+└── tests/                       # Testing suitetkinter                    # Standard library (included with Python)├── main.py                     # Tkinter GUI, nhập NLP, lịch, chỉnh sửa, import/export, nhắc nhở
+
+    ├── test_nlp_pipeline.py     # Unit tests
+
+    ├── run_edge_case_tests.py   # Edge case test runner├── core_nlp/
+
+    ├── test_cases.json          # Test dataset
+
+    └── edge_case_tests_1000.json  # 1050 edge cases# Data Processing│   ├── pipeline.py             # NLPPipeline: NER (underthesea) + regex trích event/time/location/reminder
+
+```
+
+babel>=2.13.1             # Locale and timezone support│   └── time_parser.py          # parse_vietnamese_time: quy tắc thời gian tiếng Việt
+
+### Luồng Xử Lý NLP
+
+├── database/
+
+```
+
+Input: "thứ 3 mười giờ tôi có lịch phỏng vấn ở tầng 5, nhắc trước 30 phút"# Import/Export│   ├── db_manager.py           # SQLite CRUD và các truy vấn tiện ích
+
+   │
+
+   ▼ics>=0.7.2                # iCalendar format support│   └── schema.sql              # DDL tạo bảng events
+
+┌─────────────────────────────────────────┐
+
+│ 1. Normalize & Extract Time Patterns   │├── services/
+
+│    → "thứ 3 mười giờ"                  │
+
+└─────────────────────────────────────────┘# Statistics & Reporting (v0.6+)│   ├── import_service.py       # Import JSON/ICS → DB
+
+   │
+
+   ▼matplotlib>=3.8.0         # Charts and visualizations│   ├── export_service.py       # Export DB → JSON/ICS
+
+┌─────────────────────────────────────────┐
+
+│ 2. Parse Vietnamese Time                │reportlab>=4.0.7          # PDF report generation│   └── notification_service.py # Luồng nền kiểm tra và popup nhắc nhở
+
+│    → datetime: 2025-11-11T10:00:00     │
+
+└─────────────────────────────────────────┘openpyxl>=3.1.2          # Excel file generation├── tests/
+
+   │
+
+   ▼scikit-learn>=1.3.0      # Machine learning utilities│   ├── test_nlp_pipeline.py    # unittest tính macro-F1
+
+┌─────────────────────────────────────────┐
+
+│ 3. Extract Location (NER + Regex)      │```│   └── test_cases.json         # dữ liệu kiểm thử
+
+│    → "tầng 5"                           │
+
+└─────────────────────────────────────────┘├── requirements.txt
+
+   │
+
+   ▼---└── README.md
+
+┌─────────────────────────────────────────┐
+
+│ 4. Extract Reminder                     │```
+
+│    → reminder_minutes: 30               │
+
+└─────────────────────────────────────────┘## 🚀 Cài Đặt Nhanh
+
+   │
+
+   ▼## Yêu cầu hệ thống
+
+┌─────────────────────────────────────────┐
+
+│ 5. Extract Event Name (Remaining Text) │### 1. Clone Repository
+
+│    → "phỏng vấn"                        │
+
+└─────────────────────────────────────────┘```powershell- Python 3.9+ (đã kiểm thử trên Windows)
+
+   │
+
+   ▼git clone https://github.com/d0ngle8k/NLP-Processing.git- Tkinter (đi kèm CPython chuẩn trên Windows)
+
+Result: {
+
+  "event": "phỏng vấn",cd NLP-Processing- Thư viện trong `requirements.txt`: underthesea, tkcalendar, ics, babel, (dateparser hiện không dùng trong mã, có thể giữ lại nếu muốn thử nghiệm)
+
+  "start_time": "2025-11-11T10:00:00",
+
+  "location": "tầng 5",```
+
+  "reminder_minutes": 30
+
+}## Cài đặt và chạy (Windows PowerShell)
+
+```
+
+### 2. Tạo Virtual Environment
+
+### Database Schema
+
+```powershell1) Tạo môi trường ảo và kích hoạt
+
+```sql
+
+CREATE TABLE IF NOT EXISTS events (python -m venv venv
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    event_name TEXT NOT NULL,.\venv\Scripts\Activate.ps1```powershell
+
+    start_time TEXT NOT NULL,      -- ISO 8601 format
+
+    end_time TEXT,                  -- ISO 8601 (optional)```python -m venv venv
+
+    location TEXT,
+
+    reminder_minutes INTEGER DEFAULT 0,.\n+venv\Scripts\Activate.ps1  # thông thường trên Windows
+
+    status TEXT DEFAULT 'pending'   -- 'pending' or 'notified'
+
+);### 3. Cài Đặt Dependencies# Nếu venv của bạn có cấu trúc dạng bin/ (như repo này), dùng:
+
+```
 
 ```powershell# .\venv\bin\Activate.ps1
 
+---
+
 pip install -r requirements.txt```
 
+## 🧪 Kiểm Thử
+
 ```
+
+### Edge Case Testing
 
 2) Cài đặt phụ thuộc
 
+Ứng dụng đã được kiểm thử với **1050 edge cases** bao gồm:
+
 ### 4. Chạy Ứng Dụng
 
-```powershell```powershell
+- ✅ **weekday_time** (100 cases): "t5 támh", "thứ 2 bah", "chu nhat mườih" - **100% pass**
 
-python main.pypip install -r requirements.txt
+- ✅ **date_format** (100 cases): "20.10", "15/12", "ngày 6 tháng 11" - **100% pass**```powershell```powershell
 
-``````
+- ✅ **period_marker** (100 cases): "sáng", "chiều", "tối", "đêm" - **100% pass**
+
+- ✅ **typo_no_diacritics** (50 cases): "hom nay", "ngay mai", "toi" - **100% pass**python main.pypip install -r requirements.txt
+
+- ✅ **duration** (25 cases): "trong 2 ngày", "sau 3 giờ" - **100% pass**
+
+- ✅ **next_week** (50 cases): "tuần sau", "thứ 2 tuần sau" - **100% pass**``````
+
+- ✅ **today_explicit** (25 cases): "hôm nay 10h" - **100% pass**
 
 
+
+**Tổng kết**: **96.6%** pass rate (1014/1050)
 
 ### 5. (Optional) Build EXE3) Chạy ứng dụng
 
+### Chạy Tests
+
 ```powershell
 
-python -m PyInstaller TroLyLichTrinh0.6.1.spec --clean --noconfirm```powershell
+```powershell
+
+# Tạo edge case testspython -m PyInstaller TroLyLichTrinh0.6.1.spec --clean --noconfirm```powershell
+
+python scripts\generate_edge_case_tests.py
 
 ```python main.py
 
-File EXE sẽ có tại: `dist\TroLyLichTrinh0.6.1.exe` (111.91 MB)# hoặc (nếu dùng interpreter trong venv/bin)
+# Chạy edge case tests
 
-# .\venv\bin\python.exe main.py
-
----```
+python tests\run_edge_case_tests.pyFile EXE sẽ có tại: `dist\TroLyLichTrinh0.6.1.exe` (111.91 MB)# hoặc (nếu dùng interpreter trong venv/bin)
 
 
 
-## 📖 Sử DụngMẹo dùng nhanh:
+# Kết quả# .\venv\bin\python.exe main.py
 
-- Nhập: “Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút” → bấm “Thêm sự kiện”.
+# Total Tests: 1050
 
-### Thêm Sự Kiện- Chọn ngày trên lịch để xem danh sách. Chọn một dòng → “Sửa” để chỉnh nhanh.
+# ✅ Passed: 1014 (96.6%)---```
 
-Nhập câu lệnh tự nhiên vào ô text, ví dụ:- “Xuất JSON/ICS” và “Nhập JSON/ICS” ở thanh nút dưới cùng.
+# ❌ Failed: 36 (3.4%)
 
 ```
 
-Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút## Kiểm thử (F1 macro)
+
+
+### Test Cases Đặc Biệt## 📖 Sử DụngMẹo dùng nhanh:
+
+
+
+```python- Nhập: “Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút” → bấm “Thêm sự kiện”.
+
+# Compact weekday format với typos
+
+"t5 támh phỏng vấn"           → Thứ 5, 8:00, "phỏng vấn"### Thêm Sự Kiện- Chọn ngày trên lịch để xem danh sách. Chọn một dòng → “Sửa” để chỉnh nhanh.
+
+"t2 bah họp"                  → Thứ 2, 3:00, "họp"
+
+"chu nhat mườih đi chơi"      → Chủ nhật, 10:00, "đi chơi"Nhập câu lệnh tự nhiên vào ô text, ví dụ:- “Xuất JSON/ICS” và “Nhập JSON/ICS” ở thanh nút dưới cùng.
+
+
+
+# Date formats```
+
+"họp 20.10"                   → 20/10/2025, "họp"
+
+"khám bệnh 15/12"             → 15/12/2025, "khám bệnh"Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút## Kiểm thử (F1 macro)
+
+
+
+# Period markers  ```
+
+"6h chiều họp"                → 18:00 (không phải 6:00)
+
+"10h tối"                     → 22:00Bấm **"Thêm sự kiện"** → Hệ thống tự động:Chạy unittest đo macro-F1 cho pipeline NLP:
+
+
+
+# Relative dates- Trích xuất tên sự kiện: "Họp nhóm"
+
+"tuần sau thứ 3"              → Thứ 3 tuần sau
+
+"tháng sau ngày 15"           → Ngày 15 tháng sau- Parse thời gian: 10:00 AM ngày mai```powershell
 
 ```
-
-Bấm **"Thêm sự kiện"** → Hệ thống tự động:Chạy unittest đo macro-F1 cho pipeline NLP:
-
-- Trích xuất tên sự kiện: "Họp nhóm"
-
-- Parse thời gian: 10:00 AM ngày mai```powershell
 
 - Địa điểm: "phòng 302"python -m unittest tests\test_nlp_pipeline.py -v
 
+---
+
 - Nhắc nhở: 15 phút trước```
 
+## 📦 Dependencies
 
 
-### Xem & Sửa Sự KiệnVí dụ kết quả gần đây: macro-F1 ≈ 0.967 (tùy môi trường/thư viện).
 
-1. Click vào ngày trên **Calendar**
+### Core Libraries
 
-2. Danh sách sự kiện hiển thị bên dưới## Cơ sở dữ liệu (SQLite)
+```### Xem & Sửa Sự KiệnVí dụ kết quả gần đây: macro-F1 ≈ 0.967 (tùy môi trường/thư viện).
 
-3. Double-click vào sự kiện → Chỉnh sửa inline
+underthesea>=6.7.0          # Vietnamese NLP (NER)
 
-4. Bấm **"Sửa"** để lưu thay đổi- File DB: `database/events.db` tự tạo nếu chưa có.
+python-dateutil>=2.8.2      # Date parsing1. Click vào ngày trên **Calendar**
 
-- Bảng `events` (xem `database/schema.sql`):
+tkcalendar>=1.6.1           # Calendar widget
 
-### Xóa Sự Kiện    - `id` (PK), `event_name` (TEXT, NOT NULL), `start_time` (TEXT ISO 8601, NOT NULL), `end_time` (TEXT, NULL), `location` (TEXT), `reminder_minutes` (INTEGER, default 0), `status` (TEXT, default 'pending').
+babel>=2.13.1               # Timezone support2. Danh sách sự kiện hiển thị bên dưới## Cơ sở dữ liệu (SQLite)
+
+ics>=0.7.2                  # iCalendar format
+
+```3. Double-click vào sự kiện → Chỉnh sửa inline
+
+
+
+### Optional (Statistics - chưa dùng)4. Bấm **"Sửa"** để lưu thay đổi- File DB: `database/events.db` tự tạo nếu chưa có.
+
+```
+
+matplotlib>=3.8.0           # Charts- Bảng `events` (xem `database/schema.sql`):
+
+reportlab>=4.0.7            # PDF reports
+
+openpyxl>=3.1.2            # Excel export### Xóa Sự Kiện    - `id` (PK), `event_name` (TEXT, NOT NULL), `start_time` (TEXT ISO 8601, NOT NULL), `end_time` (TEXT, NULL), `location` (TEXT), `reminder_minutes` (INTEGER, default 0), `status` (TEXT, default 'pending').
+
+```
 
 - **Xóa 1 sự kiện**: Chọn sự kiện → Bấm **"Xóa"**- Reset DB (xóa dữ liệu): xoá file `database/events.db` khi ứng dụng đang tắt.
 
+---
+
 - **Xóa tất cả**: Bấm **"Xóa tất cả"** → Xác nhận 2 lần
+
+## 🔧 Troubleshooting
 
 ## Nhập/Xuất JSON & ICS
 
+### Lỗi Thường Gặp
+
 ### Xem Thống Kê
 
-1. Bấm **"📊 Xem thống kê"**- Xuất mặc định ra gốc dự án: `schedule_export.json`, `schedule_export.ics`.
+#### 1. `ModuleNotFoundError: No module named 'tkcalendar'`
 
-2. Chọn tab phân tích:- Nhập từ tệp do bạn chọn qua hộp thoại.
+```powershell1. Bấm **"📊 Xem thống kê"**- Xuất mặc định ra gốc dự án: `schedule_export.json`, `schedule_export.ics`.
 
-   - 📊 Tổng quan- **Nhập JSON hỗ trợ 2 định dạng**:
+# Kích hoạt venv và cài đặt lại
 
-   - ⏰ Thời gian    1. **Export format** (truyền thống): `{"event_name": "...", "start_time": "2025-11-10T18:00:00", ...}`
+.\venv\Scripts\Activate.ps12. Chọn tab phân tích:- Nhập từ tệp do bạn chọn qua hộp thoại.
 
-   - 📍 Địa điểm    2. **Test case format** (MỚI): `{"input": "Họp nhóm 10h mai...", "expected": {...}}` - tự động parse qua NLP
+pip install -r requirements.txt
 
-   - 🏷️ Phân loại- Mapping chính:
+```   - 📊 Tổng quan- **Nhập JSON hỗ trợ 2 định dạng**:
 
-   - 📉 Xu hướng    - JSON export: `event_name`/`event` → `event_name`, `start_time` ISO bắt buộc, `location`, `reminder_minutes`.
 
-3. Bấm **"📄 Xuất PDF"** hoặc **"📊 Xuất Excel"**    - JSON test case: `input` → parse qua NLP → event + start_time + location + reminder.
 
-    - ICS: đọc `name`, `begin` (tự động chuyển `datetime`/Arrow → ISO), `location`.
+#### 2. Database không tạo được   - ⏰ Thời gian    1. **Export format** (truyền thống): `{"event_name": "...", "start_time": "2025-11-10T18:00:00", ...}`
 
-### Import/Export- **Lưu ý**: Có thể nhập file test từ `./tests/` (như `test_cases.json`, `extended_test_cases_10000.json`).
+```powershell
 
-- **Export JSON**: Bấm **"Xuất JSON"** → `schedule_export.json`
+# Kiểm tra quyền ghi trong thư mục database/   - 📍 Địa điểm    2. **Test case format** (MỚI): `{"input": "Họp nhóm 10h mai...", "expected": {...}}` - tự động parse qua NLP
 
-- **Export ICS**: Bấm **"Xuất ICS"** → `schedule_export.ics` (Google Calendar compatible)## Đóng gói (.exe) bằng PyInstaller
+# Xóa file events.db cũ nếu bị corrupt
 
-- **Import**: Bấm **"Nhập JSON/ICS"** → Chọn file
+Remove-Item database\events.db -Force   - 🏷️ Phân loại- Mapping chính:
+
+python main.py  # Sẽ tạo lại tự động
+
+```   - 📉 Xu hướng    - JSON export: `event_name`/`event` → `event_name`, `start_time` ISO bắt buộc, `location`, `reminder_minutes`.
+
+
+
+#### 3. Underthesea NER không hoạt động3. Bấm **"📄 Xuất PDF"** hoặc **"📊 Xuất Excel"**    - JSON test case: `input` → parse qua NLP → event + start_time + location + reminder.
+
+```
+
+⚠️ WARNING: underthesea NER failed, using fallback regex    - ICS: đọc `name`, `begin` (tự động chuyển `datetime`/Arrow → ISO), `location`.
+
+```
+
+→ Không ảnh hưởng chức năng, app vẫn chạy với regex location detection### Import/Export- **Lưu ý**: Có thể nhập file test từ `./tests/` (như `test_cases.json`, `extended_test_cases_10000.json`).
+
+
+
+#### 4. Venv có cấu trúc `bin/` thay vì `Scripts/`- **Export JSON**: Bấm **"Xuất JSON"** → `schedule_export.json`
+
+```powershell
+
+# Sử dụng đường dẫn bin/- **Export ICS**: Bấm **"Xuất ICS"** → `schedule_export.ics` (Google Calendar compatible)## Đóng gói (.exe) bằng PyInstaller
+
+.\venv\bin\Activate.ps1
+
+.\venv\bin\python.exe main.py- **Import**: Bấm **"Nhập JSON/ICS"** → Chọn file
+
+```
 
 `underthesea` sử dụng mô hình ngoài thư mục người dùng (`~/.underthesea`), cần add-data và đã có hack `_MEIPASS` trong `main.py` để định tuyến `Path.home()` khi chạy bản đóng gói.
 
 ---
 
+---
+
+## 📝 Changelog
+
 ```powershell
 
-## 🏗️ Kiến Trúc & Luồng Xử Lýpyinstaller --onefile --windowed --name "TrinhLyAo" \
+### Version 0.8.1 (2025-11-06) - Current
 
-    --add-data "C:\Users\<TEN_USER>\.underthesea;.underthesea" \
+**Edge Case Improvements:**## 🏗️ Kiến Trúc & Luồng Xử Lýpyinstaller --onefile --windowed --name "TrinhLyAo" \
 
-### Architecture Overview    --hidden-import "babel.numbers" \
+- ✅ Fixed compact weekday format: "t5 támh", "t2 bah", "t7 sáuh"
+
+- ✅ Added word boundaries to prevent partial matches    --add-data "C:\Users\<TEN_USER>\.underthesea;.underthesea" \
+
+- ✅ Enhanced pipeline patterns for number words with diacritics
+
+- ✅ Fixed "chu nhat" (chủ nhật) parsing### Architecture Overview    --hidden-import "babel.numbers" \
+
+- 📊 Edge case pass rate: **96.6%** (1014/1050)
 
 ```    main.py
 
-┌─────────────────────────────────────────────────────────────┐```
+**Improvements:**
 
-│                        main.py (GUI)                         │
+- ✨ Added Settings window (⚙️ button)┌─────────────────────────────────────────────────────────────┐```
+
+- 🎨 Reorganized Import/Export to Settings
+
+- 📦 Added app info section│                        main.py (GUI)                         │
+
+- 🧹 Code cleanup and optimization
 
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │Ghi chú:
 
-│  │ Input Field  │  │   Calendar   │  │  Statistics  │      │- Sửa `<TEN_USER>` phù hợp máy build.
+### Version 0.7.0 (2025-11-05)
 
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │- `--hidden-import "babel.numbers"` giúp tkcalendar/babel không lỗi khi đóng gói.
+**Major Fixes:**│  │ Input Field  │  │   Calendar   │  │  Statistics  │      │- Sửa `<TEN_USER>` phù hợp máy build.
 
-└─────────┼──────────────────┼──────────────────┼─────────────┘- Bản .exe sẽ giải nén tạm và `Path.home()` đã được ghi đè để trỏ tới vùng tạm.
+- ✅ Fixed "thứ 3 mười giờ" parsing (weekday + number words)
 
-          │                  │                  │
+- ✅ Fixed "tôi" vs "tối" ambiguity│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │- `--hidden-import "babel.numbers"` giúp tkcalendar/babel không lỗi khi đóng gói.
 
-          ▼                  ▼                  ▼## Sự cố thường gặp (Troubleshooting)
+- ✅ Fixed "hôm nay" parsing (0% → 100%)
 
-┌─────────────────────────────────────────────────────────────┐
+- ✅ Fixed "tuần sau" parsing (64% → 100%)└─────────┼──────────────────┼──────────────────┼─────────────┘- Bản .exe sẽ giải nén tạm và `Path.home()` đã được ghi đè để trỏ tới vùng tạm.
 
-│                     Core Components                          │- Lỗi `ModuleNotFoundError: No module named 'tkcalendar'`
+- ✅ Fixed duration expressions (64% → 100%)
 
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │    - Đảm bảo bạn đã kích hoạt đúng venv và chạy `pip install -r requirements.txt`.
+- 📊 Generated 1050 edge case tests          │                  │                  │
 
-│  │ NLP Pipeline │  │  DB Manager  │  │  Statistics  │      │
 
-│  │ (core_nlp)   │  │  (database)  │  │  Service     │      │- underthesea không tải được mô hình/không có NER
+
+### Version 0.6.1 (2025-11-04)          ▼                  ▼                  ▼## Sự cố thường gặp (Troubleshooting)
+
+**Critical Fixes:**
+
+- ✅ Fixed date format parsing: "20.10", "15/12", "6-11"┌─────────────────────────────────────────────────────────────┐
+
+- ✅ Fixed "6h chiều" parsed as 06:00 (now correctly 18:00)
+
+- ✅ Enhanced period detection logic│                     Core Components                          │- Lỗi `ModuleNotFoundError: No module named 'tkcalendar'`
+
+
+
+### Version 0.6.0 (2025-11-03)│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │    - Đảm bảo bạn đã kích hoạt đúng venv và chạy `pip install -r requirements.txt`.
+
+**Initial Release:**
+
+- ✨ Basic NLP pipeline for Vietnamese│  │ NLP Pipeline │  │  DB Manager  │  │  Statistics  │      │
+
+- 📅 Calendar UI with tkcalendar
+
+- 🔔 Reminder notifications│  │ (core_nlp)   │  │  (database)  │  │  Service     │      │- underthesea không tải được mô hình/không có NER
+
+- 📥📤 JSON/ICS import/export
 
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │    - Ứng dụng vẫn chạy nhờ fallback, nhưng nhận diện địa điểm có thể kém chính xác hơn.
 
+---
+
 └─────────┼──────────────────┼──────────────────┼─────────────┘    - Khi đóng gói, nhớ `--add-data ~/.underthesea` như hướng dẫn.
+
+## 📄 License
 
           │                  │                  │
 
+MIT License
+
           ▼                  ▼                  ▼- Vấn đề timezone trong ICS/hiển thị giờ
+
+Copyright (c) 2025 Trường Gia Thành (d0ngle8k)
 
 ┌─────────────────────────────────────────────────────────────┐    - Parser chỉ gán timezone khi bạn nêu rõ (UTC/GMT hoặc “múi giờ +..”). Với dữ liệu không có tz, ứng dụng dùng datetime “naive”.
 
+---
+
 │                      Data Layer                              │
+
+## 👨‍💻 Tác Giả
 
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │- Venv có thư mục `bin/` thay vì `Scripts/`
 
-│  │ Time Parser  │  │SQLite (events│  │ Export/Import│      │    - Sử dụng đường dẫn `venv/bin/python.exe` và `venv/bin/Activate.ps1` thay thế như ví dụ.
+**Trường Gia Thành (d0ngle8k)**
+
+- GitHub: [@d0ngle8k](https://github.com/d0ngle8k)│  │ Time Parser  │  │SQLite (events│  │ Export/Import│      │    - Sử dụng đường dẫn `venv/bin/python.exe` và `venv/bin/Activate.ps1` thay thế như ví dụ.
+
+- Repository: [NLP-Processing](https://github.com/d0ngle8k/NLP-Processing)
 
 │  │ (Vietnamese) │  │    table)    │  │   Services   │      │
 
+---
+
 │  └──────────────┘  └──────────────┘  └──────────────┘      │---
 
+## 🙏 Cảm Ơn
+
 └─────────────────────────────────────────────────────────────┘
 
-```Nếu bạn muốn mở rộng: thêm index DB cho `start_time`/`status`, mở rộng mẫu thời gian (ví dụ “tuần tới”, “đầu tuần”, “cuối tháng”), thêm bộ lint/type check (ruff/mypy), hoặc cải thiện UX xuất/nhập với hộp thoại lưu.
+- **underthesea**: Vietnamese NLP library
+
+- **tkcalendar**: Calendar widget for Tkinter```Nếu bạn muốn mở rộng: thêm index DB cho `start_time`/`status`, mở rộng mẫu thời gian (ví dụ “tuần tới”, “đầu tuần”, “cuối tháng”), thêm bộ lint/type check (ruff/mypy), hoặc cải thiện UX xuất/nhập với hộp thoại lưu.
+
+- **python-dateutil**: Powerful date parsing
+
+- **ics**: iCalendar format support
 
 
 
-### NLP Pipeline Flow
+---### NLP Pipeline Flow
+
 ```
-User Input: "Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút"
+
+## 📞 Hỗ TrợUser Input: "Họp nhóm lúc 10h sáng mai ở phòng 302, nhắc trước 15 phút"
+
      │
-     ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 1. NER (underthesea) + Regex Location Extraction            │
-│    → location = "phòng 302"                                 │
+
+Nếu gặp vấn đề hoặc có câu hỏi:     ▼
+
+1. Kiểm tra [Troubleshooting](#-troubleshooting)┌─────────────────────────────────────────────────────────────┐
+
+2. Xem [CHANGELOG.md](CHANGELOG.md)│ 1. NER (underthesea) + Regex Location Extraction            │
+
+3. Tạo issue trên GitHub│    → location = "phòng 302"                                 │
+
 └─────────────────────────────────────────────────────────────┘
-     │
+
+---     │
+
      ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 2. Time Expression Detection & Extraction                   │
-│    → time_str = "10h sáng mai"                              │
-│    → parse_vietnamese_time() → datetime                     │
-└─────────────────────────────────────────────────────────────┘
+
+<p align="center">┌─────────────────────────────────────────────────────────────┐
+
+  <strong>🎯 Version 0.8.1 - Production Ready</strong>│ 2. Time Expression Detection & Extraction                   │
+
+  <br>│    → time_str = "10h sáng mai"                              │
+
+  Made with ❤️ by d0ngle8k│    → parse_vietnamese_time() → datetime                     │
+
+</p>└─────────────────────────────────────────────────────────────┘
+
      │
      ▼
 ┌─────────────────────────────────────────────────────────────┐

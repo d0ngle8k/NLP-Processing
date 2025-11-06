@@ -36,7 +36,13 @@ class NLPPipeline:
             r"|\btoi\s+(?:nay|mai|qua|hom\s*nay|hom\s*qua|hom\s*kia)(?=\s|$)"
             # Weekend
             r"|(?:cuối tuần|cuoi tuan)(?!\w)"
-            # Weekday patterns with optional period
+            # Weekday patterns with optional period or number words (including typos with/without diacritics)
+            # Pattern 1: weekday + number words (e.g., "t5 támh", "thứ 2 bah", "chu nhat mười haih")
+            # Use word boundaries \b to prevent partial matches like "tam" matching "támh"
+            # Include all typo variations: tamh/támh, sauh/sáuh, namh/nămh, muoih/mườih, moth, haih, bah, bonh, tuh, bayh, chinh
+            r"|(?:thứ|thu|t)\s*(?:\d|hai|ba|tu|nam|sau|bay|tam|chin|muoi|moth|haih|bah|bonh|tuh|namh|sauh|bayh|tamh|chinh|muoih|támh|sáuh|nămh|mườih)\b\s+\b(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|mươi|muoi|moth|haih|bah|bonh|tuh|namh|sauh|bayh|tamh|chinh|muoih|mườih|mười|một|bốn|sáu|tám|chín|támh|sáuh|nămh)\b(?:\s+\b(?:mot|hai|ba|bon|tu|moth|haih|bah|bonh|tuh|một)\b)?"
+            r"|(?:cn|chu\s+nhat|chu\s*nhat|chủ\s+nhật|chủ\s*nhật)\s+\b(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|mươi|muoi|moth|haih|bah|bonh|tuh|namh|sauh|bayh|tamh|chinh|muoih|mườih|mười|một|bốn|sáu|tám|chín|támh|sáuh|nămh)\b(?:\s+\b(?:mot|hai|ba|bon|tu|moth|haih|bah|bonh|tuh|một)\b)?"
+            # Pattern 2: weekday with period (existing)
             r"|(?:thứ|thu)\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?"
             r"|t\s*\d(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?"
             r"|cn(?:\s+(?:tuần|tuan)\s+sau\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?(?:\s+(?:sáng|sang|trưa|trua|chiều|chieu|tối|toi|đêm|dem|khuya))?"

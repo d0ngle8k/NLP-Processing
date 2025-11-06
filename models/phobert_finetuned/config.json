@@ -1,0 +1,7 @@
+{
+  "model_type": "phobert_event_extractor",
+  "trained_date": "2025-11-06T17:35:41.482717",
+  "num_epochs": 15,
+  "learning_rate": 2e-05,
+  "batch_size": 16
+}

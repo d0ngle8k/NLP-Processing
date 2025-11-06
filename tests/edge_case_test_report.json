@@ -1,0 +1,627 @@
+{
+  "timestamp": "2025-11-06T19:59:44.423876",
+  "summary": {
+    "total": 1050,
+    "passed": 1014,
+    "failed": 36,
+    "pass_rate": 96.57142857142857
+  },
+  "by_category": {
+    "weekday_time": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0
+    },
+    "ambiguous_toi": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "period_evening": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "date_format": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0
+    },
+    "missing_time": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "missing_location": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "missing_event": {
+      "total": 25,
+      "passed": 0,
+      "failed": 25
+    },
+    "only_event": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "period_marker": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0
+    },
+    "relative_date": {
+      "total": 100,
+      "passed": 99,
+      "failed": 1
+    },
+    "time_range": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "compressed_time": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "duration": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "special_time": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "with_location": {
+      "total": 100,
+      "passed": 100,
+      "failed": 0
+    },
+    "with_reminder": {
+      "total": 50,
+      "passed": 50,
+      "failed": 0
+    },
+    "typo_no_diacritics": {
+      "total": 50,
+      "passed": 50,
+      "failed": 0
+    },
+    "mixed_case": {
+      "total": 50,
+      "passed": 50,
+      "failed": 0
+    },
+    "same_weekday": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "today_explicit": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "next_week": {
+      "total": 50,
+      "passed": 50,
+      "failed": 0
+    },
+    "invalid_input": {
+      "total": 50,
+      "passed": 40,
+      "failed": 10
+    }
+  },
+  "failures": [
+    {
+      "test_id": 301,
+      "input": "t4 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "t4 10h",
+        "start_time": "2025-11-12T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 302,
+      "input": "t7 15h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "t7 15h",
+        "start_time": "2025-11-08T15:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 303,
+      "input": "thu 2 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thu 2 10h",
+        "start_time": "2025-11-10T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 304,
+      "input": "thứ bảy 16h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ bảy 16h",
+        "start_time": "2025-11-08T16:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 305,
+      "input": "t7 12h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "t7 12h",
+        "start_time": "2025-11-08T12:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 306,
+      "input": "thứ ba 12h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ ba 12h",
+        "start_time": "2025-11-11T12:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 307,
+      "input": "thứ 6 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ 6 11h",
+        "start_time": "2025-11-07T11:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 308,
+      "input": "thứ sáu 16h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ sáu 16h",
+        "start_time": "2025-11-07T16:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 309,
+      "input": "t5 13h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "t5 13h",
+        "start_time": "2025-11-06T13:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 310,
+      "input": "thu 3 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thu 3 10h",
+        "start_time": "2025-11-11T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 311,
+      "input": "thu 5 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thu 5 10h",
+        "start_time": "2025-11-06T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 312,
+      "input": "thu 2 15h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thu 2 15h",
+        "start_time": "2025-11-10T15:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 313,
+      "input": "thứ 2 14h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ 2 14h",
+        "start_time": "2025-11-10T14:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 314,
+      "input": "thu 2 18h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thu 2 18h",
+        "start_time": "2025-11-10T18:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 315,
+      "input": "thứ sáu 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ sáu 11h",
+        "start_time": "2025-11-07T11:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 316,
+      "input": "t2 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "t2 11h",
+        "start_time": "2025-11-10T11:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 317,
+      "input": "t7 11h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "t7 11h",
+        "start_time": "2025-11-08T11:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 318,
+      "input": "thứ bảy 14h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ bảy 14h",
+        "start_time": "2025-11-08T14:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 319,
+      "input": "t4 10h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "t4 10h",
+        "start_time": "2025-11-12T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 320,
+      "input": "thu 6 17h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thu 6 17h",
+        "start_time": "2025-11-07T17:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 321,
+      "input": "chu nhat 12h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "chu nhat 12h",
+        "start_time": "2025-11-09T12:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 322,
+      "input": "cn 18h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "cn 18h",
+        "start_time": "2025-11-09T18:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 323,
+      "input": "thu 4 17h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thu 4 17h",
+        "start_time": "2025-11-12T17:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 324,
+      "input": "thứ hai 15h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "thứ hai 15h",
+        "start_time": "2025-11-10T15:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 325,
+      "input": "chủ nhật 13h",
+      "category": "missing_event",
+      "note": "Has time only, missing event name - should FAIL",
+      "error": "Should have failed but passed",
+      "parsed_data": {
+        "event": "chủ nhật 13h",
+        "start_time": "2025-11-09T13:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 515,
+      "input": "standup hôm nay lúc 9h",
+      "category": "relative_date",
+      "note": "Relative: hôm nay",
+      "error": "Missing start time",
+      "parsed_data": {
+        "event": "standup 9h",
+        "start_time": null,
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1001,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "10h",
+        "start_time": "2025-11-06T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1004,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "ngày mai",
+        "start_time": "2025-11-07T19:59:44.414361",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1012,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "10h",
+        "start_time": "2025-11-06T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1013,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "10h",
+        "start_time": "2025-11-06T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1018,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "ngày mai",
+        "start_time": "2025-11-07T19:59:44.415361",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1027,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "ngày mai",
+        "start_time": "2025-11-07T19:59:44.415361",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1029,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "10h",
+        "start_time": "2025-11-06T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1042,
+      "input": "10h",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "10h",
+        "start_time": "2025-11-06T10:00:00",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1044,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "ngày mai",
+        "start_time": "2025-11-07T19:59:44.416360",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    },
+    {
+      "test_id": 1049,
+      "input": "ngày mai",
+      "category": "invalid_input",
+      "note": "Should fail gracefully",
+      "error": "Invalid input accepted when it should be rejected",
+      "parsed_data": {
+        "event": "ngày mai",
+        "start_time": "2025-11-07T19:59:44.417361",
+        "end_time": null,
+        "location": null,
+        "reminder_minutes": 0
+      }
+    }
+  ]
+}

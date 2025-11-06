@@ -12,12 +12,21 @@ from tkinter import ttk, messagebox, filedialog
 from tkcalendar import Calendar
 from datetime import date, datetime
 
-from core_nlp.pipeline import NLPPipeline
 from database.db_manager import DatabaseManager
 from services.notification_service import start_notification_service
 from services.export_service import export_to_json, export_to_ics
 from services.import_service import import_from_json, import_from_ics
 from services.statistics_service import StatisticsService
+
+# NLP Pipeline - PhoBERT or Rule-based
+try:
+    from core_nlp.phobert_model import PhoBERTNLPPipeline
+    USE_PHOBERT = True
+    print("✅ Using PhoBERT-based NLP (AI Model)")
+except ImportError:
+    from core_nlp.pipeline import NLPPipeline
+    USE_PHOBERT = False
+    print("⚠️ Using Rule-based NLP (PhoBERT not available)")
 
 # Matplotlib for charts
 try:
@@ -139,11 +148,8 @@ class Application(tk.Tk):
         vsb.grid(row=0, column=1, sticky='ns')
         hsb.grid(row=1, column=0, sticky='ew')
 
-        # Controls
-        ttk.Button(control_frame, text="Nhập JSON", command=self.handle_import_json).pack(side='right', padx=4)
-        ttk.Button(control_frame, text="Nhập ICS", command=self.handle_import_ics).pack(side='right', padx=4)
-        ttk.Button(control_frame, text="Xuất JSON", command=self.handle_export_json).pack(side='right', padx=4)
-        ttk.Button(control_frame, text="Xuất ICS", command=self.handle_export_ics).pack(side='right', padx=4)
+        # Controls - Settings button (bottom left corner)
+        ttk.Button(control_frame, text="⚙️ Cài đặt", command=self.handle_show_settings).pack(side='left', padx=4)
 
         # Inline edit frame (hidden by default)
         self.edit_frame = ttk.LabelFrame(self, text="Chỉnh sửa sự kiện", padding=10)
@@ -905,11 +911,175 @@ class Application(tk.Tk):
                 "Lỗi xuất Excel",
                 f"Không thể xuất Excel:\n{e}"
             )
+    
+    # --- Settings Window ---
+    def handle_show_settings(self):
+        """Show settings window with app info and import/export"""
+        # Create settings window
+        settings_window = tk.Toplevel(self)
+        settings_window.title("⚙️ Cài đặt")
+        settings_window.geometry("550x600")
+        settings_window.transient(self)  # Set as child of main window
+        settings_window.resizable(False, False)
+        
+        # Main container
+        main_container = ttk.Frame(settings_window, padding=20)
+        main_container.pack(fill='both', expand=True)
+        
+        # === Section 1: Import/Export Data ===
+        import_export_frame = ttk.LabelFrame(
+            main_container,
+            text="📁 Nhập/Xuất Dữ liệu",
+            padding=15
+        )
+        import_export_frame.pack(fill='x', pady=(0, 20))
+        
+        # Description
+        ttk.Label(
+            import_export_frame,
+            text="Sao lưu hoặc khôi phục dữ liệu lịch trình của bạn",
+            font=('Arial', 9),
+            foreground='gray'
+        ).pack(pady=(0, 15))
+        
+        # Export buttons
+        export_frame = ttk.Frame(import_export_frame)
+        export_frame.pack(fill='x', pady=5)
+        
+        ttk.Button(
+            export_frame,
+            text="📤 Xuất ra JSON",
+            command=self.handle_export_json,
+            width=25
+        ).pack(side='left', padx=5)
+        
+        ttk.Button(
+            export_frame,
+            text="📤 Xuất ra ICS",
+            command=self.handle_export_ics,
+            width=25
+        ).pack(side='left', padx=5)
+        
+        # Import buttons
+        import_frame = ttk.Frame(import_export_frame)
+        import_frame.pack(fill='x', pady=5)
+        
+        ttk.Button(
+            import_frame,
+            text="📥 Nhập từ JSON",
+            command=self.handle_import_json,
+            width=25
+        ).pack(side='left', padx=5)
+        
+        ttk.Button(
+            import_frame,
+            text="📥 Nhập từ ICS",
+            command=self.handle_import_ics,
+            width=25
+        ).pack(side='left', padx=5)
+        
+        # === Section 2: Advanced Options ===
+        advanced_frame = ttk.LabelFrame(
+            main_container,
+            text="🔧 Đơn Dẹp Dữ Liệu",
+            padding=15
+        )
+        advanced_frame.pack(fill='x', pady=(0, 20))
+        
+        # Description
+        ttk.Label(
+            advanced_frame,
+            text="Xóa toàn bộ sự kiện (không thể hoàn tác)",
+            font=('Arial', 9),
+            foreground='red'
+        ).pack(pady=(0, 10))
+        
+        # Delete all button
+        ttk.Button(
+            advanced_frame,
+            text="🗑️ Xóa tất cả sự kiện",
+            command=self.handle_delete_all_events,
+        ).pack()
+        
+        # === Section 3: App Information ===
+        info_frame = ttk.LabelFrame(
+            main_container,
+            text="ℹ️ Thông tin ứng dụng",
+            padding=15
+        )
+        info_frame.pack(fill='both', expand=True, pady=(0, 20))
+        
+        # App info with styling
+        info_container = ttk.Frame(info_frame)
+        info_container.pack(expand=True)
+        
+        # App name
+        ttk.Label(
+            info_container,
+            text="Trợ Lý Lịch Trình",
+            font=('Arial', 16, 'bold'),
+            foreground='#2196F3'
+        ).pack(pady=(10, 5))
+        
+        # Separator
+        ttk.Separator(info_container, orient='horizontal').pack(fill='x', pady=10)
+        
+        # Version info
+        info_items = [
+            ("📋 Tên ứng dụng:", "Trợ Lý Lịch Trình"),
+            ("📦 Phiên bản:", "0.8.1"),
+            ("👨‍💻 Phát triển bởi:", "Trường Gia Thành d0ngle8k"),
+            ("📅 Năm:", "2025"),
+        ]
+        
+        for label, value in info_items:
+            item_frame = ttk.Frame(info_container)
+            item_frame.pack(fill='x', pady=5)
+            
+            ttk.Label(
+                item_frame,
+                text=label,
+                font=('Arial', 10),
+                width=20,
+                anchor='e'
+            ).pack(side='left', padx=(0, 10))
+            
+            ttk.Label(
+                item_frame,
+                text=value,
+                font=('Arial', 10, 'bold'),
+                foreground='#424242'
+            ).pack(side='left')
+        
+        # === Bottom: Close Button ===
+        bottom_frame = ttk.Frame(main_container)
+        bottom_frame.pack(fill='x', pady=(10, 0))
+        
+        ttk.Button(
+            bottom_frame,
+            text="Đóng",
+            command=settings_window.destroy,
+            width=15
+        ).pack(side='right')
 
 
 if __name__ == '__main__':
     db = DatabaseManager()
-    nlp = NLPPipeline()
+    
+    # Initialize NLP Pipeline (PhoBERT or Rule-based)
+    if USE_PHOBERT:
+        # Try to use fine-tuned model if available
+        import os
+        model_path = "./models/phobert_finetuned"
+        if os.path.exists(model_path):
+            print(f"🎯 Loading fine-tuned PhoBERT from {model_path}")
+            nlp = PhoBERTNLPPipeline(model_path=model_path)
+        else:
+            print("🤖 Loading base PhoBERT (not fine-tuned)")
+            nlp = PhoBERTNLPPipeline()
+    else:
+        nlp = NLPPipeline()
+    
     app = Application(db, nlp)
     # Dịch vụ nhắc nhở nền
     start_notification_service(app, db)
