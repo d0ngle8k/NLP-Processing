@@ -1,7 +1,11 @@
 import json
 import unittest
+import sys
 from pathlib import Path
 from datetime import datetime
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core_nlp.pipeline import NLPPipeline
 from core_nlp.time_parser import parse_vietnamese_time
