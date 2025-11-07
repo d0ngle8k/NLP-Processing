@@ -140,7 +140,7 @@ class Application(tk.Tk):
         self.tree.column('id', width=50, stretch=False, anchor='center')
         self.tree.column('event_name', width=330, anchor='center')
         self.tree.column('time', width=150, anchor='center')
-        self.tree.column('remind', width=80, anchor='center')
+        self.tree.column('remind', width=150, anchor='center')
         self.tree.column('location', width=180, anchor='center')
         
         # Vertical scrollbar
@@ -383,7 +383,20 @@ class Application(tk.Tk):
                     time_str = dt.strftime('%d/%m/%Y %H:%M')
                 except:
                     time_str = ev.get('start_time') or ''
-            remind_str = 'Có' if (ev.get('reminder_minutes') or 0) > 0 else 'Không'
+            
+                # Calculate and display specific reminder time (not just "Có"/"Không")
+                remind_str = 'Không'
+                reminder_minutes = ev.get('reminder_minutes') or 0
+                if reminder_minutes > 0 and ev.get('start_time'):
+                    try:
+                        # Calculate reminder time: event_time - reminder_minutes
+                        event_dt = datetime.fromisoformat(ev.get('start_time'))
+                        reminder_dt = event_dt - timedelta(minutes=reminder_minutes)
+                        remind_str = reminder_dt.strftime('%d/%m/%Y %H:%M')
+                    except:
+                        # Fallback to "Có" if calculation fails
+                        remind_str = 'Có'
+            
             self.tree.insert('', 'end', values=(ev.get('id'), ev.get('event_name'), time_str, remind_str, ev.get('location') or ''))
 
     def handle_search(self):
