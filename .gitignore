@@ -18,8 +18,8 @@ build_main_ctk.spec
 *.db-shm
 *.db-wal
 
-# Version documents archive
-/version_document/
+# Version documents (tracked)
+# (Keep docs in repo; do not ignore the folder)
 
 # Editor/IDE
 .vscode/
