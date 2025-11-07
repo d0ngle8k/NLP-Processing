@@ -89,13 +89,22 @@ class NLPPipeline:
         unit_min = r"(?:phút|phut|p|'|')"
         # FIXED: Add "tieng/tiếng" for hour unit (common typo/variant)
         unit_hour = r"(?:giờ|gio|tiếng|tieng|h|hr)"
+        unit_day = r"(?:ngày|ngay|d|day)"
+        unit_week = r"(?:tuần|tuan|week|w)"
+        unit_month = r"(?:tháng|thang|month|m)"
         num = r"(\d{1,3})"
         # Forms: verb [pron] [before]? NUM UNIT [before]?  (covers: 'nhắc trước 10p' and 'nhắc 10p trước')
         self.reminder_min_regex1 = re.compile(fr"{verb}{pron}(?:{before}\s*)?{num}\s*{unit_min}(?:\s*(?:trước|truoc|trc))?\b", re.IGNORECASE)
         self.reminder_hour_regex1 = re.compile(fr"{verb}{pron}(?:{before}\s*)?{num}\s*{unit_hour}(?:\s*(?:trước|truoc|trc))?\b", re.IGNORECASE)
+        self.reminder_day_regex1 = re.compile(fr"{verb}{pron}(?:{before}\s*)?{num}\s*{unit_day}(?:\s*(?:trước|truoc|trc))?\b", re.IGNORECASE)
+        self.reminder_week_regex1 = re.compile(fr"{verb}{pron}(?:{before}\s*)?{num}\s*{unit_week}(?:\s*(?:trước|truoc|trc))?\b", re.IGNORECASE)
+        self.reminder_month_regex1 = re.compile(fr"{verb}{pron}(?:{before}\s*)?{num}\s*{unit_month}(?:\s*(?:trước|truoc|trc))?\b", re.IGNORECASE)
         # Forms: NUM UNIT [before] [verb] (e.g., '10p trước nhắc tôi')
         self.reminder_min_regex2 = re.compile(fr"\b{num}\s*{unit_min}{before}\s*(?:{verb})", re.IGNORECASE)
         self.reminder_hour_regex2 = re.compile(fr"\b{num}\s*{unit_hour}{before}\s*(?:{verb})", re.IGNORECASE)
+        self.reminder_day_regex2 = re.compile(fr"\b{num}\s*{unit_day}{before}\s*(?:{verb})", re.IGNORECASE)
+        self.reminder_week_regex2 = re.compile(fr"\b{num}\s*{unit_week}{before}\s*(?:{verb})", re.IGNORECASE)
+        self.reminder_month_regex2 = re.compile(fr"\b{num}\s*{unit_month}{before}\s*(?:{verb})", re.IGNORECASE)
         # Presence-only (no number): used to strip from text and optional boolean
         self.reminder_presence_regex = re.compile(fr"{verb}{pron}(?:\s*(?:trước|truoc|trc))?\b", re.IGNORECASE)
 
@@ -384,8 +393,14 @@ class NLPPipeline:
         working = text
         # Try different forms, prioritize the first explicit number found
         for rx, factor in [
+            (self.reminder_month_regex1, 43200),  # 30 days * 24 hours * 60 min
+            (self.reminder_week_regex1, 10080),   # 7 days * 24 hours * 60 min
+            (self.reminder_day_regex1, 1440),     # 24 hours * 60 min
             (self.reminder_hour_regex1, 60),
             (self.reminder_min_regex1, 1),
+            (self.reminder_month_regex2, 43200),
+            (self.reminder_week_regex2, 10080),
+            (self.reminder_day_regex2, 1440),
             (self.reminder_hour_regex2, 60),
             (self.reminder_min_regex2, 1),
         ]:

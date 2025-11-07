@@ -1609,3 +1609,87 @@ python main.py
 ---
 
 <p align="center">Made with ❤️ by d0ngle8k</p>
+
+## 🛠 Hybrid Model EXE Build (v0.8+)
+
+Bạn có thể đóng gói ứng dụng (bao gồm mô hình PhoBERT fine-tuned hybrid) thành file `.exe` bằng script tự động.
+
+### 1. Chuẩn bị
+```powershell
+git clone https://github.com/d0ngle8k/NLP-Processing.git
+cd NLP-Processing
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+### 2. Kiểm tra mô hình
+Thư mục bắt buộc: `models/phobert_finetuned/` (nếu thiếu sẽ fallback rule-based).
+Tuỳ chọn: `models/phobert_base/`.
+
+### 3. Build ONEDIR (khuyên dùng cho mô hình lớn)
+```powershell
+python scripts/build_exe.py --name TroLyLichTrinhHybrid
+```
+Kết quả: `dist/TroLyLichTrinhHybrid/` chứa `.exe` và các file phụ.
+
+### 4. Build ONEFILE (dung lượng lớn, khởi động chậm hơn)
+```powershell
+python scripts/build_exe.py --name TroLyLichTrinhHybrid --onefile
+```
+Kết quả: `dist/TroLyLichTrinhHybrid.exe`
+
+### 5. Thêm underthesea cache (nếu cần)
+Nếu bạn có thư mục `~/.underthesea` đã tải mô hình, copy hoặc dùng trực tiếp:
+```powershell
+python scripts/build_exe.py --name TroLyLichTrinhHybrid --underthesea-cache "$env:USERPROFILE\.underthesea"
+```
+
+### 6. Xác thực sau build
+```powershell
+dist/TroLyLichTrinhHybrid/TroLyLichTrinhHybrid.exe  # hoặc .exe onefile
+```
+Console log (khi chạy lần đầu nên thấy):
+- `⚡ Initializing Rule-based NLP...`
+- `🤖 Loading base PhoBERT...` hoặc `🤖 Loading fine-tuned PhoBERT from ...`
+- `🔥 HYBRID MODE: Rule-based + PhoBERT`
+
+Nếu không thấy dòng HYBRID MODE: kiểm tra lại mô hình đã thêm vào build (thư mục `models/phobert_finetuned`).
+
+### 7. Tuỳ chọn loại bỏ mô hình (chỉ rule-based)
+```powershell
+python scripts/build_exe.py --name TroLyLichTrinhLite --no-model
+```
+Dung lượng nhỏ hơn đáng kể.
+
+### 8. Mẹo tối ưu dung lượng
+- Tránh --onefile nếu không cần, ONEDIR dễ nạp torch/transformers.
+- Loại bỏ không dùng: sửa script thêm `excludes=['matplotlib','reportlab']` nếu không cần thống kê/PDF/Excel.
+- Đảm bảo `upx` không làm hỏng DLL (mặc định PyInstaller dùng nếu có). Nếu lỗi runtime, rebuild với `--noupx` (sửa spec).
+
+### 9. Lỗi thường gặp
+| Lỗi | Nguyên nhân | Khắc phục |
+|-----|-------------|-----------|
+| PhoBERT failed to load | Thiếu file mô hình | Kiểm tra `models/phobert_finetuned` đầy đủ |
+| ModuleNotFoundError (underthesea) | Cache không đóng gói | Thêm `--underthesea-cache` hoặc để fallback regex |
+| EXE khởi động chậm | ONEFILE + torch lớn | Dùng ONEDIR |
+| schema.sql missing | Data không thêm | Script đã thêm, kiểm tra log `[WARN] database/schema.sql not found` |
+
+### 10. Cấu trúc sau khi build (ONEDIR)
+```
+dist/
+   TroLyLichTrinhHybrid/
+      TroLyLichTrinhHybrid.exe
+      database/schema.sql
+      models/phobert_finetuned/... (weights, tokenizer, config)
+      lib/... (Python stdlib + deps)
+```
+
+### 11. Phân phối
+Chỉ cần gửi nguyên folder `TroLyLichTrinhHybrid/` cho người dùng; họ double-click `.exe` để chạy (không cần Python cài đặt).
+
+### 12. Kiểm tra fallback
+Thử rename tạm `models/phobert_finetuned` bên trong dist và chạy lại – nếu thấy `⚡ RULE-BASED MODE`, nghĩa là fallback hoạt động.
+
+---
+*(Mục này được thêm ở phiên bản v0.8 hướng dẫn đóng gói hybrid model dễ dàng hơn.)*

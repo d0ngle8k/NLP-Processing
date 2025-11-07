@@ -10,6 +10,13 @@ matplotlib
 openpyxl
 reportlab
 
+# UI dependencies
+customtkinter>=5.2.0
+pillow
+
+# Audio playback
+playsound==1.2.2
+
 # PhoBERT dependencies (optional but recommended)
 # Install with: pip install -r requirements.txt
 # For CPU: torch torchvision torchaudio

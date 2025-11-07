@@ -11,6 +11,33 @@ try:
 except Exception:
     winsound = None
 
+# Import SoundManager
+try:
+    from services.sound_manager import SoundManager
+    SOUND_MANAGER_AVAILABLE = True
+except ImportError:
+    SOUND_MANAGER_AVAILABLE = False
+
+
+# Global sound manager instance
+_sound_manager: SoundManager = None
+
+
+def init_sound_manager(base_dir: str = '.') -> SoundManager:
+    """Initialize global sound manager"""
+    global _sound_manager
+    if _sound_manager is None:
+        _sound_manager = SoundManager(base_dir)
+    return _sound_manager
+
+
+def get_sound_manager() -> SoundManager:
+    """Get global sound manager instance"""
+    global _sound_manager
+    if _sound_manager is None:
+        _sound_manager = SoundManager('.')
+    return _sound_manager
+
 
 def check_reminders_loop(root_window, db_manager):
     """
@@ -68,8 +95,15 @@ def check_reminders_loop(root_window, db_manager):
 
 
 def _play_notification_sound():
-    """Play a notification sound (Windows if available), otherwise try Tk bell."""
+    """Play notification sound using SoundManager or fallback"""
     try:
+        # Try using SoundManager first
+        if SOUND_MANAGER_AVAILABLE:
+            sound_mgr = get_sound_manager()
+            if sound_mgr.play_notification_sound():
+                return  # Success
+        
+        # Fallback to old method
         if winsound and platform.system() == 'Windows':
             # Play system exclamation sound
             winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
@@ -82,8 +116,8 @@ def _play_notification_sound():
                     root.bell()
             except Exception:
                 pass
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Sound playback error: {e}")
 
 
 def show_popup_pre_reminder(event_name, event_time, reminder_minutes):

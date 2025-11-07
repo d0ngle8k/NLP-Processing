@@ -44,9 +44,10 @@ class DatabaseManager:
     """
     Database manager with connection pooling for better multithreading performance
     """
-    # Connection pool settings
-    MAX_POOL_SIZE = 10
-    POOL_TIMEOUT = 5.0
+    # Connection pool settings - OPTIMIZED
+    MAX_POOL_SIZE = 20  # Tăng từ 10 → 20 (hỗ trợ nhiều thread hơn)
+    POOL_TIMEOUT = 10.0  # Tăng từ 5s → 10s
+    INITIAL_POOL_SIZE = 5  # Tăng từ 3 → 5 (sẵn sàng cho load cao)
     
     def __init__(self, db_path: str = DB_PATH) -> None:
         self.db_path = db_path
@@ -57,8 +58,8 @@ class DatabaseManager:
         self._pool_lock = threading.Lock()
         self._pool_size = 0
         
-        # Initialize connection pool with 3 connections
-        for _ in range(3):
+        # Initialize connection pool with more connections
+        for _ in range(self.INITIAL_POOL_SIZE):
             self._create_connection()
         
         self._create_table()
@@ -86,32 +87,47 @@ class DatabaseManager:
             conn = self._connection_pool.get(timeout=self.POOL_TIMEOUT)
             return conn
         except Empty:
-            # Pool exhausted, create new connection if under limit
+            # Pool exhausted - create new connection dynamically if under limit
             with self._pool_lock:
                 if self._pool_size < self.MAX_POOL_SIZE:
+                    # Create new connection immediately
                     conn = sqlite3.connect(
                         self.db_path,
                         check_same_thread=False,
                         timeout=30.0
                     )
                     conn.row_factory = sqlite3.Row
+                    # WAL mode for better concurrency
                     conn.execute("PRAGMA journal_mode=WAL")
                     conn.execute("PRAGMA synchronous=NORMAL")
+                    # Enable memory optimization
+                    conn.execute("PRAGMA cache_size=-8000")  # 8MB cache
                     self._pool_size += 1
+                    print(f"📊 Pool expanded to {self._pool_size} connections")
                     return conn
                 else:
-                    # Wait longer for available connection
-                    return self._connection_pool.get(timeout=30.0)
+                    # Pool at max - wait longer (60s instead of 30s)
+                    print(f"⚠️ Pool exhausted ({self._pool_size} connections), waiting...")
+                    return self._connection_pool.get(timeout=60.0)
 
     def _return_connection(self, conn: sqlite3.Connection) -> None:
         """Return connection to pool"""
+        if conn is None:
+            return
+        
         try:
+            # Ensure connection is in good state before returning
+            conn.commit()  # Commit any pending transactions
             self._connection_pool.put_nowait(conn)
         except:
-            # Pool full, close connection
-            conn.close()
+            # Pool full or connection bad - close and decrease count
+            try:
+                conn.close()
+            except:
+                pass
             with self._pool_lock:
                 self._pool_size -= 1
+                print(f"📊 Pool shrunk to {self._pool_size} connections")
 
     def _conn(self) -> sqlite3.Connection:
         """Legacy method for backward compatibility - returns pooled connection"""
@@ -427,3 +443,90 @@ class DatabaseManager:
                     pass
             self._pool_size = 0
             print(f"🔒 Database connection pool closed")
+    
+    # ===== APP SETTINGS METHODS =====
+    
+    def get_setting(self, key: str, default: Any = None) -> Any:
+        """
+        Get application setting by key
+        
+        Args:
+            key: Setting key
+            default: Default value if not found
+            
+        Returns:
+            Setting value or default
+        """
+        with self._get_connection() as conn:
+            cursor = conn.execute(
+                "SELECT value FROM app_settings WHERE key = ?",
+                (key,)
+            )
+            row = cursor.fetchone()
+            return row['value'] if row else default
+    
+    def set_setting(self, key: str, value: str) -> None:
+        """
+        Set application setting (insert or update)
+        
+        Args:
+            key: Setting key
+            value: Setting value (stored as TEXT)
+        """
+        with self._get_connection() as conn:
+            conn.execute("""
+                INSERT INTO app_settings (key, value, updated_at)
+                VALUES (?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(key) DO UPDATE SET
+                    value = excluded.value,
+                    updated_at = CURRENT_TIMESTAMP
+            """, (key, value))
+            conn.commit()
+    
+    def set_settings_batch(self, settings: Dict[str, str]) -> None:
+        """
+        Set multiple settings in a single transaction (OPTIMIZED)
+        
+        Args:
+            settings: Dictionary of key-value pairs to set
+        """
+        if not settings:
+            return
+        
+        with self._get_connection() as conn:
+            for key, value in settings.items():
+                conn.execute("""
+                    INSERT INTO app_settings (key, value, updated_at)
+                    VALUES (?, ?, CURRENT_TIMESTAMP)
+                    ON CONFLICT(key) DO UPDATE SET
+                        value = excluded.value,
+                        updated_at = CURRENT_TIMESTAMP
+                """, (key, value))
+            conn.commit()
+    
+    def delete_setting(self, key: str) -> None:
+        """Delete a setting by key"""
+        with self._get_connection() as conn:
+            conn.execute("DELETE FROM app_settings WHERE key = ?", (key,))
+            conn.commit()
+    
+    def delete_settings_batch(self, keys: List[str]) -> None:
+        """
+        Delete multiple settings in a single transaction (OPTIMIZED)
+        
+        Args:
+            keys: List of setting keys to delete
+        """
+        if not keys:
+            return
+        
+        with self._get_connection() as conn:
+            placeholders = ','.join('?' * len(keys))
+            conn.execute(f"DELETE FROM app_settings WHERE key IN ({placeholders})", keys)
+            conn.commit()
+    
+    def get_all_settings(self) -> Dict[str, str]:
+        """Get all settings as a dictionary"""
+        with self._get_connection() as conn:
+            cursor = conn.execute("SELECT key, value FROM app_settings")
+            return {row['key']: row['value'] for row in cursor.fetchall()}

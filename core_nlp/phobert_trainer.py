@@ -204,7 +204,17 @@ class PhoBERTTrainer:
         phobert_base = AutoModel.from_pretrained(model_name)
         
         # Create classifier model
-        self.model = PhoBERTEventClassifier(phobert_base).to(self.device)
+        self.model = PhoBERTEventClassifier(phobert_base)
+        
+        # Multi-GPU support with DataParallel
+        if self.device == "cuda" and torch.cuda.device_count() > 1:
+            print(f"   🎮 Using {torch.cuda.device_count()} GPUs with DataParallel")
+            self.model = nn.DataParallel(self.model)
+            self.multi_gpu = True
+        else:
+            self.multi_gpu = False
+        
+        self.model = self.model.to(self.device)
         
         # Loss function
         self.criterion = nn.CrossEntropyLoss()
@@ -261,18 +271,33 @@ class PhoBERTTrainer:
         train_dataset = EventExtractionDataset(train_data, self.tokenizer)
         val_dataset = EventExtractionDataset(val_data, self.tokenizer)
         
+        # Determine optimal num_workers based on device
+        if self.device == "cuda":
+            num_workers = 4  # GPU can handle more workers
+            pin_memory = True
+        else:
+            # CPU: Use multi-threading for data loading
+            import os
+            num_workers = min(4, os.cpu_count() or 1)  # Use up to 4 cores
+            pin_memory = False
+            print(f"   💻 CPU Training: Using {num_workers} worker threads for data loading")
+        
         # Create dataloaders
         train_loader = DataLoader(
             train_dataset,
             batch_size=self.batch_size,
             shuffle=True,
-            num_workers=0  # Windows compatibility
+            num_workers=num_workers,
+            pin_memory=pin_memory,
+            persistent_workers=num_workers > 0  # Keep workers alive between epochs
         )
         val_loader = DataLoader(
             val_dataset,
             batch_size=self.batch_size,
             shuffle=False,
-            num_workers=0
+            num_workers=num_workers,
+            pin_memory=pin_memory,
+            persistent_workers=num_workers > 0
         )
         
         # Optimizer and scheduler
@@ -473,11 +498,28 @@ def train_phobert_from_test_cases(
 
 
 if __name__ == '__main__':
-    # Train from MASSIVE 90K dataset with 40 epochs for ultimate performance
-    # Target: 90-100% accuracy with extreme edge cases coverage
+    # Train from COMPREHENSIVE 95K+ dataset with week/month reminders
+    # Includes: All edge cases + Week/Month reminder patterns + Location conflicts
+    # Target: 95%+ accuracy with full reminder unit support
+    print("🚀 Starting PhoBERT Fine-tuning with COMPREHENSIVE Dataset")
+    print("=" * 70)
+    print("📊 Dataset: 95K+ samples (augmented)")
+    print("🎯 Focus: Week/Month reminders + All edge cases")
+    print("⏱️  Estimated time: ~2-3 hours (40 epochs)")
+    print("=" * 70)
+    
     train_phobert_from_test_cases(
-        test_file="./tests/extended_test_cases_100k.json",
+        test_file="./training_data/phobert_training_augmented.json",
         output_dir="./models/phobert_finetuned",
         num_epochs=40,
         batch_size=16,  # Increased batch size for faster training
+        gradient_accumulation_steps=2,  # Accumulate gradients for stability
     )
+    
+    print("\n" + "=" * 70)
+    print("✅ TRAINING COMPLETE!")
+    print("📁 Model saved to: ./models/phobert_finetuned")
+    print("\n🎯 Next steps:")
+    print("   1. Test with: python -c \"from core_nlp.hybrid_pipeline import HybridNLPPipeline; p = HybridNLPPipeline(); print(p.process('đặt lịch họp nhắc trước 2 tuần'))\"")
+    print("   2. Rebuild EXE: python scripts/build_exe.py --name TroLyLichTrinhHybrid --console")
+    print("=" * 70)

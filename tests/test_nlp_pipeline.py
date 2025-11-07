@@ -49,8 +49,8 @@ class TestNLPPipeline(unittest.TestCase):
             gold = item['expected']
             pred = self.pipeline.process(text)
 
-            # event
-            if normalize(pred['event']) == normalize(gold['event']):
+            # event (pipeline returns 'event_name' not 'event')
+            if normalize(pred.get('event_name')) == normalize(gold['event']):
                 tp['event'] += 1
             else:
                 fp['event'] += 1
