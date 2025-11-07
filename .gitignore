@@ -44,4 +44,5 @@ FEATURES_*.md
 
 # Large model files (too big for GitHub)
 models/phobert_finetuned/model.pt
+models/phobert_base/
 *.pt

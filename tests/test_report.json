@@ -1,22 +1,20 @@
 {
-  "timestamp": "2025-11-06T18:57:18.958088",
+  "timestamp": "2025-11-07T16:59:40.435125",
   "summary": {
-    "total": 1000,
-    "passed": 997,
-    "failed": 3,
-    "pass_rate": "99.70%"
+    "total": 1065,
+    "passed": 1065,
+    "failed": 0,
+    "pass_rate": "100.00%"
   },
-  "error_categories": {
-    "event_extraction": 3
-  },
+  "error_categories": {},
   "edge_case_results": {
     "mixed_case": {
-      "passed": 848,
-      "failed": 2
+      "passed": 855,
+      "failed": 0
     },
     "normal": {
-      "passed": 9,
-      "failed": 1
+      "passed": 70,
+      "failed": 0
     },
     "special_chars": {
       "passed": 105,
@@ -31,69 +29,5 @@
       "failed": 0
     }
   },
-  "failed_tests": [
-    {
-      "test_number": 10,
-      "input": "an trua 18:00 thứ 2 tuần sau tại bệnh viện bạch mai nhắc trước 60 phút",
-      "expected": {
-        "event": "an trua",
-        "time_str": "18:00 thứ 2 tuần sau",
-        "location": "bệnh viện bạch mai",
-        "reminder_minutes": 60
-      },
-      "actual": {
-        "event": "an 18:00 thứ 2",
-        "start_time": "2025-11-06T12:00:00",
-        "end_time": null,
-        "location": "bệnh viện bạch mai",
-        "reminder_minutes": 60
-      },
-      "errors": [
-        "Event mismatch: expected 'an trua', got 'an 18:00 thứ 2'"
-      ],
-      "category": "normal"
-    },
-    {
-      "test_number": 19,
-      "input": "SINH NHẬT 8:30 ngày mai nhắc trước 60 phút",
-      "expected": {
-        "event": "sinh nhật",
-        "time_str": "8:30 ngày mai",
-        "location": null,
-        "reminder_minutes": 60
-      },
-      "actual": {
-        "event": "sinh nhậ :30",
-        "start_time": "2025-11-09T18:57:18.886386",
-        "end_time": null,
-        "location": null,
-        "reminder_minutes": 60
-      },
-      "errors": [
-        "Event mismatch: expected 'sinh nhật', got 'sinh nhậ :30'"
-      ],
-      "category": "mixed_case"
-    },
-    {
-      "test_number": 124,
-      "input": "Gặp mặt 20h toi",
-      "expected": {
-        "event": "gặp mặt",
-        "time_str": "20h toi",
-        "location": null,
-        "reminder_minutes": 0
-      },
-      "actual": {
-        "event": "gặp mặ toi",
-        "start_time": "2025-11-06T20:00:00",
-        "end_time": null,
-        "location": null,
-        "reminder_minutes": 0
-      },
-      "errors": [
-        "Event mismatch: expected 'gặp mặt', got 'gặp mặ toi'"
-      ],
-      "category": "mixed_case"
-    }
-  ]
+  "failed_tests": []
 }

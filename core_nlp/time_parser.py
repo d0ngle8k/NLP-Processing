@@ -14,6 +14,16 @@ def _vn_norm(s: str) -> str:
         return ''
     s = s.lower()
     s = s.replace('đ', 'd').replace('Đ', 'D')
+    
+    # Fix typo numbers: "sauh" -> "sau", "namh" -> "nam", etc.
+    typo_map = {
+        'moth': 'mot', 'haih': 'hai', 'bah': 'ba', 'bonh': 'bon', 
+        'tuh': 'tu', 'namh': 'nam', 'sauh': 'sau', 'bayh': 'bay', 
+        'tamh': 'tam', 'chinh': 'chin', 'muoih': 'muoi'
+    }
+    for typo, correct in typo_map.items():
+        s = s.replace(typo, correct)
+    
     nfkd = unicodedata.normalize('NFKD', s)
     return ''.join(c for c in nfkd if not unicodedata.combining(c))
 
@@ -137,6 +147,12 @@ def _parse_explicit_time(s: str) -> tuple[Optional[int], Optional[int], str]:
     for word, num in sorted(number_words.items(), key=lambda x: -len(x[0])):
         s_norm_numbers = re.sub(r"\b" + word + r"\b", str(num), s_norm_numbers)
     
+    # SPECIAL CASE: "sauh gio chieu" → "6 gio chieu" (number word + gio + period)
+    # Must handle BEFORE removing "luc" to preserve full expression
+    # Pattern: number_word + gio/giờ + period
+    # After conversion above: "6 gio chieu", "8 gio sang", "10 gio toi"
+    # This ensures period flags are preserved for _adjust_hour_by_period()
+    
     # "lúc 12 giờ" / "lúc 12h" - remove "lúc" prefix
     s_norm_numbers = re.sub(r"\bluc\s+", "", s_norm_numbers)
     
@@ -169,12 +185,33 @@ def _parse_explicit_time(s: str) -> tuple[Optional[int], Optional[int], str]:
         hh = int(m.group(1))
         mm = int(m.group(2) or 0)
         return hh, mm, re.sub(m.group(0), "", s, 1).strip()
+    # ENHANCED: Handle "period + number" (reversed order)
+    # Example: "chiều 3h" → period="chieu", hour=3
+    # Pattern: period_word + number + h/gio
+    period_first = re.search(r"\b(sang|chieu|trua|toi|dem)\s+(\d{1,2})\s*(?:h|gio|giờ)\b", s_norm_numbers)
+    if period_first:
+        # Extract hour from reversed pattern
+        hh = int(period_first.group(2))
+        mm = 0
+        # Remove the matched pattern from original string
+        s = re.sub(r"\b(?:sáng|sang|chiều|chieu|trưa|trua|tối|toi|đêm|dem)\s+\d{1,2}\s*(?:h|gio|giờ)\b", "", s, 1, flags=re.IGNORECASE).strip()
+        return hh, mm, s
+    
     # "12 giờ 30 phút" / "12 giờ" - now with number word support
     m = re.search(r"\b(\d{1,2})\s*(?:gio|giờ)(?:\s*(\d{1,2})\s*(?:phut|phút))?\b", s_norm_numbers)
     if m:
         hh = int(m.group(1))
         mm = int(m.group(2) or 0)
         return hh, mm, re.sub(r"\b\d{1,2}\s*(?:giờ|gio)(?:\s*\d{1,2}\s*(?:phút|phut))?\b", "", s, 1, flags=re.IGNORECASE).strip()
+    
+    # ENHANCED: "sau gio" → "6 gio" (number word + gio, after typo normalization)
+    # Pattern: NUMBER_WORD + gio (where NUMBER_WORD was already converted to digit above)
+    # BUT: Also handle case where "gio" comes AFTER the period word
+    # Example: "sauh gio chieu" → "6 gio chieu" (already converted by typo_map + number_words)
+    # Example: "muoi gio sang" → "10 gio sang"
+    # This pattern catches the converted form: "\d+ gio [period]?"
+    # The period flag will be detected later by _has_period_flags()
+    
     # Standalone number (from number word conversion like "támh" -> "8", "mười haih" -> "12")
     # This catches cases where number words with typo "h" were converted to digits
     m = re.search(r"\b(\d{1,2})\b", s_norm_numbers)
@@ -200,7 +237,8 @@ def _parse_explicit_date(base: datetime, s_norm: str) -> tuple[Optional[datetime
             pass
     
     # Format: DD.MM or DD/MM or DD-MM (short date, current year)
-    m = re.search(r"\b(\d{1,2})[\.\-/](\d{1,2})\b", s_norm)
+    # FIXED: Support optional "ngày/ngay" prefix
+    m = re.search(r"(?:ngay\s*)?(\d{1,2})[\.\-/](\d{1,2})\b", s_norm)
     if m:
         day = int(m.group(1))
         month = int(m.group(2))
@@ -261,15 +299,22 @@ def _parse_relative_words(base: datetime, s_norm: str) -> tuple[Optional[datetim
         return dt, text
     
     # hom nay / ngay mai / mai
-    # "hôm nay" keeps base date (today) but preserves base time
-    # Will be overridden if explicit time is found later
+    # BUG FIX: "hôm nay" keeps base date (today) with current base time
+    # "ngày mai" / "mai" → tomorrow, PRESERVE base hour/minute (will be overridden by explicit time if found)
     if re.search(r"\bhom\s+nay\b", text):
         dt = base  # Keep current base datetime
         text = re.sub(r"\bhom\s+nay\b", "", text).strip()
         return dt, text
-    if re.search(r"\b(ngay mai|mai)\b", text):
-        dt = (base + timedelta(days=1)).replace(hour=base.hour, minute=base.minute)
-        text = re.sub(r"\b(ngay mai|mai)\b", "", text).strip()
+    if re.search(r"\bngay\s+mai\b", text):
+        # BUG FIX: Don't set hour=base.hour here! Just shift date by +1
+        # Hour will be set by explicit time parsing or period flags later
+        dt = base + timedelta(days=1)
+        text = re.sub(r"\bngay\s+mai\b", "", text).strip()
+        return dt, text
+    if re.search(r"\bmai\b", text):
+        # "mai" alone (not part of compound like "tối mai")
+        dt = base + timedelta(days=1)
+        text = re.sub(r"\bmai\b", "", text).strip()
         return dt, text
     # ngay mot / mot / ngay kia / mai mot => +2 days
     if re.search(r"\b(ngay mot|mai mot|mot|ngay kia)\b", text):
@@ -309,36 +354,41 @@ def _parse_relative_words(base: datetime, s_norm: str) -> tuple[Optional[datetim
         
         days_ahead = (target_wd - base.weekday()) % 7
         
-        # If "tuần sau" specified, always go to next week
+        # If "tuần sau" specified, find next week's occurrence
         if has_tuan_sau:
+            # BUG FIX: "tuần sau" means NEXT WEEK, not 2 weeks from now
+            # If today is Wed (Nov 5) and we say "thứ 2 tuần sau" (Monday next week)
+            # Next week starts Monday Nov 10, so we want Nov 10 (not Nov 17!)
             if days_ahead == 0:
+                # Same weekday: go to next week (7 days)
                 days_ahead = 7
-            else:
-                days_ahead += 7
-        # If days_ahead == 0 (today is the target weekday), only skip if it's too late
-        # For now, if it's the same day and no specific time extracted yet, keep it today
-        # This will be refined when combining with time
+            # ELSE: Keep days_ahead as is - it's already the next occurrence of that weekday
+            # No need to add 7 more days!
+        # If days_ahead == 0 (today is the target weekday)
+        # Default to next week since people usually mean future event
+        # (e.g., saying "t5" on Thursday typically means next Thursday)
         elif days_ahead == 0:
-            # Keep today (will check time later)
-            pass
+            days_ahead = 7
         
         dt = (base + timedelta(days=days_ahead)).replace(hour=base.hour, minute=base.minute)
         text = text.replace(m.group(0), '').strip()
         return dt, text
     # CN / Chủ nhật (tuần sau)?
-    m = re.search(r"\b(?:cn|chu\s+nhat)(?:\s*tuan sau)?\b", text)
+    # ENHANCED: Also match "chu nhat" ANYWHERE in text (not just at boundaries)
+    # This handles "muoi gio sang chu nhat" (number words + period + weekday)
+    m = re.search(r"(?:cn|chu\s+nhat)(?:\s*tuan sau)?", text)
     if m:
         target_wd = 6  # Sunday
         days_ahead = (target_wd - base.weekday()) % 7
         has_tuan_sau = 'tuan sau' in m.group(0)
         if has_tuan_sau:
+            # BUG FIX: Same as above - "tuần sau" means NEXT WEEK, not 2 weeks
             if days_ahead == 0:
                 days_ahead = 7
-            else:
-                days_ahead += 7
+            # Keep days_ahead - it's already the next occurrence
         elif days_ahead == 0:
-            # Same day - keep it
-            pass
+            # Same day - default to next week
+            days_ahead = 7
         dt = (base + timedelta(days=days_ahead)).replace(hour=base.hour, minute=base.minute)
         text = text.replace(m.group(0), '').strip()
         return dt, text

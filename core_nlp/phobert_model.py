@@ -73,9 +73,17 @@ class PhoBERTEventExtractor:
                 return
         
         # Fallback to base PhoBERT
-        print(f"🔄 Loading base PhoBERT (vinai/phobert-base)...")
-        self.tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base")
-        self.model = AutoModel.from_pretrained("vinai/phobert-base")
+        # Try to use local cached directory first to avoid re-downloading
+        local_base_dir = Path("./models/phobert_base")
+        if local_base_dir.exists():
+            print(f"🔄 Loading base PhoBERT from local cache: {local_base_dir}")
+            base_source = str(local_base_dir)
+        else:
+            print(f"🔄 Loading base PhoBERT (vinai/phobert-base) from Hugging Face...")
+            base_source = "vinai/phobert-base"
+
+        self.tokenizer = AutoTokenizer.from_pretrained(base_source)
+        self.model = AutoModel.from_pretrained(base_source)
         self.model.to(self.device)
         self.model.eval()
         self.classifier = None  # No fine-tuned classifier
@@ -115,16 +123,30 @@ class PhoBERTEventExtractor:
                 has_location = torch.argmax(outputs['location'], dim=1).item() == 1
                 has_reminder = torch.argmax(outputs['reminder'], dim=1).item() == 1
                 
-                # Extract based on predictions
+                # Extract based on predictions using time_parser for better accuracy
+                from .time_parser import parse_vietnamese_datetime
+                
                 result = {
-                    'event_name': text if has_event else None,
-                    'time_str': self._extract_time_heuristic(text) if has_time else None,
-                    'location': self._extract_location_heuristic(text) if has_location else None,
-                    'reminder_minutes': self._extract_reminder(text) if has_reminder else 0
+                    'event_name': None,
+                    'time_str': None,
+                    'location': None,
+                    'reminder_minutes': 0
                 }
                 
-                # Refine event name
-                if result['event_name']:
+                # Extract time using sophisticated time_parser
+                if has_time:
+                    result['time_str'] = self._extract_time_heuristic(text)
+                
+                # Extract location
+                if has_location:
+                    result['location'] = self._extract_location_heuristic(text)
+                
+                # Extract reminder
+                if has_reminder:
+                    result['reminder_minutes'] = self._extract_reminder(text)
+                
+                # Extract event name by removing extracted components
+                if has_event:
                     result['event_name'] = self._extract_event_name(text, result)
                 
                 return result
@@ -181,6 +203,16 @@ class PhoBERTEventExtractor:
         def normalize(s):
             s = s.lower()
             s = s.replace('đ', 'd')
+            
+            # Fix typo numbers: "sauh" -> "sau", "namh" -> "nam", etc.
+            typo_map = {
+                'moth': 'mot', 'haih': 'hai', 'bah': 'ba', 'bonh': 'bon', 
+                'tuh': 'tu', 'namh': 'nam', 'sauh': 'sau', 'bayh': 'bay', 
+                'tamh': 'tam', 'chinh': 'chin', 'muoih': 'muoi'
+            }
+            for typo, correct in typo_map.items():
+                s = s.replace(typo, correct)
+            
             nfkd = unicodedata.normalize('NFKD', s)
             return ''.join(c for c in nfkd if not unicodedata.combining(c))
         
@@ -190,13 +222,37 @@ class PhoBERTEventExtractor:
         # Order matters: more specific patterns first
         # NOTE: These patterns match against NORMALIZED text (no diacritics: ô→o, ư→u, đ→d, etc.)
         time_patterns = [
-            # Weekday + time: thứ 3 mười giờ, thứ 2 10h, t2 8:30, chủ nhật 10h
-            # Also handle typos: "bah" (ba + h), "sáuh" (sáu + h), "mườih" (mười + h)
-            # Normalized forms: "muoih", "namh", "haih", "tamh", "sauh", "bah"
-            r'(?:chu\s+nhat|cn)\s+(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|moth|haih|bah|bonh|tuh|namh|sauh|bayh|tamh|chinh|muoih)(?:\s+(?:mot|hai|moth|haih))?\b',
+            # PRIORITY 0: Time ranges (MUST be FIRST to capture full range)
+            # "từ 9h đến 11h sáng mai", "9h-11h", "9h đến 11h"
+            # Allow period (sang/chieu/toi) and relative (mai/hom nay/etc) AFTER range
+            # FIXED: Use (?:\d{2})? instead of \d{0,2} to avoid catastrophic backtracking
+            r'(?:tu\s+)?\d{1,2}\s*(?:h|gio|:)(?:\d{2})?\s*(?:den|-|–)\s*\d{1,2}\s*(?:h|gio|:)(?:\d{2})?\s*(?:sang|trua|chieu|toi|dem)?\s*(?:mai|hom\s+nay|ngay\s+mai|ngay\s+kia)?',
+            
+            # PRIORITY 1: Number words + period + weekday (REVERSED ORDER)
+            # "muoi gio sang chu nhat" → Must come FIRST
+            r'(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|mươi)\s+gio\s*(?:sang|trua|chieu|toi|dem)?\s*(?:chu\s+nhat|cn)',
+            r'(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|mươi)\s+gio\s*(?:sang|trua|chieu|toi|dem)?\s*(?:thu[s]?|t)\s*(?:\d+|hai|ba|tu|nam|sau|bay)',
+            
+            # PRIORITY 2: Weekday + number words + period
+            # "chu nhat sauh gio chieu"
+            r'(?:chu\s+nhat|cn)\s+(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+gio\s*(?:sang|trua|chieu|toi|dem)',
+            r'(?:thu[s]?|t)\s*(?:\d+|hai|ba|tu|nam|sau|bay)\s+(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+gio\s*(?:sang|trua|chieu|toi|dem)',
+            
+            # PRIORITY 3: Weekday + period + hour (REVERSED ORDER)
+            # "thứ 5 chiều 3h"
+            r'(?:chu\s+nhat|cn)\s+(?:sang|trua|chieu|toi|dem)\s+\d{1,2}\s*(?:h|gio)',
+            r'(?:thu[s]?|t)\s*(?:\d+|hai|ba|tu|nam|sau|bay)\s+(?:sang|trua|chieu|toi|dem)\s+\d{1,2}\s*(?:h|gio)',
+            
+            # PRIORITY 4: Weekday + time + period
+            # "t5 8h sang", "thứ 3 10h sáng", "cn 6h chiều"
+            r'(?:chu\s+nhat|cn)\s+\d{1,2}\s*(?:h|gio|:)\s*\d{0,2}\s*(?:sang|trua|chieu|toi|dem)',
+            r'(?:thu[s]?|t)\s*(?:\d+|hai|ba|tu|nam|sau|bay)\s+\d{1,2}\s*(?:h|gio|:)\s*\d{0,2}\s*(?:sang|trua|chieu|toi|dem)',
+            # Weekday + time (without period)
             r'(?:chu\s+nhat|cn)\s+\d{1,2}\s*(?:h|gio|:)',
-            r'(?:thu[s]?|t)\s*(?:\d+|hai|ba|tu|nam|sau|bay)\s+(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|moth|haih|bah|bonh|tuh|namh|sauh|bayh|tamh|chinh|muoih)(?:\s+(?:mot|hai|moth|haih))?\b',
             r'(?:thu[s]?|t)\s*(?:\d+|hai|ba|tu|nam|sau|bay)\s+\d{1,2}\s*(?:h|gio|:)',
+            # Date + time + period: hôm nay 6h chiều, mai 10h sáng, ngày kia 8h tối
+            # MUST come before simple "date + time" to capture period
+            r'(?:hom\s+nay|ngay\s+mai|mai|ngay\s+kia)\s+\d{1,2}\s*(?:h|gio)\s*(?:\d{1,2}\s*(?:phut))?\s*(?:sang|trua|chieu|toi|dem)',
             # Period + date combo: tối mai, sáng mai, chiều mai, đêm nay, tối nay
             # BUT NOT "toi" alone (which could be "tôi" = I/me)
             r'(?:toi|sang|chieu|trua|dem)\s+(?:mai|hom\s+nay|nay|ngay\s+kia)',
@@ -245,7 +301,7 @@ class PhoBERTEventExtractor:
             r'ngay\s+\d{1,2}\s+thang\s+\d{1,2}',
         ]
         
-        # Find all time matches on normalized text but return original text
+        # Match on normalized text for pattern recognition, then extract from original
         best_match = None
         best_length = 0
         best_span = None
@@ -258,28 +314,53 @@ class PhoBERTEventExtractor:
                     best_length = len(matched_text)
                     best_span = match.span()
         
-        # Extract from original text using span
+        # Extract from original text using span, then extend end to capture full words with diacritics
         if best_span:
-            best_match = text[best_span[0]:best_span[1]]
+            start, end = best_span
+            # Extend end position while we're still in the same word (handle diacritic chars)
+            while end < len(text) and text[end].isalpha():
+                end += 1
+            best_match = text[start:end]
         
         return best_match
     
     def _extract_location_heuristic(self, text: str) -> Optional[str]:
-        """Simple heuristic location extraction - returns location string"""
+        """Enhanced location extraction using improved regex from pipeline.py"""
         if not text:
             return None
         
-        # Location markers (ordered by specificity)
-        location_patterns = [
-            # Specific: phòng 302, tầng 5, toà A
-            (r'(?:phòng|tầng|toà|tòa|lầu)\s+[\w\d]+', False),
-            # Marker + location: ở văn phòng, tại bệnh viện
-            (r'(?:ở|tại|đến|về)\s+([^\s,\.]{3,50}(?:\s+[^\s,\.]{1,20}){0,3})', True),
-            # Named places: bệnh viện, công ty, văn phòng
-            (r'(?:trường|công ty|văn phòng|bệnh viện|nhà hàng|quán|cafe|café|siêu thị|chợ)(?:\s+[\w\s]{1,30})?', False),
+        # Enhanced pattern: ở|o / tại|tai followed by location (stops at punctuation or time connectors)
+        # This matches the improved regex from pipeline.py (lines 56-62)
+        # Pattern: "o truong ham tu" -> "truong ham tu" (handles no-diacritics)
+        location_pattern = re.compile(
+            r"\b(?:ở|o|tại|tai)\s+"                        # location marker (with/without diacritics)
+            r"([^\n,.;:!?]+?)\s*"                          # location content (non-greedy)
+            r"(?=$|[，,.;:!?]|\b(?:vào|vao|lúc|luc|khoảng|khoang|đến|den|tới|toi|cho\s+đến|cho\s+den|nhắc|nhac|trước|truoc))",
+            re.IGNORECASE
+        )
+        
+        match = location_pattern.search(text)
+        if match:
+            location = match.group(1).strip()
+            if len(location) > 2:
+                return location
+        
+        # Fallback: specific location types (phòng, tầng, building names)
+        # PRIORITY ORDER: Compound locations (company + building) FIRST, then single patterns
+        fallback_patterns = [
+            # PRIORITY 1: Company/organization + building (e.g., "công ty ABC phòng 401")
+            # Captures full compound location: organization name + room/floor
+            (r'(?:công ty|cong ty|văn phòng|van phong|trường|truong|bệnh viện|benh vien)\s+[A-Z\w]+(?:\s+(?:phòng|phong|tầng|tang|toà|toa|lầu|lau)\s+[\w\d]+)?', False),
+            
+            # PRIORITY 2: Named places with names (e.g., "nhà hàng Sài Gòn", "quán cafe Trung Nguyên")
+            (r'(?:nhà hàng|nha hang|quán|quan|cafe|café|siêu thị|sieu thi|chợ|cho)\s+[\w\s]{2,30}', False),
+            
+            # PRIORITY 3: Building-only (e.g., "phòng 302", "tầng 5") - MUST BE LAST
+            # Only matches if no compound location found above
+            (r'(?:phòng|phong|tầng|tang|toà|toa|lầu|lau)\s+[\w\d]+', False),
         ]
         
-        for pattern, has_group in location_patterns:
+        for pattern, has_group in fallback_patterns:
             match = re.search(pattern, text, re.IGNORECASE)
             if match:
                 if has_group and match.lastindex:
@@ -288,11 +369,11 @@ class PhoBERTEventExtractor:
                     location = match.group(0)
                 
                 # Clean up
-                location = re.sub(r'^(?:ở|tại|đến|về)\s+', '', location, flags=re.IGNORECASE)
+                location = re.sub(r'^(?:ở|o|tại|tai|đến|den|về|ve)\s+', '', location, flags=re.IGNORECASE)
                 location = location.strip(' ,.;')
                 
                 # Stop at time expressions or reminder keywords
-                location = re.split(r'\s+(?:\d{1,2}(?:h|:|giờ)|nhắc|remind)', location)[0]
+                location = re.split(r'\s+(?:\d{1,2}(?:h|:|giờ|gio)|nhắc|nhac|remind)', location)[0]
                 
                 if len(location) > 2:
                     return location
@@ -312,25 +393,69 @@ class PhoBERTEventExtractor:
     
     def _extract_time_semantic(self, text: str, embeddings: torch.Tensor) -> Optional[str]:
         """Extract time expressions using semantic understanding"""
+        # Build normalization map first
+        import unicodedata
+        
+        # Step 1: Normalize typos character-by-character (preserves length)
+        typo_map = {
+            'moth': 'mot', 'haih': 'hai', 'bah': 'ba', 'bonh': 'bon',
+            'tuh': 'tu', 'namh': 'nam', 'sauh': 'sau', 'bayh': 'bay',
+            'tamh': 'tam', 'chinh': 'chin', 'muoih': 'muoi'
+        }
+        text_typo_fixed = text.lower()
+        for typo, correct in typo_map.items():
+            text_typo_fixed = text_typo_fixed.replace(typo, correct)
+        
+        # Step 2: Remove diacritics (changes length - need mapping!)
+        # Build character mapping: norm_pos -> orig_pos
+        text_norm = ''
+        norm_to_orig = []  # Maps each char in normalized to original position
+        
+        for i, char in enumerate(text_typo_fixed):
+            # Remove diacritics
+            nfd = unicodedata.normalize('NFD', char)
+            no_diacritics = ''.join(c for c in nfd if not unicodedata.combining(c))
+            # Add to normalized text
+            for c in no_diacritics:
+                text_norm += c
+                norm_to_orig.append(i)  # Each normalized char maps to this original position
+        
         # Time patterns (comprehensive Vietnamese time expressions)
+        # IMPORTANT: Order matters - ranges MUST come first!
+        # NOTE: Patterns match against NORMALIZED text (no typos, no diacritics)
         time_patterns = [
+            # PRIORITY 0: Time ranges (MUST be first to capture as single unit)
+            # "từ 9h đến 11h sáng mai", "9h-11h", "9h đến 11h"
+            r'(?:tu\s+)?\d{1,2}(?:h|:\d{2}|(?:\s*gio(?:\s*\d{1,2}(?:\s*phut)?)?))\s*(?:den|den|-|–)\s*\d{1,2}(?:h|:\d{2}|(?:\s*gio(?:\s*\d{1,2}(?:\s*phut)?)?))',
+            # Number words + gio + period + weekday (e.g., "chu nhat sau gio chieu")
+            r'(?:chu\s+nhat|cn|thu|t\s*\d)\s+(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:gio)\s*(?:sang|trua|chieu|toi|dem)?',
+            r'(?:mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:gio)\s*(?:sang|trua|chieu|toi|dem)?\s*(?:chu\s+nhat|cn|thu|t\s*\d)',
             # Explicit time: 10h, 10:30, 10 giờ 30
-            r'\d{1,2}(?:h|:\d{2}|(?:\s*giờ(?:\s*\d{1,2}(?:\s*phút)?)?))(?:\s*(?:sáng|trưa|chiều|tối|đêm))?',
+            r'\d{1,2}(?:h|:\d{2}|(?:\s*gio(?:\s*\d{1,2}(?:\s*phut)?)?))(?:\s*(?:sang|trua|chieu|toi|dem))?',
             # Relative: ngày mai, hôm nay, tuần sau
-            r'(?:hôm\s+nay|ngày\s+mai|mai|ngày\s+kia|tuần\s+sau|tuần\s+tới|tháng\s+sau)',
+            r'(?:hom\s+nay|ngay\s+mai|mai|ngay\s+kia|tuan\s+sau|tuan\s+toi|thang\s+sau)',
             # Weekdays: thứ 2, thứ hai, t2, CN
-            r'(?:thứ|t)\s*\d|CN|chủ\s+nhật',
+            r'(?:thu|t)\s*\d|CN|chu\s+nhat',
             # Date: ngày 15 tháng 12
-            r'ngày\s+\d{1,2}\s+tháng\s+\d{1,2}',
+            r'ngay\s+\d{1,2}\s+thang\s+\d{1,2}',
             # Period: sáng, chiều, tối
-            r'\b(?:sáng|trưa|chiều|tối|đêm|khuya)\b',
+            r'\b(?:sang|trua|chieu|toi|dem|khuya)\b',
         ]
         
-        # Find all time-related spans
+        # Find all time-related spans ON NORMALIZED TEXT
         time_spans = []
         for pattern in time_patterns:
-            for match in re.finditer(pattern, text, re.IGNORECASE):
-                time_spans.append((match.start(), match.end(), match.group()))
+            for match in re.finditer(pattern, text_norm, re.IGNORECASE):
+                # Map normalized positions back to original text positions
+                norm_start = match.start()
+                norm_end = match.end() - 1  # Last char of match
+                
+                # Get original positions
+                orig_start = norm_to_orig[norm_start] if norm_start < len(norm_to_orig) else norm_start
+                orig_end = norm_to_orig[norm_end] + 1 if norm_end < len(norm_to_orig) else norm_end + 1
+                
+                # Extract from ORIGINAL (typo-fixed) text
+                time_spans.append((orig_start, orig_end, text_typo_fixed[orig_start:orig_end]))
         
         if not time_spans:
             return None
@@ -340,24 +465,33 @@ class PhoBERTEventExtractor:
         merged = []
         for start, end, txt in time_spans:
             if merged and start <= merged[-1][1] + 3:
-                # Merge with previous
-                merged[-1] = (merged[-1][0], end, text[merged[-1][0]:end])
+                # Merge with previous - EXTEND to max end position (don't truncate!)
+                new_end = max(end, merged[-1][1])
+                merged[-1] = (merged[-1][0], new_end, text_typo_fixed[merged[-1][0]:new_end])
             else:
                 merged.append((start, end, txt))
         
-        # Return the longest/most complete time expression
+        # Return the longest/most complete time expression FROM ORIGINAL TEXT (with typos fixed)
         if merged:
-            return max(merged, key=lambda x: x[1] - x[0])[2].strip()
+            longest = max(merged, key=lambda x: x[1] - x[0])
+            start, end = longest[0], longest[1]
+            # Extend end to capture full words
+            while end < len(text) and text[end].isalpha():
+                end += 1
+            return text[start:end].strip()
         
         return None
     
     def _extract_location_semantic(self, text: str, embeddings: torch.Tensor) -> Optional[str]:
         """Extract location using semantic understanding"""
         # Location markers
+        # PRIORITY ORDER: Compound locations FIRST (company + building), then single patterns
         location_markers = [
             r'(?:ở|tại|đến|về)\s+([^,\.\d]{3,50})',
+            # Company/org + building: "công ty ABC phòng 401"
+            r'(?:trường|công ty|văn phòng|bệnh viện|nhà hàng|quán)\s+[A-Z\w]+(?:\s+(?:phòng|tầng|toà|tòa)\s+[\w\d]+)?',
+            # Building-only (MUST BE LAST)
             r'(?:phòng|tầng|toà|tòa)\s+[\w\s\d]{1,30}',
-            r'(?:trường|công ty|văn phòng|bệnh viện|nhà hàng|quán)\s+[\w\s]{2,40}',
         ]
         
         for pattern in location_markers:
@@ -411,59 +545,172 @@ class PhoBERTEventExtractor:
         return 0
     
     def _extract_event_name(self, text: str, extracted: Dict[str, Any]) -> str:
-        """Extract event name by removing time, location, reminder"""
+        """Extract event name by removing time, location, reminder
+        
+        IMPROVED: Better fragment removal and location-aware cleaning
+        """
         cleaned = text
         
-        # Remove time expression first (most specific)
+        # Remove weekday patterns (t2, t3, t5, cn, chu nhat, thu 2, thứ 3, etc.)
+        weekday_patterns = [
+            r'\b(?:thứ|thu)\s*(?:hai|ba|tư|tu|năm|nam|sáu|sau|bảy|bay|chủ\s*nhật)\b',
+            # Typo variants with 'h' suffix
+            r'\b(?:thứ|thu)\s*(?:haih|bah|tuh|namh|sauh|bayh)\b',
+            r'\b(?:thứ|thu)\s*\d\b',
+            r'\bt\s*\d\b',
+            r'\bcn\b',
+            r'\bchủ\s*nhật\b',
+            r'\bchu\s*nhat\b',
+        ]
+        for pattern in weekday_patterns:
+            cleaned = re.sub(pattern, ' ', cleaned, flags=re.IGNORECASE)
+        
+        # Remove time patterns (explicit times: 10h, 8:30, etc.)
+        time_patterns = [
+            r'\b\d{1,2}\s*[hH:]\s*\d{0,2}\b',  # 10h, 8:30
+            r'\b\d{1,2}\s*giờ(?:\s*\d{1,2}\s*phút)?\b',  # 10 giờ, 10 giờ 30 phút
+            # Number words + giờ (mười giờ, hai giờ, etc.)
+            r'\b(?:một|mot|hai|ba|bốn|bon|năm|nam|sáu|sau|bảy|bay|tám|tam|chín|chin|mười|muoi|muoi\s+mot|muoi\s+hai)\s+giờ\b',
+        ]
+        for pattern in time_patterns:
+            cleaned = re.sub(pattern, ' ', cleaned, flags=re.IGNORECASE)
+        
+        # Remove time expression if extracted
         if extracted.get('time_str'):
             time_str = extracted['time_str']
             cleaned = cleaned.replace(time_str, ' ')
-            # Also remove time markers
-            cleaned = re.sub(r'\b(?:lúc|vào)\s+', ' ', cleaned, flags=re.IGNORECASE)
         
-        # Remove location with marker
+        # Remove location marker + location (ở/o/tại + location) - ENHANCED
+        # This removes the ENTIRE phrase "ở truong ham tu" not just marker
+        location_marker_pattern = r'\b(?:ở|o|tại|tai)\s+[^\s,\.!?\d]+'
+        cleaned = re.sub(location_marker_pattern, ' ', cleaned, flags=re.IGNORECASE)
+        
+        # Remove location if extracted (without marker) - WORD BY WORD
         if extracted.get('location'):
             location = extracted['location']
-            # Remove with location marker
-            cleaned = re.sub(
-                r'(?:ở|tại|đến|về)\s+' + re.escape(location),
-                ' ',
-                cleaned,
-                flags=re.IGNORECASE
-            )
+            # Remove full location phrase
+            cleaned = cleaned.replace(location, ' ')
+            # Also remove individual words from location (handles fragments like "ham", "tu")
+            # BUT preserve compound verb/event phrases
+            compound_phrases = [
+                r'\bkhám\s+bệnh\b', r'\bkham\s+benh\b',  # medical checkup
+                r'\băn\s+tối\b', r'\ban\s+toi\b',  # dinner
+                r'\băn\s+sáng\b', r'\ban\s+sang\b',  # breakfast
+                r'\băn\s+trưa\b', r'\ban\s+trua\b',  # lunch
+                r'\bđi\s+cafe\b', r'\bdi\s+cafe\b',  # go to cafe (event, not just location)
+                r'\bđi\s+chợ\b', r'\bdi\s+cho\b',  # go to market (event, not just location)
+                r'\bra\s+chợ\b', r'\bra\s+cho\b',  # go out to market
+            ]
+            location_words = location.split()
+            for word in location_words:
+                if len(word) > 2:  # Only remove meaningful words
+                    # Check if this word is part of a preserved compound phrase
+                    skip = False
+                    for phrase_pattern in compound_phrases:
+                        if re.search(phrase_pattern, cleaned, re.IGNORECASE):
+                            # Check if word is in this phrase
+                            if word.lower() in re.search(phrase_pattern, cleaned, re.IGNORECASE).group().lower():
+                                skip = True
+                                break
+                    if not skip:
+                        # Use word boundary to avoid removing parts of other words
+                        cleaned = re.sub(r'\b' + re.escape(word) + r'\b', ' ', cleaned, flags=re.IGNORECASE)
         
         # Remove reminder phrases
-        reminder_phrases = [
-            r'nhắc\s+(?:tôi\s+)?(?:trước\s+)?\d{1,3}\s*(?:phút|p|giờ|h)(?:\s+trước)?',
-            r'\d{1,3}\s*(?:phút|p|giờ|h)\s*(?:trước\s+)?(?:nhắc|nhở)',
-            r'nhắc\s+(?:tôi\s+)?(?:trước|nhở)?',
+        reminder_patterns = [
+            r'nhắc\s+(?:tôi\s+)?(?:trước|sớm\s+hơn)?\s*\d{1,3}\s*(?:phút|p|giờ|h|gio)(?:\s+trước)?',
+            r'nhac\s+(?:toi\s+)?(?:truoc|som\s+hon)?\s*\d{1,3}\s*(?:phut|p|gio|h)(?:\s+truoc)?',
+            r'\d{1,3}\s*(?:phút|phut|p|giờ|gio|h)\s*(?:trước|truoc\s+)?(?:nhắc|nhac|nhở|nho)',
+            r'nhắc\s+(?:tôi\s+)?(?:trước|nhở|som\s+hon)?',
+            r'nhac\s+(?:toi\s+)?(?:truoc|nho|som\s+hon)?',
+            # Remove standalone reminder modifiers that might remain
+            r'\b(?:sớm\s+hơn|som\s+hon|trước|truoc)\b',
         ]
-        for pattern in reminder_phrases:
+        for pattern in reminder_patterns:
             cleaned = re.sub(pattern, ' ', cleaned, flags=re.IGNORECASE)
         
-        # Remove standalone numbers (likely from time/room that wasn't caught)
-        cleaned = re.sub(r'\b\d{1,4}\b', ' ', cleaned)
-        
-        # Remove common time/location connectors
-        connectors = [
-            'vào', 'lúc', 'vào lúc', 'khoảng', 'từ', 'đến', 'tới',
-            'ở', 'tại', 'đến', 'về',
-            'sáng', 'trưa', 'chiều', 'tối', 'đêm', 'khuya',
-            'hôm nay', 'ngày mai', 'mai', 'ngày kia'
+        # Remove relative time words
+        relative_time = [
+            'hôm nay', 'hom nay', 'ngày mai', 'ngay mai', 'mai', 
+            'ngày kia', 'ngay kia', 'ngày mốt', 'ngay mot', 'mốt', 'mot',
+            'hôm qua', 'hom qua', 'qua', 'nay',
+            'tuần sau', 'tuan sau', 'tuần trước', 'tuan truoc',
         ]
+        for word in relative_time:
+            cleaned = re.sub(r'\b' + re.escape(word) + r'\b', ' ', cleaned, flags=re.IGNORECASE)
+        
+        # Remove period words (sáng, chiều, tối, đêm) but preserve compound phrases
+        # E.g., keep "ăn tối", "ăn sáng", "ăn trưa" but remove standalone period words
+        period_words_to_remove = ['sáng', 'sang', 'trưa', 'trua', 'chiều', 'chieu', 'đêm', 'dem', 'khuya']
+        # Remove "tối" only if NOT preceded by "ăn" (preserve "ăn tối")
+        cleaned = re.sub(r'(?<!ăn\s)(?<!an\s)\b(?:tối|toi)\b', ' ', cleaned, flags=re.IGNORECASE)
+        # Remove other period words normally
+        for word in period_words_to_remove:
+            cleaned = re.sub(r'\b' + re.escape(word) + r'\b', ' ', cleaned, flags=re.IGNORECASE)
+        
+        # Remove time/location connectors
+        connectors = ['vào', 'vao', 'lúc', 'luc', 'vào lúc', 'vao luc', 'khoảng', 'khoang', 'từ', 'tu', 'đến', 'den', 'tới', 'cho đến', 'cho den']
         for word in connectors:
             cleaned = re.sub(r'\b' + re.escape(word) + r'\b', ' ', cleaned, flags=re.IGNORECASE)
         
+        # Remove location-related fragments (common fragments that leak into events)
+        # NEW: Target specific problematic fragments with smart preservation
+        location_fragments = [
+            # Building/place words
+            r'\b(?:phòng|phong|tầng|tang|toà|toa|lầu|lau)\b',
+            # Partial words from compound location names
+            r'\b(?:ham|tu|gần|gan|viện|vien|hàng|hang|công|cong|ty|quan)\b',
+        ]
+        for pattern in location_fragments:
+            cleaned = re.sub(pattern, ' ', cleaned, flags=re.IGNORECASE)
+        
+        # Remove cafe/market words ONLY if NOT part of motion event (preserve "đi chợ", "đi cafe")
+        # Use negative lookbehind to keep verb + location patterns
+        cleaned = re.sub(r'(?<!đi\s)(?<!di\s)(?<!ra\s)(?<!vào\s)(?<!vao\s)\b(?:cafe|café)\b', ' ', cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r'(?<!đi\s)(?<!di\s)(?<!ra\s)(?<!vào\s)(?<!vao\s)\b(?:chợ|cho)\b', ' ', cleaned, flags=re.IGNORECASE)
+        # Remove market-related words normally (these are rarely events)
+        cleaned = re.sub(r'\b(?:siêu|sieu|thị|thi|truong|trường)\b', ' ', cleaned, flags=re.IGNORECASE)
+        
+        # Remove standalone numbers (including typo number words)
+        cleaned = re.sub(r'\b\d{1,4}\b', ' ', cleaned)
+        cleaned = re.sub(r'\b(?:sauh|namh|tamh|muoih|bayh|bah|bonh|tuh|haih|moth|chinh)\b', ' ', cleaned, flags=re.IGNORECASE)
+        
         # Clean up whitespace and punctuation
         cleaned = re.sub(r'\s+', ' ', cleaned)
-        cleaned = cleaned.strip(' ,.;-:')
+        cleaned = cleaned.strip(' ,.;-:!?')
         
-        # If cleaned is empty or too short, return first few words of original
+        # POST-PROCESSING: Remove trailing single-word fragments
+        # If cleaned ends with a single short word (< 4 chars), it's likely a fragment
+        words = cleaned.split()
+        if len(words) > 1 and len(words[-1]) <= 3:
+            # Check if last word is a common fragment
+            last_word = words[-1].lower()
+            if last_word in ['ham', 'tu', 'ty', 'abc', 'gan', 'nha', 'o', 'a', 'b', 'c', 'mai', 'bai', 'sai', 'gon']:
+                words = words[:-1]
+                cleaned = ' '.join(words)
+        
+        # If cleaned is empty or too short, try to extract main action verb
+        if not cleaned or len(cleaned) < 2:
+            # Look for common action verbs
+            action_verbs = ['họp', 'hop', 'đi', 'di', 'làm', 'lam', 'gặp', 'gap', 'học', 'hoc', 'ăn', 'an', 'chạy', 'chay', 'tập', 'tap']
+            for verb in action_verbs:
+                if re.search(r'\b' + re.escape(verb) + r'\b', text, flags=re.IGNORECASE):
+                    # Find verb and next 1-2 words
+                    match = re.search(r'\b' + re.escape(verb) + r'\b(?:\s+\w+){0,2}', text, flags=re.IGNORECASE)
+                    if match:
+                        cleaned = match.group(0)
+                        # Remove fragments from matched text too
+                        for pattern in location_fragments:
+                            cleaned = re.sub(pattern, ' ', cleaned, flags=re.IGNORECASE)
+                        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+                        break
+        
+        # Final cleanup
         if not cleaned or len(cleaned) < 2:
             words = text.split()[:3]
             cleaned = ' '.join(words)
         
-        return cleaned
+        return cleaned.strip()
     
     def _classify_entities(self, text: str, embeddings: torch.Tensor) -> Dict[str, Any]:
         """

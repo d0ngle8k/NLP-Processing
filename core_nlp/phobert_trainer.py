@@ -54,8 +54,20 @@ class EventExtractionDataset(Dataset):
                 - has_event, has_time, has_location, has_reminder: int labels
         """
         item = self.data[idx]
-        text = item['input']
-        expected = item.get('expected', {})
+        
+        # Support both old format (input/expected) and new format (text/event/start_time/location/reminder_minutes)
+        if 'input' in item:
+            text = item['input']
+            expected = item.get('expected', {})
+        else:
+            # New format from generate_large_dataset.py
+            text = item['text']
+            expected = {
+                'event': item.get('event'),
+                'start_time': item.get('start_time'),
+                'location': item.get('location'),
+                'reminder_minutes': item.get('reminder_minutes', 0)
+            }
         
         # Tokenize input
         encoding = self.tokenizer(
@@ -461,10 +473,11 @@ def train_phobert_from_test_cases(
 
 
 if __name__ == '__main__':
-    # Example: Train from extended test cases
+    # Train from MASSIVE 90K dataset with 40 epochs for ultimate performance
+    # Target: 90-100% accuracy with extreme edge cases coverage
     train_phobert_from_test_cases(
-        test_file="./tests/extended_test_cases.json",
+        test_file="./tests/extended_test_cases_100k.json",
         output_dir="./models/phobert_finetuned",
-        num_epochs=15,
-        batch_size=8,
+        num_epochs=40,
+        batch_size=16,  # Increased batch size for faster training
     )

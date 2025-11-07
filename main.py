@@ -16,28 +16,27 @@ from database.db_manager import DatabaseManager
 from services.notification_service import start_notification_service
 from services.export_service import export_to_json, export_to_ics
 from services.import_service import import_from_json, import_from_ics
-from services.statistics_service import StatisticsService
+# Statistics dashboard removed per request
 
-# NLP Pipeline - PhoBERT or Rule-based
+# NLP Pipeline - Hybrid (Rule-based + PhoBERT)
 try:
-    from core_nlp.phobert_model import PhoBERTNLPPipeline
-    USE_PHOBERT = True
-    print("✅ Using PhoBERT-based NLP (AI Model)")
+    from core_nlp.hybrid_pipeline import HybridNLPPipeline
+    USE_HYBRID = True
+    print("🔥 Using Hybrid NLP (Rule-based + PhoBERT AI)")
 except ImportError:
-    from core_nlp.pipeline import NLPPipeline
-    USE_PHOBERT = False
-    print("⚠️ Using Rule-based NLP (PhoBERT not available)")
+    try:
+        from core_nlp.phobert_model import PhoBERTNLPPipeline
+        USE_HYBRID = False
+        USE_PHOBERT = True
+        print("✅ Using PhoBERT-based NLP (AI Model)")
+    except ImportError:
+        from core_nlp.pipeline import NLPPipeline
+        USE_HYBRID = False
+        USE_PHOBERT = False
+        print("⚠️ Using Rule-based NLP (Hybrid/PhoBERT not available)")
 
-# Matplotlib for charts
-try:
-    import matplotlib
-    matplotlib.use('TkAgg')
-    from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-    from matplotlib.figure import Figure
-    MATPLOTLIB_AVAILABLE = True
-except ImportError:
-    MATPLOTLIB_AVAILABLE = False
-    print("⚠️ WARNING: matplotlib not installed - statistics dashboard disabled")
+# Matplotlib-based statistics dashboard has been removed/disabled
+MATPLOTLIB_AVAILABLE = False
 
 
 class Application(tk.Tk):
@@ -131,7 +130,7 @@ class Application(tk.Tk):
         # Center column contents
         self.tree.column('id', width=50, stretch=False, anchor='center')
         self.tree.column('event_name', width=330, anchor='center')
-        self.tree.column('time', width=110, anchor='center')
+        self.tree.column('time', width=150, anchor='center')
         self.tree.column('remind', width=80, anchor='center')
         self.tree.column('location', width=180, anchor='center')
         
@@ -319,7 +318,14 @@ class Application(tk.Tk):
         for item in self.tree.get_children():
             self.tree.delete(item)
         for ev in events:
-            time_str = (ev['start_time'] or '')[11:16] if ev.get('start_time') else ''
+            # Hiển thị đầy đủ: DD/MM/YYYY HH:MM
+            time_str = ''
+            if ev.get('start_time'):
+                try:
+                    dt = datetime.fromisoformat(ev['start_time'])
+                    time_str = dt.strftime('%d/%m/%Y %H:%M')
+                except:
+                    time_str = ev['start_time']
             remind_str = 'Có' if (ev.get('reminder_minutes') or 0) > 0 else 'Không'
             self.tree.insert('', 'end', values=(ev['id'], ev['event_name'], time_str, remind_str, ev.get('location') or ''))
 
@@ -327,7 +333,14 @@ class Application(tk.Tk):
         for item in self.tree.get_children():
             self.tree.delete(item)
         for ev in events:
-            time_str = (ev.get('start_time') or '')[11:16] if ev.get('start_time') else ''
+            # Hiển thị đầy đủ: DD/MM/YYYY HH:MM
+            time_str = ''
+            if ev.get('start_time'):
+                try:
+                    dt = datetime.fromisoformat(ev.get('start_time'))
+                    time_str = dt.strftime('%d/%m/%Y %H:%M')
+                except:
+                    time_str = ev.get('start_time') or ''
             remind_str = 'Có' if (ev.get('reminder_minutes') or 0) > 0 else 'Không'
             self.tree.insert('', 'end', values=(ev.get('id'), ev.get('event_name'), time_str, remind_str, ev.get('location') or ''))
 
@@ -569,348 +582,7 @@ class Application(tk.Tk):
         except Exception as e:
             messagebox.showerror("Lỗi", f"Không thể lưu chỉnh sửa: {e}")
 
-    # --- Statistics Dashboard ---
-    def handle_show_statistics(self):
-        """Show comprehensive statistics dashboard"""
-        if not MATPLOTLIB_AVAILABLE:
-            messagebox.showerror(
-                "Thiếu thư viện",
-                "Tính năng thống kê yêu cầu matplotlib.\n\n"
-                "Vui lòng cài đặt: pip install matplotlib reportlab"
-            )
-            return
-            
-        try:
-            # Initialize statistics service
-            stats_service = StatisticsService(self.db_manager)
-            
-            # Get all statistics
-            stats = stats_service.get_comprehensive_stats()
-            
-            # Check if there are events
-            if stats['overview']['total_events'] == 0:
-                messagebox.showinfo(
-                    "Không có dữ liệu",
-                    "Chưa có sự kiện nào trong hệ thống.\n\n"
-                    "Hãy thêm sự kiện để xem thống kê."
-                )
-                return
-            
-            # Create statistics dialog
-            self._show_statistics_dialog(stats, stats_service)
-            
-        except Exception as e:
-            messagebox.showerror(
-                "Lỗi thống kê",
-                f"Không thể tạo thống kê:\n{e}\n\n"
-                "Vui lòng thử lại."
-            )
-    
-    def _show_statistics_dialog(self, stats: dict, stats_service):
-        """Display statistics in a tabbed dialog window"""
-        # Create dialog window
-        stats_window = tk.Toplevel(self)
-        stats_window.title("📊 Thống kê & Phân tích")
-        stats_window.geometry("900x700")
-        stats_window.transient(self)  # Set as child of main window
-        
-        # Create notebook (tabs)
-        notebook = ttk.Notebook(stats_window)
-        notebook.pack(fill='both', expand=True, padx=10, pady=10)
-        
-        # Tab 1: Overview
-        overview_frame = ttk.Frame(notebook)
-        notebook.add(overview_frame, text="📊 Tổng quan")
-        self._build_overview_tab(overview_frame, stats['overview'])
-        
-        # Tab 2: Time Analysis
-        time_frame = ttk.Frame(notebook)
-        notebook.add(time_frame, text="⏰ Thời gian")
-        self._build_time_tab(time_frame, stats['time'], stats_service)
-        
-        # Tab 3: Location
-        location_frame = ttk.Frame(notebook)
-        notebook.add(location_frame, text="📍 Địa điểm")
-        self._build_location_tab(location_frame, stats['location'], stats_service)
-        
-        # Tab 4: Event Type
-        type_frame = ttk.Frame(notebook)
-        notebook.add(type_frame, text="🏷️ Phân loại")
-        self._build_event_type_tab(type_frame, stats['event_type'], stats_service)
-        
-        # Tab 5: Trends
-        trend_frame = ttk.Frame(notebook)
-        notebook.add(trend_frame, text="📈 Xu hướng")
-        self._build_trend_tab(trend_frame, stats['trends'], stats_service)
-        
-        # Bottom frame with export buttons
-        export_frame = ttk.Frame(stats_window)
-        export_frame.pack(fill='x', padx=10, pady=10)
-        
-        ttk.Button(
-            export_frame,
-            text="📄 Xuất PDF",
-            command=lambda: self._export_stats_pdf(stats)
-        ).pack(side='left', padx=5)
-        
-        ttk.Button(
-            export_frame,
-            text="📊 Xuất Excel",
-            command=lambda: self._export_stats_excel(stats)
-        ).pack(side='left', padx=5)
-        
-        ttk.Button(
-            export_frame,
-            text="Đóng",
-            command=stats_window.destroy
-        ).pack(side='right', padx=5)
-    
-    def _build_overview_tab(self, parent, stats):
-        """Build overview statistics tab"""
-        # Scrollable frame
-        canvas = tk.Canvas(parent)
-        scrollbar = ttk.Scrollbar(parent, orient="vertical", command=canvas.yview)
-        scrollable_frame = ttk.Frame(canvas)
-        
-        scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-        )
-        
-        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
-        
-        # Title
-        title = ttk.Label(
-            scrollable_frame,
-            text="📊 THỐNG KÊ TỔNG QUAN",
-            font=('Arial', 16, 'bold')
-        )
-        title.pack(pady=20)
-        
-        # Stats container
-        stats_container = ttk.Frame(scrollable_frame)
-        stats_container.pack(fill='both', expand=True, padx=40)
-        
-        # Display stats with cards
-        self._add_stat_card(stats_container, "📋 Tổng số sự kiện", stats['total_events'], 0)
-        self._add_stat_card(stats_container, "📅 Sự kiện tuần này", stats['week_events'], 1)
-        self._add_stat_card(stats_container, "📆 Sự kiện tháng này", stats['month_events'], 2)
-        
-        # Separator
-        ttk.Separator(stats_container, orient='horizontal').grid(
-            row=3, column=0, columnspan=2, sticky='ew', pady=20
-        )
-        
-        self._add_stat_card(stats_container, "🔔 Có nhắc nhở", 
-                           f"{stats['with_reminder']} ({stats['reminder_percentage']:.1f}%)", 4)
-        self._add_stat_card(stats_container, "📍 Có địa điểm", 
-                           f"{stats['with_location']} ({stats['location_percentage']:.1f}%)", 5)
-        
-        ttk.Separator(stats_container, orient='horizontal').grid(
-            row=6, column=0, columnspan=2, sticky='ew', pady=20
-        )
-        
-        self._add_stat_card(stats_container, "🔥 Streak hiện tại", 
-                           f"{stats['current_streak']} ngày", 7)
-        self._add_stat_card(stats_container, "🏆 Streak dài nhất", 
-                           f"{stats['longest_streak']} ngày", 8)
-        self._add_stat_card(stats_container, "📊 TB sự kiện/ngày (30 ngày)", 
-                           f"{stats['avg_events_per_day']:.1f}", 9)
-        
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-    
-    def _add_stat_card(self, parent, label: str, value, row: int):
-        """Add a statistic card to the grid"""
-        # Label
-        lbl = ttk.Label(
-            parent,
-            text=label,
-            font=('Arial', 12)
-        )
-        lbl.grid(row=row, column=0, sticky='w', pady=10, padx=10)
-        
-        # Value
-        val = ttk.Label(
-            parent,
-            text=str(value),
-            font=('Arial', 14, 'bold'),
-            foreground='blue'
-        )
-        val.grid(row=row, column=1, sticky='e', pady=10, padx=10)
-        
-        parent.columnconfigure(0, weight=1)
-        parent.columnconfigure(1, weight=1)
-    
-    def _build_time_tab(self, parent, stats, stats_service):
-        """Build time analysis tab with charts"""
-        # Create notebook for sub-tabs
-        time_notebook = ttk.Notebook(parent)
-        time_notebook.pack(fill='both', expand=True)
-        
-        # Weekday chart
-        weekday_frame = ttk.Frame(time_notebook)
-        time_notebook.add(weekday_frame, text="Theo ngày")
-        
-        fig_weekday = stats_service.create_weekday_chart(stats)
-        canvas_weekday = FigureCanvasTkAgg(fig_weekday, weekday_frame)
-        canvas_weekday.draw()
-        canvas_weekday.get_tk_widget().pack(fill='both', expand=True)
-        
-        # Hourly chart
-        hourly_frame = ttk.Frame(time_notebook)
-        time_notebook.add(hourly_frame, text="Theo giờ")
-        
-        fig_hourly = stats_service.create_hourly_chart(stats)
-        canvas_hourly = FigureCanvasTkAgg(fig_hourly, hourly_frame)
-        canvas_hourly.draw()
-        canvas_hourly.get_tk_widget().pack(fill='both', expand=True)
-        
-        # Summary info
-        summary_frame = ttk.Frame(time_notebook)
-        time_notebook.add(summary_frame, text="Tóm tắt")
-        
-        info_text = f"""
-        📊 PHÂN TÍCH THỜI GIAN
-        
-        🔥 Ngày bận nhất: {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'][stats['peak_day']]} 
-           → {stats['peak_day_count']} sự kiện
-        
-        ⏰ Giờ bận nhất: {stats['peak_hour']}:00
-           → {stats['peak_hour_count']} sự kiện
-        
-        💡 Insight:
-        - Hãy tránh đặt thêm lịch vào {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'][stats['peak_day']]}
-        - Khoảng {stats['peak_hour']}:00 là thời gian bạn bận nhất
-        """
-        
-        ttk.Label(summary_frame, text=info_text, justify='left', font=('Arial', 11)).pack(
-            pady=20, padx=20
-        )
-    
-    def _build_location_tab(self, parent, stats, stats_service):
-        """Build location tab with chart"""
-        if stats['total_unique_locations'] == 0:
-            ttk.Label(
-                parent,
-                text="📍 Chưa có dữ liệu địa điểm\n\nHãy thêm địa điểm vào các sự kiện",
-                font=('Arial', 14),
-                justify='center'
-            ).pack(expand=True)
-            return
-        
-        # Chart
-        chart_frame = ttk.Frame(parent)
-        chart_frame.pack(fill='both', expand=True, side='top')
-        
-        fig = stats_service.create_location_chart(stats)
-        canvas = FigureCanvasTkAgg(fig, chart_frame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(fill='both', expand=True)
-        
-        # Summary
-        summary_frame = ttk.Frame(parent)
-        summary_frame.pack(fill='x', side='bottom', padx=20, pady=10)
-        
-        summary_text = f"Tổng {stats['total_unique_locations']} địa điểm khác nhau"
-        ttk.Label(summary_frame, text=summary_text, font=('Arial', 11, 'bold')).pack()
-    
-    def _build_event_type_tab(self, parent, stats, stats_service):
-        """Build event type tab with pie chart"""
-        # Chart
-        chart_frame = ttk.Frame(parent)
-        chart_frame.pack(fill='both', expand=True)
-        
-        fig = stats_service.create_event_type_pie_chart(stats)
-        canvas = FigureCanvasTkAgg(fig, chart_frame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(fill='both', expand=True)
-    
-    def _build_trend_tab(self, parent, stats, stats_service):
-        """Build trend analysis tab"""
-        # Chart
-        chart_frame = ttk.Frame(parent)
-        chart_frame.pack(fill='both', expand=True, side='top')
-        
-        fig = stats_service.create_trend_chart(stats)
-        canvas = FigureCanvasTkAgg(fig, chart_frame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(fill='both', expand=True)
-        
-        # Growth info
-        info_frame = ttk.Frame(parent)
-        info_frame.pack(fill='x', side='bottom', padx=20, pady=20)
-        
-        growth = stats['growth_rate']
-        if growth > 0:
-            trend_text = f"📈 Tăng {growth:.1f}% so với tuần trước"
-            color = 'green'
-        elif growth < 0:
-            trend_text = f"📉 Giảm {abs(growth):.1f}% so với tuần trước"
-            color = 'red'
-        else:
-            trend_text = "➡️ Không thay đổi so với tuần trước"
-            color = 'black'
-        
-        ttk.Label(
-            info_frame,
-            text=trend_text,
-            font=('Arial', 12, 'bold'),
-            foreground=color
-        ).pack()
-    
-    def _export_stats_pdf(self, stats):
-        """Export statistics to PDF"""
-        try:
-            filepath = filedialog.asksaveasfilename(
-                defaultextension=".pdf",
-                filetypes=[("PDF files", "*.pdf")],
-                initialfile=f"thong-ke-{datetime.now().strftime('%Y%m%d')}.pdf"
-            )
-            
-            if not filepath:
-                return
-            
-            stats_service = StatisticsService(self.db_manager)
-            stats_service.export_to_pdf(filepath, stats)
-            
-            messagebox.showinfo(
-                "Xuất PDF thành công",
-                f"Đã xuất thống kê ra file:\n{filepath}"
-            )
-            
-        except Exception as e:
-            messagebox.showerror(
-                "Lỗi xuất PDF",
-                f"Không thể xuất PDF:\n{e}"
-            )
-    
-    def _export_stats_excel(self, stats):
-        """Export statistics to Excel"""
-        try:
-            filepath = filedialog.asksaveasfilename(
-                defaultextension=".xlsx",
-                filetypes=[("Excel files", "*.xlsx")],
-                initialfile=f"thong-ke-{datetime.now().strftime('%Y%m%d')}.xlsx"
-            )
-            
-            if not filepath:
-                return
-            
-            stats_service = StatisticsService(self.db_manager)
-            stats_service.export_to_excel(filepath, stats)
-            
-            messagebox.showinfo(
-                "Xuất Excel thành công",
-                f"Đã xuất thống kê ra file:\n{filepath}"
-            )
-            
-        except Exception as e:
-            messagebox.showerror(
-                "Lỗi xuất Excel",
-                f"Không thể xuất Excel:\n{e}"
-            )
+    # --- Statistics Dashboard removed ---
     
     # --- Settings Window ---
     def handle_show_settings(self):
@@ -942,37 +614,43 @@ class Application(tk.Tk):
             foreground='gray'
         ).pack(pady=(0, 15))
         
-        # Export buttons
+        # Export buttons (centered)
         export_frame = ttk.Frame(import_export_frame)
         export_frame.pack(fill='x', pady=5)
         
+        export_container = ttk.Frame(export_frame)
+        export_container.pack(expand=True)
+        
         ttk.Button(
-            export_frame,
+            export_container,
             text="📤 Xuất ra JSON",
             command=self.handle_export_json,
             width=25
         ).pack(side='left', padx=5)
         
         ttk.Button(
-            export_frame,
+            export_container,
             text="📤 Xuất ra ICS",
             command=self.handle_export_ics,
             width=25
         ).pack(side='left', padx=5)
         
-        # Import buttons
+        # Import buttons (centered)
         import_frame = ttk.Frame(import_export_frame)
         import_frame.pack(fill='x', pady=5)
         
+        import_container = ttk.Frame(import_frame)
+        import_container.pack(expand=True)
+        
         ttk.Button(
-            import_frame,
+            import_container,
             text="📥 Nhập từ JSON",
             command=self.handle_import_json,
             width=25
         ).pack(side='left', padx=5)
         
         ttk.Button(
-            import_frame,
+            import_container,
             text="📥 Nhập từ ICS",
             command=self.handle_import_ics,
             width=25
@@ -981,12 +659,12 @@ class Application(tk.Tk):
         # === Section 2: Advanced Options ===
         advanced_frame = ttk.LabelFrame(
             main_container,
-            text="🔧 Đơn Dẹp Dữ Liệu",
+            text="🔧 Dọn Dẹp Dữ Liệu",
             padding=15
         )
         advanced_frame.pack(fill='x', pady=(0, 20))
         
-        # Description
+        # Description (centered)
         ttk.Label(
             advanced_frame,
             text="Xóa toàn bộ sự kiện (không thể hoàn tác)",
@@ -994,9 +672,12 @@ class Application(tk.Tk):
             foreground='red'
         ).pack(pady=(0, 10))
         
-        # Delete all button
+        # Delete all button (centered)
+        delete_container = ttk.Frame(advanced_frame)
+        delete_container.pack(expand=True)
+        
         ttk.Button(
-            advanced_frame,
+            delete_container,
             text="🗑️ Xóa tất cả sự kiện",
             command=self.handle_delete_all_events,
         ).pack()
@@ -1028,27 +709,28 @@ class Application(tk.Tk):
         info_items = [
             ("📋 Tên ứng dụng:", "Trợ Lý Lịch Trình"),
             ("📦 Phiên bản:", "0.8.1"),
-            ("👨‍💻 Phát triển bởi:", "Trường Gia Thành d0ngle8k"),
+            ("👨‍💻 Phát triển bởi:", "Trương Gia Thành"),
             ("📅 Năm:", "2025"),
         ]
         
         for label, value in info_items:
-            item_frame = ttk.Frame(info_container)
-            item_frame.pack(fill='x', pady=5)
+            row = ttk.Frame(info_container)
+            row.pack(pady=5, anchor='w', padx=20)
             
             ttk.Label(
-                item_frame,
+                row,
                 text=label,
                 font=('Arial', 10),
-                width=20,
-                anchor='e'
-            ).pack(side='left', padx=(0, 10))
+                width=22,
+                anchor='w'
+            ).pack(side='left')
             
             ttk.Label(
-                item_frame,
+                row,
                 text=value,
                 font=('Arial', 10, 'bold'),
-                foreground='#424242'
+                foreground='#424242',
+                anchor='w'
             ).pack(side='left')
         
         # === Bottom: Close Button ===
@@ -1066,9 +748,17 @@ class Application(tk.Tk):
 if __name__ == '__main__':
     db = DatabaseManager()
     
-    # Initialize NLP Pipeline (PhoBERT or Rule-based)
-    if USE_PHOBERT:
-        # Try to use fine-tuned model if available
+    # Initialize NLP Pipeline (Hybrid > PhoBERT > Rule-based)
+    if USE_HYBRID:
+        # Use Hybrid Pipeline (Rule-based + PhoBERT)
+        import os
+        model_path = "./models/phobert_finetuned"
+        print("🔥 Initializing Hybrid NLP Pipeline...")
+        nlp = HybridNLPPipeline(model_path=model_path if os.path.exists(model_path) else None)
+        model_info = nlp.get_model_info()
+        print(f"📊 Models: {model_info['mode']}")
+    elif USE_PHOBERT:
+        # Use PhoBERT only
         import os
         model_path = "./models/phobert_finetuned"
         if os.path.exists(model_path):
@@ -1078,6 +768,7 @@ if __name__ == '__main__':
             print("🤖 Loading base PhoBERT (not fine-tuned)")
             nlp = PhoBERTNLPPipeline()
     else:
+        # Fallback to rule-based
         nlp = NLPPipeline()
     
     app = Application(db, nlp)
