@@ -155,6 +155,9 @@ class Application(tk.Tk):
         self.tree.grid(row=0, column=0, sticky='nsew')
         vsb.grid(row=0, column=1, sticky='ns')
         hsb.grid(row=1, column=0, sticky='ew')
+        
+        # Bind double-click event to open edit form
+        self.tree.bind("<Double-Button-1>", self.handle_double_click_edit)
 
         # Controls - Settings button (bottom left corner)
         ttk.Button(control_frame, text="⚙️ Cài đặt", command=self.handle_show_settings).pack(side='left', padx=4)
@@ -688,6 +691,27 @@ class Application(tk.Tk):
             messagebox.showerror("Lỗi", f"Nhập ICS thất bại: {e}")
 
     # --- Inline Edit ---
+    def handle_double_click_edit(self, event):
+        """
+        Handle double-click on tree item to open edit form.
+        This provides a more intuitive UX - users can double-click an event to edit it.
+        
+        Args:
+            event: Tkinter event object (required for event binding)
+        """
+        # Get the item that was double-clicked
+        item = self.tree.identify('item', event.x, event.y)
+        if not item:
+            # Double-clicked on empty space
+            return
+        
+        # Select the item (focus on it)
+        self.tree.selection_set(item)
+        self.tree.focus(item)
+        
+        # Open edit form
+        self.handle_edit_start()
+    
     def handle_edit_start(self):
         sel = self.tree.focus()
         if not sel:
