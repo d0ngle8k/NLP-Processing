@@ -41,3 +41,8 @@ Thumbs.db
 # Documentation markdown (keep README.md only)
 DUAL_NOTIFICATION.md
 FEATURES_*.md
+
+# Large model files (too big for GitHub)
+models/phobert_finetuned/model.pt
+models/phobert_base/
+*.pt
