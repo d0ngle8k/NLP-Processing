@@ -81,8 +81,8 @@ class HybridNLPPipeline:
         """
         scores = {}
         
-        # Event agreement
-        event1 = self._normalize_text(result1.get('event'))
+        # Event agreement - rule_result uses 'event_name', phobert uses 'event'
+        event1 = self._normalize_text(result1.get('event_name'))
         event2 = self._normalize_text(result2.get('event'))
         if event1 and event2:
             # Partial match - if one contains the other
@@ -138,15 +138,15 @@ class HybridNLPPipeline:
         
         # Event: Prefer rule-based if it has a value, otherwise PhoBERT
         # (Rule-based is more accurate based on tests: 100% vs 95%)
-        rule_event = rule_result.get('event')
+        rule_event = rule_result.get('event_name')
         phobert_event = phobert_result.get('event')
         
         if scores['event'] >= 0.7:
             # Models agree or similar - use rule-based (cleaner)
-            merged['event'] = rule_event
+            merged['event_name'] = rule_event
         else:
             # Models differ - prefer rule-based (100% accuracy)
-            merged['event'] = rule_event if rule_event else phobert_event
+            merged['event_name'] = rule_event if rule_event else phobert_event
         
         # Time: Always prefer rule-based (100% accuracy)
         merged['start_time'] = rule_result.get('start_time')
@@ -177,7 +177,7 @@ class HybridNLPPipeline:
         """
         if not text or not text.strip():
             return {
-                'event': None,
+                'event_name': None,
                 'start_time': None,
                 'end_time': None,
                 'location': None,
