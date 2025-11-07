@@ -2,7 +2,7 @@
 
 
 
-> **Version:** 0.6.2  
+> **Version:** 1.0.2  
 
 > **Status:** Production Ready ✅  
 
