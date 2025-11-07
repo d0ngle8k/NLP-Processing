@@ -69,6 +69,15 @@ class Application(tk.Tk):
         control_frame = ttk.Frame(self, padding=10)
         control_frame.pack(fill='x', side='bottom')
         self.control_frame = control_frame
+        
+        # Sorting state tracking (column_name -> is_reverse)
+        self.sort_states = {
+            'id': False,
+            'event_name': False,
+            'time': False,
+            'remind': False,
+            'location': False
+        }
 
         # Input
         ttk.Label(input_frame, text="Lập lịch:").pack(side='left', padx=(0, 8))
@@ -120,12 +129,12 @@ class Application(tk.Tk):
         cols = ('id', 'event_name', 'time', 'remind', 'location')
         self.tree = ttk.Treeview(tree_wrap, columns=cols, show='headings')
         
-        # Center headings
-        self.tree.heading('id', text='ID', anchor='center')
-        self.tree.heading('event_name', text='Sự kiện', anchor='center')
-        self.tree.heading('time', text='Thời gian', anchor='center')
-        self.tree.heading('remind', text='Nhắc tôi', anchor='center')
-        self.tree.heading('location', text='Địa điểm', anchor='center')
+        # Center headings - Bind click events for sorting
+        self.tree.heading('id', text='ID ▼', anchor='center', command=lambda: self.handle_column_sort('id'))
+        self.tree.heading('event_name', text='Sự kiện ▼', anchor='center', command=lambda: self.handle_column_sort('event_name'))
+        self.tree.heading('time', text='Thời gian ▼', anchor='center', command=lambda: self.handle_column_sort('time'))
+        self.tree.heading('remind', text='Nhắc tôi ▼', anchor='center', command=lambda: self.handle_column_sort('remind'))
+        self.tree.heading('location', text='Địa điểm ▼', anchor='center', command=lambda: self.handle_column_sort('location'))
         
         # Center column contents
         self.tree.column('id', width=50, stretch=False, anchor='center')
@@ -354,8 +363,14 @@ class Application(tk.Tk):
         self._render_events(events)
 
     def _render_events(self, events):
+        # Clear current items
         for item in self.tree.get_children():
             self.tree.delete(item)
+        
+        # Store events for sorting (keep reference)
+        self.current_events = events
+        
+        # Insert events
         for ev in events:
             # Hiển thị đầy đủ: DD/MM/YYYY HH:MM
             time_str = ''
@@ -399,6 +414,131 @@ class Application(tk.Tk):
         self.search_entry.delete(0, 'end')
         self.search_mode = False
         self.refresh_for_date(self.calendar.selection_get())
+
+    def handle_column_sort(self, column):
+        """
+        Sort table by column with intelligent sorting logic.
+        
+        Sorting behaviors:
+        - ID: Numeric ASC/DESC toggle
+        - Event name: Alphanumeric (numbers first, then A-Z, case-insensitive)
+        - Time: Nearest first / Farthest first
+        - Remind: 'Không' first / 'Có' first
+        - Location: Alphanumeric (same as event name)
+        
+        Each click toggles between normal and reverse order.
+        """
+        # Check if we have events to sort
+        if not hasattr(self, 'current_events') or not self.current_events:
+            return
+        
+        # Toggle sort direction
+        is_reverse = self.sort_states.get(column, False)
+        self.sort_states[column] = not is_reverse
+        
+        # Update header indicators
+        self._update_sort_indicators(column, not is_reverse)
+        
+        # Sort logic based on column
+        if column == 'id':
+            # Numeric sort
+            sorted_events = sorted(
+                self.current_events,
+                key=lambda x: int(x.get('id', 0)),
+                reverse=is_reverse
+            )
+        
+        elif column == 'event_name':
+            # Alphanumeric sort: numbers first, then letters (case-insensitive)
+            def alphanumeric_key(event):
+                name = (event.get('event_name') or '').strip()
+                if not name:
+                    return (2, '')  # Empty names go last
+                first_char = name[0]
+                if first_char.isdigit():
+                    return (0, name.lower())  # Numbers first
+                else:
+                    return (1, name.lower())  # Letters after numbers
+            
+            sorted_events = sorted(
+                self.current_events,
+                key=alphanumeric_key,
+                reverse=is_reverse
+            )
+        
+        elif column == 'time':
+            # Time sort: nearest first (ASC) or farthest first (DESC)
+            def time_key(event):
+                time_str = event.get('start_time', '')
+                if not time_str:
+                    # Events without time go to end
+                    return datetime.max if not is_reverse else datetime.min
+                try:
+                    return datetime.fromisoformat(time_str)
+                except:
+                    return datetime.max if not is_reverse else datetime.min
+            
+            sorted_events = sorted(
+                self.current_events,
+                key=time_key,
+                reverse=is_reverse
+            )
+        
+        elif column == 'remind':
+            # Reminder sort: 'Không' first (0), then 'Có' (1)
+            def remind_key(event):
+                reminder = event.get('reminder_minutes', 0) or 0
+                return 1 if reminder > 0 else 0
+            
+            sorted_events = sorted(
+                self.current_events,
+                key=remind_key,
+                reverse=is_reverse
+            )
+        
+        elif column == 'location':
+            # Alphanumeric sort (same as event name)
+            def location_alphanumeric_key(event):
+                loc = (event.get('location') or '').strip()
+                if not loc:
+                    return (2, '')  # Empty locations go last
+                first_char = loc[0]
+                if first_char.isdigit():
+                    return (0, loc.lower())  # Numbers first
+                else:
+                    return (1, loc.lower())  # Letters after
+            
+            sorted_events = sorted(
+                self.current_events,
+                key=location_alphanumeric_key,
+                reverse=is_reverse
+            )
+        
+        else:
+            # Fallback: no sorting
+            sorted_events = self.current_events
+        
+        # Re-render with sorted events
+        self._render_events(sorted_events)
+    
+    def _update_sort_indicators(self, active_column, is_reverse):
+        """Update column headers with sort direction indicators"""
+        headers = {
+            'id': 'ID',
+            'event_name': 'Sự kiện',
+            'time': 'Thời gian',
+            'remind': 'Nhắc tôi',
+            'location': 'Địa điểm'
+        }
+        
+        for col, label in headers.items():
+            if col == active_column:
+                # Show indicator for active column
+                indicator = ' ▲' if is_reverse else ' ▼'
+                self.tree.heading(col, text=label + indicator)
+            else:
+                # No indicator for inactive columns
+                self.tree.heading(col, text=label + ' ▼')
 
     def handle_delete_event(self):
         sel = self.tree.focus()
@@ -594,7 +734,7 @@ class Application(tk.Tk):
                     tz_suffix = st[19:]
             new_iso = f"{date_str}T{time_str}:00{tz_suffix}"
             payload = {
-                'event': event_name,
+                'event_name': event_name,  # ✅ FIXED: Use correct key
                 'start_time': new_iso,
                 'end_time': old.get('end_time') if old else None,
                 'location': location,
