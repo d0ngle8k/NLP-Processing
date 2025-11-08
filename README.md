@@ -14,7 +14,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-> **Download:** https://open-source-schedule-7tta.bolt.host/
+
 
 ---
 
