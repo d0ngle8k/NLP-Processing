@@ -6,9 +6,9 @@
 
 > Extract events, times, locations, and reminders from Vietnamese text with PhoBERT hybrid NLP pipeline
 
-> **Version:** 1.0.2  
+> **Version:** 1.0.4
 
-[![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)](https://github.com/d0ngle8k/NLP-Processing)
+
 
 [![Python](https://img.shields.io/badge/python-3.13%2B-brightgreen.svg)](https://www.python.org/)> **Status:** Production Ready ✅  
 
