@@ -573,10 +573,79 @@ class NLPPipeline:
         loc2 = re.sub(r"\s{2,}", " ", loc2).strip(" ,.-").strip()
         return loc2 or None
     
+    def _validate_location(self, loc: Optional[str]) -> bool:
+        """
+        v1.0.5: Validation rules to reduce false positives in location extraction.
+        Returns True if location is valid, False otherwise.
+        """
+        if not loc:
+            return False
+        
+        # Rule 1: Minimum length (at least 2 characters after cleaning)
+        if len(loc.strip()) < 2:
+            return False
+        
+        # Rule 2: Reject pure time period words
+        time_periods = ['sang', 'sáng', 'trua', 'trưa', 'chieu', 'chiều', 'toi', 'tối', 'dem', 'đêm', 'khuya']
+        if loc.strip().lower() in time_periods:
+            return False
+        
+        # Rule 3: Reject if contains only digits and whitespace
+        if re.match(r'^[\d\s:]+$', loc):
+            return False
+        
+        # Rule 4: Reject common time-only phrases
+        invalid_phrases = [
+            r'^\d{1,2}\s*h\s*\d{1,2}$',  # "14h30", "9h15"
+            r'^\d{1,2}:\d{1,2}$',  # "14:30"
+            r'^thứ\s+[2-8]$',  # "thứ 2"
+            r'^t[2-8]$',  # "t2"
+            r'^cn$',  # "cn"
+            r'^mai$',  # "mai"
+            r'^nay$',  # "nay"
+            r'^qua$',  # "qua"
+        ]
+        
+        loc_lower = loc.lower().strip()
+        for pattern in invalid_phrases:
+            if re.match(pattern, loc_lower):
+                return False
+        
+        # Rule 5: Must contain at least one location indicator OR be a known location
+        location_indicators = [
+            'phong', 'phòng', 'cong ty', 'công ty', 'van phong', 'văn phòng',
+            'nha', 'nhà', 'truong', 'trường', 'benh vien', 'bệnh viện',
+            'quan', 'quán', 'san', 'sân', 'cong vien', 'công viên',
+            'be boi', 'bể bơi', 'rap', 'rạp', 'vincom', 'vinmart',
+            'california', 'paris', 'trung nguyen', 'trung nguyên',
+            'linh dam', 'linh đàm', 'thong nhat', 'thống nhất',
+            'bach mai', 'bạch mai', 'cho', 'chợ', 'sieu thi', 'siêu thị',
+            'cafe', 'coffee', 'hotel', 'khach san', 'khách sạn',
+            'dai hoc', 'đại học', 'hoc vien', 'học viện'
+        ]
+        
+        # Check if location contains ANY indicator
+        has_indicator = any(indicator in loc_lower for indicator in location_indicators)
+        
+        # Rule 6: If no indicator, check for proper location names (capitalized multi-word)
+        # Example: "Bạch Mai", "Trung Nguyên", "California Fitness"
+        if not has_indicator:
+            # Must have at least 2 words OR be a single capitalized word with length >= 4
+            words = loc.split()
+            if len(words) >= 2:
+                # Multi-word location likely valid
+                has_indicator = True
+            elif len(words) == 1 and len(words[0]) >= 4:
+                # Single word but substantial length (e.g., "Vincom")
+                has_indicator = True
+        
+        return has_indicator
+    
     def _clean_location_of_time_components(self, loc: Optional[str]) -> Optional[str]:
         """
         CRITICAL: Remove time-related components from location extraction.
         Fixes bug where "18:00 thứ 2" → location="00 thứ 2"
+        v1.0.5: Enhanced with validation rules
         """
         if not loc:
             return loc
@@ -629,6 +698,10 @@ class NLPPipeline:
         
         # If nothing left or only punctuation/numbers, return None
         if not loc or len(loc) <= 2 or loc.isdigit() or all(c in ' ,.-:' for c in loc):
+            return None
+        
+        # v1.0.5: Apply validation rules
+        if not self._validate_location(loc):
             return None
         
         # Return cleaned location
