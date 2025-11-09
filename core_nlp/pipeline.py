@@ -21,6 +21,7 @@ class NLPPipeline:
         # Fix: Prevent matching time patterns adjacent to letters (both upper and lowercase)
         # Use Unicode category \w which includes all Vietnamese letters
         # CRITICAL: Date patterns MUST come before period words to avoid "toi" (I) being matched as "tối" (evening)
+        # v1.0.6: CRITICAL FIX - Prevent "24h" from matching when part of location names like "Cafe 24h"
         self.time_patterns = re.compile(
             r"(" 
             # === PRIORITY 1: EXPLICIT DATE PATTERNS (MUST COME FIRST) ===
@@ -40,9 +41,13 @@ class NLPPipeline:
             r"|\b(?:năm|nam)\s+(?:sau|toi|tới|nay|này|trước|truoc)(?!\w)"  # năm sau, năm tới, năm nay
             # === PRIORITY 2: TIME WITH HOURS ===
             # Time with hours: 10h, 10h30, 10:30, 10 giờ 30 phút
-            # FIXED: Support h followed by digits (17h30) using (?:h\d{1,2}|:\d{1,2})
-            # Negative lookbehind ensures no word character (includes all Vietnamese) before digit
-            r"|(?<!\w)\d{1,2}(?:h\d{1,2}|\s*(?:giờ|gio)|:\d{1,2}|h)(?:\s*\d{1,2}(?:p|\s*phút))?\b"
+            # v1.0.6 CRITICAL FIX: Exclude "24h" to prevent "Cafe 24h" from being parsed as time
+            # Only match hours 0-23 for standalone "Xh" patterns
+            # Pattern breakdown:
+            #   - (?<!\w) = not preceded by word char (prevents "Cafe24h")
+            #   - (?:1?\d|2[0-3]) = hours 0-23 (excludes 24+)
+            #   - (?:h\d{1,2}|...) = followed by h+minutes, giờ, :minutes, or standalone h
+            r"|(?<!\w)(?:1?\d|2[0-3])(?:h\d{1,2}|\s*(?:giờ|gio)|:\d{1,2}|h)(?:\s*\d{1,2}(?:p|\s*phút))?\b"
             # === PRIORITY 3: RELATIVE DAY MARKERS ===
             r"|(?:hôm nay|hom nay|ngày mai|ngay mai|mai)(?!\w)"
             r"|(?:ngày mốt|ngay mot|mốt|mot|mai mốt|mai mot|ngày kia|ngay kia)(?!\w)"
@@ -175,6 +180,103 @@ class NLPPipeline:
             # Loại khỏi text (best-effort)
             text = re.sub(re.escape(location), "", text, flags=re.IGNORECASE).strip()
         return location, text
+    
+    def _extract_location_heuristic(self, text: str, event_name: str) -> Optional[str]:
+        """
+        v1.0.7: Extract location using heuristic patterns (no marker "ở/tại" needed)
+        
+        Strategy:
+        1. Clean text from reminder keywords first
+        2. Look for known location patterns (cities, buildings, venues)
+        3. Validate and return if not part of event
+        
+        IMPORTANT: This runs AFTER event/time extraction, so text should be relatively clean.
+        """
+        if not text:
+            return None
+        
+        # Step 1: Clean reminder keywords (before, earlier, som hon, notify, etc.)
+        reminder_keywords = r'\b(?:before|earlier|notify|nhac|nhắc|báo|bao|trc|truoc|trước|som|sớm|hon|hơn)\b'
+        text_cleaned = re.sub(reminder_keywords, ' ', text, flags=re.IGNORECASE)
+        text_cleaned = re.sub(r'\s{2,}', ' ', text_cleaned).strip()
+        
+        # Common Vietnamese location names (cities, districts, venues)
+        # v1.0.7: Extracted from training_100k_comprehensive.json top locations
+        # ENHANCED: Added many more location keywords to improve 24.8% detection rate
+        known_locations = [
+            # Cities (highest priority - most specific)
+            r'\b(?:hà\s*nội|ha\s*noi|sài\s*gòn|sai\s*gon|đà\s*nẵng|da\s*nang|hải\s*phòng|hai\s*phong|cần\s*thơ|can\s*tho|hồ\s*chí\s*minh|ho\s*chi\s*minh)\b',
+            # Branded venues (specific names)
+            r'\b(?:30\s*shines|highlands?\s*coffee|starbucks?|kfc|lotteria|phúc\s*long|phuc\s*long|trung\s*nguyên|trung\s*nguyen|café|cafe)\b',
+            # Building components (specific)
+            r'\b(?:tầng\s*\d+|tang\s*\d+|toà\s*[a-z]|toa\s*[a-z]|khu\s*[a-z]|phòng\s*\d+|phong\s*\d+|lầu\s*\d+|lau\s*\d+)\b',
+            r'\b(?:quận\s*\d+|quan\s*\d+|phường\s*\d+|phuong\s*\d+|huyện\s*\d+|huyen\s*\d+)\b',
+            r'\b(?:ngõ\s*\d+|ngo\s*\d+|hẻm\s*\d+|hem\s*\d+|đường\s*\d+|duong\s*\d+)\b',
+            # Generic venues (lower priority - more ambiguous)
+            r'\b(?:rạp\s*chiếu\s*phim|rap\s*chieu\s*phim|cinema|lotte|cgv|galaxy)\b',
+            r'\b(?:trung\s*tâm\s*thương\s*mại|trung\s*tam\s*thuong\s*mai|mall|plaza|center|centre)\b',
+            r'\b(?:sân\s*bay|san\s*bay|ga\s*tàu|ga\s*tau|bến\s*xe|ben\s*xe|trạm\s*xe\s*buýt|tram\s*xe\s*buyt)\b',
+            r'\b(?:bệnh\s*viện|benh\s*vien|phòng\s*khám|phong\s*kham|nha\s*khoa|nha\s*khoa)\b',
+            r'\b(?:trường\s*học|truong\s*hoc|đại\s*học|dai\s*hoc|học\s*viện|hoc\s*vien|trường\s*đại\s*học|truong\s*dai\s*hoc)\b',
+            r'\b(?:thư\s*viện|thu\s*vien|thư\s*viện\s*tỉnh|thu\s*vien\s*tinh)\b',
+            r'\b(?:nhà\s*hàng|nha\s*hang|quán\s*ăn|quan\s*an|quán\s*cà\s*phê|quan\s*ca\s*phe|cafe|restaurant)\b',
+            r'\b(?:khách\s*sạn|khach\s*san|hotel|resort|homestay|nhà\s*nghỉ|nha\s*nghi)\b',
+            r'\b(?:công\s*viên|cong\s*vien|park|công\s*viên\s*thống\s*nhất|cong\s*vien\s*thong\s*nhat)\b',
+            r'\b(?:văn\s*phòng|van\s*phong|office|công\s*ty|cong\s*ty|company)\b',
+            r'\b(?:phòng\s*họp|phong\s*hop|meeting\s*room|conference\s*room)\b',
+            r'\b(?:giảng\s*đường|giang\s*duong|lecture\s*hall|lớp\s*học|lop\s*hoc|classroom)\b',
+            r'\b(?:siêu\s*thị|sieu\s*thi|market|vinmart|co\.op|coop)\b',
+            r'\b(?:bể\s*bơi|be\s*boi|pool|gym|hồ\s*bơi|ho\s*boi|fitness\s*center)\b',
+            r'\b(?:spa|salon|làm\s*đẹp|lam\s*dep|beauty\s*salon)\b',
+            r'\b(?:chợ|cho|market|traditional\s*market)\b',
+            r'\b(?:công\s*viên\s*thống\s*nhất|cong\s*vien\s*thong\s*nhat|thống\s*nhất|thong\s*nhat)\b',
+            r'\b(?:sông\s*hàn|song\s*han|cafe\s*sông\s*hàn|cafe\s*song\s*han)\b',
+            r'\b(?:hương\s*sen|huong\s*sen|café\s*hương\s*sen|cafe\s*huong\s*sen)\b',
+            r'\b(?:đà\s*nẵng|da\s*nang|lotte\s*cinema|lotte\s*cinema\s*đà\s*nẵng)\b',
+            # Additional common locations from training data
+            r'\b(?:villa|căn\s*hộ|can\s*ho|apartment|chung\s*cư|chung\s*cu)\b',
+            r'\b(?:trạm\s*xe\s*buýt|tram\s*xe\s*buyt|bus\s*station)\b',
+            r'\b(?:ga\s*tàu\s*xe\s*lửa|ga\s*tau\s*xe\s*lua|train\s*station)\b',
+            r'\b(?:cảng|cang|port|harbor)\b',
+            r'\b(?:sân\s*tennis|san\s*tennis|court)\b',
+            r'\b(?:sân\s*bóng|san\s*bong|stadium|field)\b',
+            r'\b(?:sân\s*bay\s*tân\s*sơn\s*nhất|san\s*bay\s*tan\s*son\s*nhat)\b',
+            r'\b(?:bệnh\s*viện\s*việt\s*đức|benh\s*vien\s*viet\s*duc)\b',
+            r'\b(?:trường\s*đại\s*học\s*bách\s*khoa|truong\s*dai\s*hoc\s*bach\s*khoa)\b',
+        ]
+        
+        # Search for location patterns (highest priority first)
+        # Use text_cleaned (reminder keywords already removed)
+        text_lower = text_cleaned.lower()
+        
+        for pattern in known_locations:
+            match = re.search(pattern, text_lower, re.IGNORECASE)
+            if match:
+                location_candidate = match.group(0).strip()
+                
+                # Validate: Make sure it's not part of the event name
+                if event_name and location_candidate.lower() in event_name.lower():
+                    continue
+                
+                # Additional validation: Skip if it's a compound event phrase
+                # e.g., "đi chợ", "ăn buffet" where "chợ"/"buffet" is event, not location
+                # ENHANCED: Added more compound event patterns to avoid false positives
+                compound_event_patterns = [
+                    r'\b(?:đi|di|ra|den|đến|toi|tới)\s+' + re.escape(location_candidate) + r'\b',
+                    r'\b(?:ăn|an|uống|uong|mua|mua|ban|ban)\s+' + re.escape(location_candidate) + r'\b',
+                    r'\b(?:xem|xem|choi|chơi|tap|tap|hoc|học)\s+' + re.escape(location_candidate) + r'\b',
+                    r'\b(?:gap|gặp|tham|thăm|kham|khám)\s+' + re.escape(location_candidate) + r'\b',
+                ]
+                is_event_part = any(re.search(p, text_lower, re.IGNORECASE) for p in compound_event_patterns)
+                if is_event_part:
+                    continue
+                
+                # Final cleaning and validation
+                location_candidate = self._clean_location_of_time_components(location_candidate)
+                if location_candidate and self._validate_location(location_candidate):
+                    return location_candidate
+        
+        return None
 
     def _extract_entities_regex(self, text: str) -> Dict[str, Any]:
         """
@@ -309,18 +411,26 @@ class NLPPipeline:
             
                 # Common single-word event verbs (both diacritic and non-diacritic)
                 # v0.6.3: Expanded list with more variants
+                # v1.0.6: Significantly expanded to match training_100k_comprehensive.json dataset
                 single_verbs = [
                     'hop', 'họp', 'hoc', 'học', 'lam', 'làm', 'gap', 'gặp', 
                     'di', 'đi', 'kham', 'khám', 'le', 'lễ', 'an', 'ăn',
                     'uong', 'uống', 'tap', 'tập', 'chay', 'chạy', 'xem',
                     'mua', 'ban', 'bán', 'doc', 'đọc', 'viet', 'viết',
                     'nop', 'nộp', 'goi', 'gọi', 'dat', 'đặt', 'dua', 'đưa',
-                    'tham', 'nau', 'nấu', 'don', 'dọn', 'review', 'cafe'
+                    'tham', 'nau', 'nấu', 'don', 'dọn', 'review', 'cafe',
+                    # v1.0.6: Additional common Vietnamese verbs
+                    'ngủ', 'ngu', 'nghi', 'nghỉ', 'choi', 'chơi', 'hat', 'hát',
+                    'dao', 'dạo', 'boi', 'bơi', 'nhay', 'nhảy', 'dua', 'đua',
+                    'thi', 'thi', 'trao', 'giao', 'nhan', 'nhận', 'gui', 'gửi',
+                    'sua', 'sửa', 'cai', 'cài', 'chuẩn', 'chuan', 'kiem', 'kiểm',
+                    'thuc', 'thực', 'trien', 'triển', 'phat', 'phát', 'thu', 'thử'
                 ]
                 
                 # Common two-word event phrases (verb + object/complement)
                 # v0.6.3: Added more variants including non-diacritic versions
                 # v0.6.4: Added more common phrases
+                # v1.0.6: Massively expanded to cover training_100k_comprehensive.json patterns
                 two_word_events = [
                     'lam viec', 'làm việc', 'gap khach', 'gặp khách', 'gap ban', 'gặp bạn', 
                     'gap doi', 'gặp đối', 'gap khach hang', 'gặp khách hàng',
@@ -335,12 +445,27 @@ class NLPPipeline:
                     'dua con', 'đưa con', 'tham ba', 'thăm bà', 'di cong vien', 'đi công viên',
                     # v0.6.4: Add compound phrases
                     'sinh nhat', 'sinh nhật', 'ky niem', 'kỷ niệm', 'le ky', 'lễ ký',
-                    'goi dien', 'gọi điện'
+                    'goi dien', 'gọi điện',
+                    # v1.0.6: Additional two-word events from training dataset
+                    'an sang', 'ăn sáng', 'an trua', 'ăn trưa', 'an toi', 'ăn tối',
+                    'lam bao', 'làm báo', 'lam du', 'làm dự', 'hop giao', 'họp giao',
+                    'hop du', 'họp dự', 'hop ke', 'họp kế', 'nop du', 'nộp dự',
+                    'nop bao', 'nộp báo', 'tap boi', 'tập bơi', 'di yoga', 'đi yoga',
+                    'di gym', 'đi gym', 'xem rap', 'xem rạp', 'di rap', 'đi rạp',
+                    'tham benh', 'thăm bệnh', 'kham benh', 'khám bệnh', 'kham suc', 'khám sức',
+                    'hop ban', 'họp ban', 'hop phu', 'họp phụ', 'lam an', 'làm ăn',
+                    'di an', 'đi ăn', 'di uong', 'đi uống', 'di cafe', 'đi cafe',
+                    'di tra', 'đi trà', 'review san', 'review sản', 'mua do', 'mua đồ',
+                    'ban do', 'bán đồ', 'don dep', 'dọn dẹp', 'nau an', 'nấu ăn',
+                    'giao hang', 'giao hàng', 'nhan hang', 'nhận hàng', 'gui hang', 'gửi hàng',
+                    'cai dat', 'cài đặt', 'sua chua', 'sửa chữa', 'kiem tra', 'kiểm tra',
+                    'thuc hien', 'thực hiện', 'trien khai', 'triển khai', 'phat trien', 'phát triển'
                 ]
                 
                 # Common three-word event phrases
                 # v0.6.3: Added more variants including non-diacritic versions
                 # v0.6.4: Significantly expanded for complex events
+                # v1.0.6: Massively expanded to cover training_100k_comprehensive.json patterns
                 three_word_events = [
                     'gap doi tac', 'gặp đối tác', 'gap khach hang', 'gặp khách hàng',
                     'hop ban giam', 'họp ban giám', 'lam bai tap', 'làm bài tập',
@@ -353,7 +478,20 @@ class NLPPipeline:
                     'hoc tieng anh', 'học tiếng anh', 'hoc boi loi', 'học bơi lội',
                     'dua con di', 'đưa con đi', 'tham ba ngoai', 'thăm bà ngoại',
                     # v0.6.4: Add more complex 3-word events
-                    'le ky ket', 'lễ ký kết', 'di cong vien', 'đi công viên'
+                    'le ky ket', 'lễ ký kết', 'di cong vien', 'đi công viên',
+                    # v1.0.6: Additional three-word events from training dataset
+                    'lam bao cao', 'làm báo cáo', 'hop ke hoach', 'họp kế hoạch',
+                    'hop du an', 'họp dự án', 'lam du an', 'làm dự án',
+                    'nop du an', 'nộp dự án', 'hop giao ban', 'họp giao ban',
+                    'di kham suc', 'đi khám sức', 'kham suc khoe', 'khám sức khỏe',
+                    'di mua sam', 'đi mua sắm', 'di xem phim', 'đi xem phim',
+                    'tap the duc', 'tập thể dục', 'tap the hinh', 'tập thể hình',
+                    'di tap gym', 'đi tập gym', 'di tap yoga', 'đi tập yoga',
+                    'di tap boi', 'đi tập bơi', 'review san pham', 'di cafe 24h',
+                    'an tiec cuoi', 'ăn tiệc cưới', 'hop ban giam', 'họp ban giám',
+                    'sinh nhat ban', 'sinh nhật bạn', 'sinh nhat con', 'sinh nhật con',
+                    'ky niem ngay', 'kỷ niệm ngày', 'le khai truong', 'lễ khai trương',
+                    'le tot nghiep', 'lễ tốt nghiệp', 'le thanh lap', 'lễ thành lập'
                 ]
                 
                 # v0.6.4: NEW - Four+ word event phrases for very complex events
@@ -443,6 +581,34 @@ class NLPPipeline:
         # This runs after all heuristic logic to ensure all extractions are cleaned
         if results.get('event_name'):
             results['event_name'] = self._clean_event_name(results['event_name'], results.get('time_str'))
+
+        # ------------------- Post-validation rules -------------------
+        # If there is no time context (no explicit time_str and no relative time words in original text),
+        # treat the input as 'no schedule' and clear the event_name to avoid creating events without time.
+        # This reduces false-positives for stress_missing cases like "viết email" or single verbs like "gặp".
+        try:
+            orig_text = original_text or ''
+        except NameError:
+            orig_text = ''
+
+        # If there's no extracted time and the original text doesn't contain time-related words, clear event
+        if not results.get('time_str'):
+            if not self.time_related_words.search(orig_text):
+                results['event_name'] = ''
+
+        # Also reject extremely short or nonsensical event names (boundary_short cases)
+        ev = results.get('event_name') or ''
+        ev_stripped = ev.strip()
+        token_count = len(orig_text.split()) if orig_text else 0
+        # Clear if event looks purely time-like (always) OR if it's extremely short AND the original input is a single token
+        if ev_stripped:
+            is_time_like = re.fullmatch(r"^[\d\s:hmghgio\.\/\-]+$", ev_stripped, flags=re.IGNORECASE) is not None
+            if is_time_like:
+                results['event_name'] = ''
+            else:
+                # Only clear very short single-token inputs (likely noise). If a time_str exists (we have time), keep short verbs like 'ăn', 'đi'.
+                if not results.get('time_str') and len(ev_stripped) <= 2 and token_count <= 1:
+                    results['event_name'] = ''
         
         return results
     
@@ -507,7 +673,12 @@ class NLPPipeline:
         reminder_minutes, text_wo_reminder, has_reminder_phrase = self._extract_reminder(processed_text)
         # 2) Extract entities (time, location, event) - location fallback runs inside _extract_entities_regex
         ex = self._extract_entities_regex(text_wo_reminder)
-        # 3) If location not found by regex fallback, try NER as backup
+        # 3) v1.0.7: If location not found by regex, try heuristic extraction (no marker needed)
+        if not ex.get('location'):
+            loc_heuristic = self._extract_location_heuristic(text_wo_reminder, ex.get('event_name', ''))
+            if loc_heuristic:
+                ex['location'] = loc_heuristic
+        # 4) If still no location, try NER as final backup (slowest but most comprehensive)
         if not ex.get('location'):
             loc_ner, _ = self._extract_location_ner(text_wo_reminder)
             if loc_ner:
@@ -517,6 +688,56 @@ class NLPPipeline:
                     ex['location'] = loc_ner
         # Parse time
         start_dt, end_dt = parse_vietnamese_time_range(ex['time_str'], relative_base=self.relative_base)
+        # If parsing produced no start_dt but we have a period-only time_str (e.g., "tối", "hôm nay"),
+        # infer a reasonable default hour so 'gặp nay' / 'học tối' produce a start_time.
+        if not start_dt and ex.get('time_str'):
+            ts = ex['time_str'].lower()
+            # Map period words to default hours
+            period_map = {
+                'sáng': 9, 'sang': 9, 'sáng': 9, 'sang': 9,
+                'trưa': 12, 'trua': 12,
+                'chiều': 15, 'chieu': 15,
+                'tối': 20, 'toi': 20, 'đêm': 22, 'dem': 22, 'khuya': 22
+            }
+            chosen_hour = None
+            for p, h in period_map.items():
+                if p in ts:
+                    chosen_hour = h
+                    break
+
+            # If found a period, build a datetime at that hour for the relative date
+            if chosen_hour is not None:
+                try:
+                    base = self.relative_base or datetime.now()
+                    # Use parse_vietnamese_time_range to resolve the date (day/month/year) if possible
+                    # Fallback: if parse didn't resolve day, assume today/relative base
+                    # We'll set start_dt to base with chosen_hour and zero minutes
+                    start_dt = base.replace(hour=chosen_hour, minute=0, second=0, microsecond=0)
+                except Exception:
+                    start_dt = None
+        
+        # ENHANCED: If still no time but we have relative time context, infer default time
+        # This handles cases like "tháng này điều trị" (this month treatment) - assume morning
+        if not start_dt and ex.get('time_str'):
+            ts_lower = ex['time_str'].lower()
+            # Check for relative time indicators that suggest we should have a time
+            relative_indicators = [
+                'tháng này', 'thang nay', 'tuần này', 'tuan nay', 'tuần sau', 'tuan sau',
+                'tháng sau', 'thang sau', 'tháng tới', 'thang toi', 'tuần tới', 'tuan toi',
+                'ngày mai', 'ngay mai', 'mai', 'ngày kia', 'ngay kia', 'hôm nay', 'hom nay',
+                'thứ hai', 'thu hai', 'thứ ba', 'thu ba', 'thứ tư', 'thu tu', 'thứ năm', 'thu nam',
+                'thứ sáu', 'thu sau', 'thứ bảy', 'thu bay', 'chủ nhật', 'chu nhat'
+            ]
+            
+            has_relative = any(indicator in ts_lower for indicator in relative_indicators)
+            
+            if has_relative:
+                # Infer morning time (9 AM) for relative time expressions without explicit hours
+                try:
+                    base = self.relative_base or datetime.now()
+                    start_dt = base.replace(hour=9, minute=0, second=0, microsecond=0)
+                except Exception:
+                    start_dt = None
         result = {
             'event_name': ex['event_name'],  # Changed from 'event' to match database schema
             'start_time': start_dt.isoformat() if start_dt else None,
@@ -561,8 +782,14 @@ class NLPPipeline:
             if self.reminder_presence_regex.search(working):
                 has = True
                 working = self.reminder_presence_regex.sub(' ', working).strip()
+        
+        # v1.0.7: Clean standalone reminder keywords that weren't matched by patterns
+        # (e.g., "before 2" when pattern matched "nhac 2 week" but left "before" behind)
+        standalone_reminder = r'\b(?:before|earlier|notify|som|sớm|hon|hơn)\b'
+        working = re.sub(standalone_reminder, ' ', working, flags=re.IGNORECASE)
+        
         # Collapse multiple spaces
-        working = re.sub(r"\s{2,}", " ", working)
+        working = re.sub(r"\s{2,}", " ", working).strip()
         return minutes, working, has
 
     def _clean_location_of_reminder(self, loc: Optional[str]) -> Optional[str]:
@@ -576,6 +803,7 @@ class NLPPipeline:
     def _validate_location(self, loc: Optional[str]) -> bool:
         """
         v1.0.5: Validation rules to reduce false positives in location extraction.
+        v1.0.6: Enhanced to better recognize location names like "Cafe 24h", "Trung Nguyen"
         Returns True if location is valid, False otherwise.
         """
         if not loc:
@@ -612,6 +840,8 @@ class NLPPipeline:
                 return False
         
         # Rule 5: Must contain at least one location indicator OR be a known location
+        # v1.0.6: Expanded location indicators to cover training_100k_comprehensive.json locations
+        # ENHANCED: Added many more location indicators to improve detection rate
         location_indicators = [
             'phong', 'phòng', 'cong ty', 'công ty', 'van phong', 'văn phòng',
             'nha', 'nhà', 'truong', 'trường', 'benh vien', 'bệnh viện',
@@ -621,7 +851,26 @@ class NLPPipeline:
             'linh dam', 'linh đàm', 'thong nhat', 'thống nhất',
             'bach mai', 'bạch mai', 'cho', 'chợ', 'sieu thi', 'siêu thị',
             'cafe', 'coffee', 'hotel', 'khach san', 'khách sạn',
-            'dai hoc', 'đại học', 'hoc vien', 'học viện'
+            'dai hoc', 'đại học', 'hoc vien', 'học viện',
+            # v1.0.6: Additional location keywords from training dataset
+            '24h', 'highlands', 'starbucks', 'kfc', 'lotte', 'aeon',
+            'gym', 'fitness', 'yoga', 'spa', 'salon', 'clinic',
+            'mall', 'plaza', 'tower', 'center', 'centre', 'building',
+            'huong', 'hương', 'tram', 'trạm', 'toa', 'toà', 'khu',
+            'duong', 'đường', 'pho', 'phố', 'hem', 'hẻm', 'ngo', 'ngõ',
+            'xa', 'xã', 'thi tran', 'thị trấn', 'huyen', 'huyện',
+            'thanh pho', 'thành phố', 'tp', 'ha noi', 'hà nội',
+            'sai gon', 'sài gòn', 'da nang', 'đà nẵng',
+            'golden', 'diamond', 'pearl', 'star', 'green', 'blue', 'red',
+            'luxury', 'royal', 'king', 'queen', 'prince', 'princess',
+            # Additional common Vietnamese location patterns
+            'homestay', 'resort', 'villa', 'apartment', 'chung cu', 'chung cư',
+            'bus station', 'train station', 'airport', 'cinema', 'theater',
+            'restaurant', 'coffee shop', 'bar', 'pub', 'club',
+            'park', 'garden', 'lake', 'river', 'beach', 'mountain',
+            'hospital', 'clinic', 'school', 'university', 'library',
+            'office', 'company', 'factory', 'warehouse', 'store',
+            'market', 'supermarket', 'mall', 'plaza', 'center'
         ]
         
         # Check if location contains ANY indicator

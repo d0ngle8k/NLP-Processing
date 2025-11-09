@@ -27,6 +27,7 @@ from database.db_manager import DatabaseManager
 from services.notification_service import start_notification_service
 from services.export_service import export_to_json, export_to_ics
 from services.import_service import import_from_json, import_from_ics
+from services.statistics_service import StatisticsService
 from widgets.event_card import EventCard
 
 # NLP Pipeline - Hybrid (Rule-based + PhoBERT)
@@ -116,6 +117,22 @@ class Application(ctk.CTk):
         )
         theme_switch.pack(side='right', padx=25)
         theme_switch.select()  # Default dark
+        
+        # Statistics button
+        stats_btn = ctk.CTkButton(
+            top_bar,
+            text="📊 Thống kê",
+            width=110,
+            height=35,
+            corner_radius=8,
+            fg_color="transparent",
+            border_width=2,
+            border_color="white",
+            hover_color=("#5566d8", "#2e2e3e"),
+            font=("Arial", 12, "bold"),
+            command=self.handle_show_statistics
+        )
+        stats_btn.pack(side='right', padx=15)
         
         settings_btn = ctk.CTkButton(
             top_bar,
@@ -1506,6 +1523,279 @@ class Application(ctk.CTk):
             font=("Arial", 13, "bold"),
             command=settings.destroy
         ).pack(pady=20)
+    
+    def handle_show_statistics(self):
+        """Show statistics dialog with charts and analytics"""
+        from services.statistics_service import StatisticsService
+        
+        # Create statistics service
+        stats_service = StatisticsService(self.db_manager)
+        
+        # Get comprehensive statistics
+        try:
+            stats = stats_service.get_comprehensive_stats()
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể tải thống kê: {e}")
+            return
+        
+        # Create dialog
+        stats_dialog = ctk.CTkToplevel(self)
+        stats_dialog.title("📊 Báo cáo và biểu đồ")
+        stats_dialog.geometry("900x700")
+        stats_dialog.transient(self)
+        stats_dialog.grab_set()
+        
+        # Title bar
+        title_bar = ctk.CTkFrame(
+            stats_dialog,
+            height=55,
+            fg_color=("#667eea", "#1e1e2e")
+        )
+        title_bar.pack(fill='x')
+        title_bar.pack_propagate(False)
+        
+        ctk.CTkLabel(
+            title_bar,
+            text="📊 Báo cáo và biểu đồ",
+            font=("Arial", 17, "bold"),
+            text_color="white"
+        ).pack(side='left', padx=25, pady=12)
+        
+        # Create tabview
+        tabview = ctk.CTkTabview(stats_dialog, width=850, height=600)
+        tabview.pack(padx=25, pady=20, fill='both', expand=True)
+        
+        # Overview tab
+        tabview.add("Tổng quan")
+        overview_tab = tabview.tab("Tổng quan")
+        
+        overview_content = ctk.CTkScrollableFrame(overview_tab)
+        overview_content.pack(fill='both', expand=True, padx=15, pady=15)
+        
+        # Overview statistics cards
+        overview_stats = stats['overview']
+        
+        # Row 1: Basic counts
+        row1 = ctk.CTkFrame(overview_content, fg_color="transparent")
+        row1.pack(fill='x', pady=5)
+        
+        cards_data = [
+            ("📅 Tổng sự kiện", f"{overview_stats['total_events']}", "Tất cả thời gian"),
+            ("📊 Tuần này", f"{overview_stats['week_events']}", "7 ngày qua"),
+            ("📈 Tháng này", f"{overview_stats['month_events']}", "30 ngày qua"),
+        ]
+        
+        for title, value, subtitle in cards_data:
+            card = ctk.CTkFrame(row1, corner_radius=10, fg_color=("gray90", "gray20"))
+            card.pack(side='left', padx=8, expand=True)
+            
+            ctk.CTkLabel(card, text=title, font=("Arial", 12, "bold")).pack(pady=(10, 5))
+            ctk.CTkLabel(card, text=value, font=("Arial", 20, "bold")).pack()
+            ctk.CTkLabel(card, text=subtitle, font=("Arial", 9), text_color=("gray60", "gray50")).pack(pady=(5, 10))
+        
+        # Row 2: Percentages and streaks
+        row2 = ctk.CTkFrame(overview_content, fg_color="transparent")
+        row2.pack(fill='x', pady=10)
+        
+        cards_data2 = [
+            ("⏰ Có nhắc nhở", f"{overview_stats['reminder_percentage']:.1f}%", f"({overview_stats['with_reminder']} sự kiện)"),
+            ("📍 Có địa điểm", f"{overview_stats['location_percentage']:.1f}%", f"({overview_stats['with_location']} sự kiện)"),
+            ("🔥 Streak hiện tại", f"{overview_stats['current_streak']}", "ngày liên tiếp"),
+        ]
+        
+        for title, value, subtitle in cards_data2:
+            card = ctk.CTkFrame(row2, corner_radius=10, fg_color=("gray90", "gray20"))
+            card.pack(side='left', padx=8, expand=True)
+            
+            ctk.CTkLabel(card, text=title, font=("Arial", 12, "bold")).pack(pady=(10, 5))
+            ctk.CTkLabel(card, text=value, font=("Arial", 20, "bold")).pack()
+            ctk.CTkLabel(card, text=subtitle, font=("Arial", 9), text_color=("gray60", "gray50")).pack(pady=(5, 10))
+        
+        # Additional stats
+        additional_frame = ctk.CTkFrame(overview_content, corner_radius=10)
+        additional_frame.pack(fill='x', pady=15)
+        
+        ctk.CTkLabel(
+            additional_frame,
+            text="📈 Thống kê bổ sung",
+            font=("Arial", 14, "bold")
+        ).pack(pady=10)
+        
+        additional_stats = [
+            f"Streak dài nhất: {overview_stats['longest_streak']} ngày",
+            f"TB sự kiện/ngày (30 ngày): {overview_stats['avg_events_per_day']:.1f}",
+        ]
+        
+        for stat in additional_stats:
+            ctk.CTkLabel(
+                additional_frame,
+                text=stat,
+                font=("Arial", 11),
+                anchor='w'
+            ).pack(fill='x', padx=20, pady=2)
+        
+        # Charts tab
+        tabview.add("Biểu đồ")
+        charts_tab = tabview.tab("Biểu đồ")
+        
+        charts_content = ctk.CTkScrollableFrame(charts_tab)
+        charts_content.pack(fill='both', expand=True, padx=15, pady=15)
+        
+        # Chart buttons
+        chart_buttons_frame = ctk.CTkFrame(charts_content, fg_color="transparent")
+        chart_buttons_frame.pack(fill='x', pady=10)
+        
+        chart_buttons = [
+            ("📅 Theo ngày", "weekday"),
+            ("🕐 Theo giờ", "hourly"),
+            ("📍 Địa điểm", "location"),
+            ("🏷️ Loại sự kiện", "event_type"),
+            ("📈 Xu hướng", "trend"),
+        ]
+        
+        def show_chart(chart_type):
+            """Show selected chart in a new window"""
+            try:
+                if chart_type == "weekday":
+                    fig = stats_service.create_weekday_chart(stats['time'])
+                    title = "Phân bố sự kiện theo ngày trong tuần"
+                elif chart_type == "hourly":
+                    fig = stats_service.create_hourly_chart(stats['time'])
+                    title = "Phân bố sự kiện theo giờ"
+                elif chart_type == "location":
+                    fig = stats_service.create_location_chart(stats['location'])
+                    title = "Top địa điểm thường xuyên"
+                elif chart_type == "event_type":
+                    fig = stats_service.create_event_type_pie_chart(stats['event_type'])
+                    title = "Phân loại sự kiện theo nội dung"
+                elif chart_type == "trend":
+                    fig = stats_service.create_trend_chart(stats['trends'])
+                    title = "Xu hướng 4 tuần gần đây"
+                else:
+                    return
+                
+                if fig is None:
+                    messagebox.showwarning("Cảnh báo", "Không thể tạo biểu đồ. Vui lòng cài matplotlib:\npip install matplotlib")
+                    return
+                
+                # Create chart window
+                chart_window = ctk.CTkToplevel(stats_dialog)
+                chart_window.title(f"📊 {title}")
+                chart_window.geometry("800x600")
+                chart_window.transient(stats_dialog)
+                
+                # Embed matplotlib figure
+                from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+                import matplotlib.pyplot as plt
+                canvas = FigureCanvasTkAgg(fig, master=chart_window)
+                canvas.draw()
+                canvas.get_tk_widget().pack(fill='both', expand=True, padx=10, pady=10)
+                
+                # Close button
+                ctk.CTkButton(
+                    chart_window,
+                    text="Đóng",
+                    command=lambda: (chart_window.destroy(), plt.close(fig)),
+                    width=100,
+                    height=35
+                ).pack(pady=10)
+                
+            except ImportError:
+                messagebox.showerror("Lỗi", "Cần cài matplotlib để xem biểu đồ:\npip install matplotlib")
+            except Exception as e:
+                messagebox.showerror("Lỗi", f"Không thể tạo biểu đồ: {e}")
+        
+        for text, chart_type in chart_buttons:
+            ctk.CTkButton(
+                chart_buttons_frame,
+                text=text,
+                width=140,
+                height=40,
+                corner_radius=8,
+                font=("Arial", 11, "bold"),
+                command=lambda ct=chart_type: show_chart(ct)
+            ).pack(side='left', padx=5)
+        
+        # Export tab
+        tabview.add("Xuất dữ liệu")
+        export_tab = tabview.tab("Xuất dữ liệu")
+        
+        export_content = ctk.CTkScrollableFrame(export_tab)
+        export_content.pack(fill='both', expand=True, padx=15, pady=15)
+        
+        ctk.CTkLabel(
+            export_content,
+            text="📤 Xuất báo cáo thống kê",
+            font=("Arial", 16, "bold")
+        ).pack(pady=(10, 20))
+        
+        # Export buttons
+        export_buttons = [
+            ("📊 Excel (.xlsx)", lambda: self._export_stats_excel(stats_service, stats)),
+            ("📄 PDF (.pdf)", lambda: self._export_stats_pdf(stats_service, stats)),
+        ]
+        
+        for text, cmd in export_buttons:
+            ctk.CTkButton(
+                export_content,
+                text=text,
+                width=200,
+                height=45,
+                corner_radius=10,
+                font=("Arial", 12, "bold"),
+                command=cmd
+            ).pack(pady=8)
+        
+        # Close button
+        ctk.CTkButton(
+            stats_dialog,
+            text="Đóng",
+            width=120,
+            height=40,
+            corner_radius=10,
+            font=("Arial", 13, "bold"),
+            command=stats_dialog.destroy
+        ).pack(pady=20)
+    
+    def _export_stats_excel(self, stats_service, stats):
+        """Export statistics to Excel"""
+        filepath = filedialog.asksaveasfilename(
+            title="Lưu file Excel",
+            defaultextension=".xlsx",
+            filetypes=[("Excel files", "*.xlsx"), ("All files", "*.*")],
+            initialfile="thong_ke_lich_trinh.xlsx"
+        )
+        
+        if not filepath:
+            return
+        
+        try:
+            stats_service.export_to_excel(filepath, stats)
+            messagebox.showinfo("Xuất Excel", f"✅ Đã xuất file thành công:\n{filepath}")
+        except ImportError:
+            messagebox.showerror("Lỗi", "Cần cài openpyxl để xuất Excel:\npip install openpyxl")
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Xuất Excel thất bại: {e}")
+    
+    def _export_stats_pdf(self, stats_service, stats):
+        """Export statistics to PDF"""
+        filepath = filedialog.asksaveasfilename(
+            title="Lưu file PDF",
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf"), ("All files", "*.*")],
+            initialfile="bao_cao_thong_ke.pdf"
+        )
+        
+        if not filepath:
+            return
+        
+        try:
+            stats_service.export_to_pdf(filepath, stats)
+            messagebox.showinfo("Xuất PDF", f"✅ Đã xuất file thành công:\n{filepath}")
+        except ImportError:
+            messagebox.showerror("Lỗi", "Cần cài reportlab để xuất PDF:\npip install reportlab")
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Xuất PDF thất bại: {e}")
     
     def handle_export_json(self):
         """Export to JSON with file dialog"""

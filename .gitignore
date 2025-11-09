@@ -52,3 +52,6 @@ FEATURES_*.md
 models/phobert_finetuned/model.pt
 models/phobert_base/
 *.pt
+
+# Ignore test cases and test runner outputs
+tests/

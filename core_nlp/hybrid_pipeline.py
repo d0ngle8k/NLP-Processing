@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 from typing import Optional, Dict, Any
 from datetime import datetime
+import re
 
 from .pipeline import NLPPipeline
 try:
@@ -146,7 +147,38 @@ class HybridNLPPipeline:
             merged['event_name'] = rule_event
         else:
             # Models differ - prefer rule-based (100% accuracy)
-            merged['event_name'] = rule_event if rule_event else phobert_event
+            if rule_event:
+                merged['event_name'] = rule_event
+            else:
+                # If PhoBERT's event looks like a time-only string or noise (e.g., "10h sáng mai"),
+                # do NOT accept it as an event. This prevents time-only inputs being returned as events.
+                phobert_ev = phobert_event or ''
+                # If phobert_ev is short/noisy or matches time patterns, ignore it
+                looks_like_time = False
+                try:
+                    if self.rule_based.time_patterns.search(phobert_ev):
+                        looks_like_time = True
+                except Exception:
+                    looks_like_time = False
+
+                # ENHANCED: Also check for invalid hour patterns that PhoBERT might generate
+                # Common PhoBERT errors: "25h", "30h", "-1h", "24h", etc.
+                invalid_hour_patterns = [
+                    r'\b(?:2[5-9]|[3-9]\d|\d{3,})h\b',  # 25h, 30h, 100h, etc.
+                    r'\b-?\d{1,2}h\s*\d{1,2}\b',        # Invalid hour-minute combos
+                    r'\bh\s*\d{1,2}\s*h\b',             # "h 25 h" patterns
+                ]
+                has_invalid_hour = any(re.search(pattern, phobert_ev, re.IGNORECASE) for pattern in invalid_hour_patterns)
+                
+                # Only ignore PhoBERT's short/time-like event if PhoBERT did NOT extract a start_time
+                phobert_has_time = bool(phobert_result.get('start_time'))
+                is_short = len(phobert_ev.strip()) <= 2
+                is_time_like_full = re.fullmatch(r"^[\d\s:hmghgio\.\/\-]+$", phobert_ev.strip(), flags=re.IGNORECASE) is not None
+
+                if (is_time_like_full and not phobert_has_time) or (is_short and not phobert_has_time) or has_invalid_hour:
+                    merged['event_name'] = ''
+                else:
+                    merged['event_name'] = phobert_ev
         
         # Time: Always prefer rule-based (100% accuracy)
         merged['start_time'] = rule_result.get('start_time')
