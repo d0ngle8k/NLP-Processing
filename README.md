@@ -1,6 +1,6 @@
-# 🗓️ Trợ Lý Lịch Trình - Vietnamese NLP Calendar Assistant# 📅 Trợ Lý Lịch Trình - Vietnamese NLP Calendar Assistant# 📅 Trợ Lý Lịch Trình - Vietnamese NLP Calendar Assistant
+# 🗓️ Trợ Lý Lịch Trình - Vietnamese NLP Calendar Assistant# 
 
-
+Download at: https://open-source-schedule-7tta.bolt.host/
 
 
 
